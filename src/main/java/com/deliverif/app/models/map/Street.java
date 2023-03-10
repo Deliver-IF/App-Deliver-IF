@@ -1,6 +1,7 @@
 package com.deliverif.app.models.map;
 
 import lombok.Getter;
+import org.apache.commons.lang3.tuple.Pair;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -17,7 +18,9 @@ public class Street {
         this.name = name;
         this.length = length;
         this.origin = origin;
+        this.origin.getReachableIntersections().add(Pair.of(destination, this));
         this.destination = destination;
+        this.destination.getReachableIntersections().add(Pair.of(origin, this));
     }
 
     public static Street create(Node nStreet, HashMap<String, Intersection> intersections) throws Exception {
@@ -27,7 +30,13 @@ public class Street {
 
         Element element = (Element) nStreet;
         Intersection origin = intersections.get(element.getAttribute("origin"));
+        if (origin == null) {
+            throw new Exception("Invalid origin");
+        }
         Intersection destination = intersections.get(element.getAttribute("destination"));
+        if (destination == null) {
+            throw new Exception("Invalid destination");
+        }
 
         return new Street(
                 element.getAttribute("name"),
