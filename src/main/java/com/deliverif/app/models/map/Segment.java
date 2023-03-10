@@ -8,13 +8,13 @@ import org.w3c.dom.Node;
 import java.util.HashMap;
 
 @Getter
-public class Street {
+public class Segment {
     private final String name;
     private final Float length;
     private final Intersection origin;
     private final Intersection destination;
 
-    protected Street(String name, Float length, Intersection origin, Intersection destination) {
+    protected Segment(String name, Float length, Intersection origin, Intersection destination) {
         this.name = name;
         this.length = length;
         this.origin = origin;
@@ -23,7 +23,7 @@ public class Street {
         this.destination.getReachableIntersections().add(Pair.of(origin, this));
     }
 
-    public static Street create(Node nStreet, HashMap<String, Intersection> intersections) throws Exception {
+    public static Segment create(Node nStreet, HashMap<String, Intersection> intersections) throws Exception {
         if (nStreet == null || nStreet.getNodeType() != Node.ELEMENT_NODE) {
             throw new Exception("Invalid node");
         }
@@ -38,7 +38,7 @@ public class Street {
             throw new Exception("Invalid destination");
         }
 
-        return new Street(
+        return new Segment(
                 element.getAttribute("name"),
                 Float.parseFloat(element.getAttribute("length")),
                 origin,

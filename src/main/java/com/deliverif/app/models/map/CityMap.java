@@ -7,16 +7,16 @@ import java.util.List;
 @Getter
 public class CityMap {
     private final Intersection warehouse;
-    private final List<Street> streets;
+    private final List<Segment> segments;
     private final Float minLatitude;
     private final Float maxLatitude;
     private final Float minLongitude;
     private final Float maxLongitude;
 
 
-    private CityMap(Intersection warehouse, List<Street> streets, Float minLatitude, Float maxLatitude, Float minLongitude, Float maxLongitude) {
+    private CityMap(Intersection warehouse, List<Segment> segments, Float minLatitude, Float maxLatitude, Float minLongitude, Float maxLongitude) {
         this.warehouse = warehouse;
-        this.streets = streets;
+        this.segments = segments;
         this.minLatitude = minLatitude;
         this.maxLatitude = maxLatitude;
         this.minLongitude = minLongitude;
@@ -24,7 +24,7 @@ public class CityMap {
     }
 
 
-    public static CityMap create(Intersection warehouse, List<Street> streets, Float minLatitude, Float maxLatitude, Float minLongitude, Float maxLongitude) {
-        return new CityMap(warehouse, streets, minLatitude, maxLatitude, minLongitude, maxLongitude);
+    public static CityMap create(Intersection warehouse, List<Segment> segments, Float minLatitude, Float maxLatitude, Float minLongitude, Float maxLongitude) {
+        return new CityMap(warehouse, segments, minLatitude, maxLatitude, minLongitude, maxLongitude);
     }
 }
