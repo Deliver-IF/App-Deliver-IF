@@ -1,19 +1,24 @@
 package com.deliverif.app.vues;
 
+import com.deliverif.app.models.map.CityMap;
+import com.deliverif.app.utils.Constants;
+
 import javax.swing.*;
+import java.awt.*;
 
 public class MainWindow extends JFrame {
-    public MainWindow() {
-        super();
-        this.setTitle("Hello World");
-        this.setContentPane(this.map);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.pack();
-        this.setVisible(true);
-    }
-    public Map map;
+    private JPanel main;
+    private Map map;
 
-    private void createUIComponents() {
-        // TODO: place custom component creation code here
+    public MainWindow(CityMap map) {
+        super();
+
+        this.setTitle(Constants.APP_NAME);
+        this.setContentPane(this.main);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setVisible(true);
+        this.setSize(800, 700);
+
+        this.map.putClientProperty("map", map);
     }
 }
