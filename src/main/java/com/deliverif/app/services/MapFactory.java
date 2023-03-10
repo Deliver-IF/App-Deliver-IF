@@ -2,7 +2,7 @@ package com.deliverif.app.services;
 
 import com.deliverif.app.models.map.CityMap;
 import com.deliverif.app.models.map.Intersection;
-import com.deliverif.app.models.map.Street;
+import com.deliverif.app.models.map.Segment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -69,13 +69,13 @@ public class MapFactory {
             if (nStreets.getLength() < 1) {
                 throw new Exception("Invalid number of segments");
             }
-            List<Street> streets = new ArrayList<>();
+            List<Segment> segments = new ArrayList<>();
             for (int i = 0; i < nStreets.getLength(); i++) {
-                Street street = Street.create(nStreets.item(i), intersections);
-                streets.add(street);
+                Segment segment = Segment.create(nStreets.item(i), intersections);
+                segments.add(segment);
             }
 
-            return CityMap.create(warehouse, streets, minLatitude, maxLatitude, minLongitude, maxLongitude);
+            return CityMap.create(warehouse, segments, minLatitude, maxLatitude, minLongitude, maxLongitude);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

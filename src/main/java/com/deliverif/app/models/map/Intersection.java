@@ -13,7 +13,7 @@ public class Intersection {
     private final String id;
     private final Float longitude;
     private final Float latitude;
-    private final List<Pair<Intersection, Street>> reachableIntersections;
+    private final List<Pair<Intersection, Segment>> reachableIntersections;
 
     protected Intersection(String id, Float longitude, Float latitude) {
         this.id = id;
