@@ -1,19 +1,25 @@
 package com.deliverif.app.models.map;
 
 import lombok.Getter;
+import org.apache.commons.lang3.tuple.Pair;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 public class Intersection {
     private final String id;
     private final Float longitude;
     private final Float latitude;
+    private final List<Pair<Intersection, Street>> reachableIntersections;
 
     protected Intersection(String id, Float longitude, Float latitude) {
         this.id = id;
         this.longitude = longitude;
         this.latitude = latitude;
+        this.reachableIntersections = new ArrayList<>();
     }
 
 
