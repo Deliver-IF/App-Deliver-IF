@@ -23,6 +23,8 @@ public class MapFactory {
             throw new FileNotFoundException();
         }
 
+        Float minLatitude = null, maxLatitude = null, minLongitude = null, maxLongitude = null;
+
         try {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -42,6 +44,18 @@ public class MapFactory {
             HashMap<String, Intersection> intersections = new HashMap<>();
             for (int i = 0; i < nIntersections.getLength(); i++) {
                 Intersection intersection = Intersection.create(nIntersections.item(i));
+                if (minLatitude == null || intersection.getLatitude() < minLatitude) {
+                    minLatitude = intersection.getLatitude();
+                }
+                if (maxLatitude == null || intersection.getLatitude() > maxLatitude) {
+                    maxLatitude = intersection.getLatitude();
+                }
+                if (minLongitude == null || intersection.getLongitude() < minLongitude) {
+                    minLongitude = intersection.getLongitude();
+                }
+                if (maxLongitude == null || intersection.getLongitude() > maxLongitude) {
+                    maxLongitude = intersection.getLongitude();
+                }
                 intersections.put(intersection.getId(), intersection);
             }
 
@@ -61,7 +75,7 @@ public class MapFactory {
                 streets.add(street);
             }
 
-            return CityMap.create(warehouse, streets);
+            return CityMap.create(warehouse, streets, minLatitude, maxLatitude, minLongitude, maxLongitude);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
