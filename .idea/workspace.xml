@@ -5,13 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e4eb8460-fdce-449b-b0ee-f17e217e1ea4" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/deliverif/app/utils/Constants.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/deliverif/app/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/deliverif/app/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/deliverif/app/vues/MainWindow.form" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/deliverif/app/vues/MainWindow.form" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/deliverif/app/vues/MainWindow.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/deliverif/app/vues/MainWindow.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/deliverif/app/vues/Map.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/deliverif/app/vues/Map.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -68,6 +63,8 @@
 }</component>
   <component name="RunManager">
     <configuration name="Deliver'IF" type="Application" factoryName="Application">
+      <option name="ALTERNATIVE_JRE_PATH" value="openjdk-19" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
       <option name="MAIN_CLASS_NAME" value="com.deliverif.app.Main" />
       <module name="Direct-IF" />
       <method v="2">
