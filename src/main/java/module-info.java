@@ -7,5 +7,7 @@ module com.deliverif.app {
 
 
     opens com.deliverif.app to javafx.fxml;
+    opens com.deliverif.app.controllers to javafx.fxml;
     exports com.deliverif.app;
+
 }
