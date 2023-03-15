@@ -12,6 +12,8 @@ import javafx.stage.Stage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 public class Main extends Application {
     CityMap cityMap;
@@ -22,7 +24,7 @@ public class Main extends Application {
         try {
             URL res = Main.class.getResource("maps/largeMap.xml");
             assert res != null;
-            cityMap = MapFactory.createMapFromPathFile(res.getPath());
+            cityMap = MapFactory.createMapFromPathFile(URLDecoder.decode(res.getPath(), StandardCharsets.UTF_8));
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
