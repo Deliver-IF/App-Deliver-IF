@@ -32,10 +32,11 @@ public class Main extends Application {
         // Load UI
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("views/main.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 320, 240);
-        MainController controller = fxmlLoader.getController();
-        Map.draw(controller.getCanvas(), cityMap);
-        stage.setTitle("Hello!");
         stage.setScene(scene);
+        stage.show();
+        MainController controller = fxmlLoader.getController();
+        Map.draw(controller.getMapPane(), cityMap);
+        stage.setTitle("Hello!");
         stage.show();
     }
 
