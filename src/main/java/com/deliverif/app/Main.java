@@ -1,16 +1,9 @@
 package com.deliverif.app;
 
-import com.deliverif.app.models.map.CityMap;
-import com.deliverif.app.services.MapFactory;
-import com.deliverif.app.vues.MainWindow;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.URL;
 
 public class Main extends Application {
     public static void main(String[] args) {
@@ -31,7 +24,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("main.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/com.deliverif.app/main.fxml"));
             Scene scene = new Scene(fxmlLoader.load(), 320, 240);
             stage.setTitle("Hello!");
             stage.setScene(scene);
