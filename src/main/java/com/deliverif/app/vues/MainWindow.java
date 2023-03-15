@@ -4,7 +4,6 @@ import com.deliverif.app.models.map.CityMap;
 import com.deliverif.app.utils.Constants;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class MainWindow extends JFrame {
     private JPanel main;
