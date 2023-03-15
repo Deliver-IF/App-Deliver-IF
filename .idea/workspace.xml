@@ -5,8 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f1cd6328-d35f-416f-8d05-6991fdbf0b48" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/deliverif/app/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/deliverif/app/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/deliverif/app/main.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/deliverif/app/views/main.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/deliverif/app/controllers/MainController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/deliverif/app/controllers/MainController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/deliverif/app/views/Map.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/deliverif/app/views/Map.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/com/deliverif/app/views/main.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/deliverif/app/views/main.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
