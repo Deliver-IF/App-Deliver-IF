@@ -13,7 +13,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class MapFactory {
 
@@ -69,7 +68,7 @@ public class MapFactory {
             if (nStreets.getLength() < 1) {
                 throw new Exception("Invalid number of segments");
             }
-            List<Segment> segments = new ArrayList<>();
+            ArrayList<Segment> segments = new ArrayList<>();
             for (int i = 0; i < nStreets.getLength(); i++) {
                 Segment segment = Segment.create(nStreets.item(i), intersections);
                 segments.add(segment);

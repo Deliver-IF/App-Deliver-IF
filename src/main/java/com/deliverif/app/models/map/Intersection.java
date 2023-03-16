@@ -6,14 +6,13 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 public class Intersection {
     private final String id;
     private final Float longitude;
     private final Float latitude;
-    private final List<Pair<Intersection, Segment>> reachableIntersections;
+    private final ArrayList<Pair<Intersection, Segment>> reachableIntersections;
 
     protected Intersection(String id, Float longitude, Float latitude) {
         this.id = id;
