@@ -12,6 +12,8 @@ public class CityMap {
     private final Float maxLatitude;
     private final Float minLongitude;
     private final Float maxLongitude;
+    private final Float latitudeRange;
+    private final Float longitudeRange;
 
 
     private CityMap(Intersection warehouse, List<Segment> segments, Float minLatitude, Float maxLatitude, Float minLongitude, Float maxLongitude) {
@@ -21,6 +23,8 @@ public class CityMap {
         this.maxLatitude = maxLatitude;
         this.minLongitude = minLongitude;
         this.maxLongitude = maxLongitude;
+        this.latitudeRange = maxLatitude - minLatitude;
+        this.longitudeRange = maxLongitude - minLongitude;
     }
 
 
