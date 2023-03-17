@@ -8,10 +8,15 @@ public class DeliveryRequest {
     private static int idCounter = 0;
     private final int id;
     private final int startTimeWindow;
-    private Intersection intersection;
+    private final Intersection intersection;
 
-    protected DeliveryRequest(int startTimeWindow) {
+    protected DeliveryRequest(int startTimeWindow, Intersection intersection) {
         this.startTimeWindow = startTimeWindow;
         this.id = idCounter++;
+        this.intersection = intersection;
+    }
+
+    public static void resetIdCounter() {
+        idCounter = 0;
     }
 }
