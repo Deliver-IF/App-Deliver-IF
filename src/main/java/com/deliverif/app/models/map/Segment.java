@@ -10,11 +10,11 @@ import java.util.HashMap;
 @Getter
 public class Segment {
     private final String name;
-    private final Float length;
+    private final float length;
     private final Intersection origin;
     private final Intersection destination;
 
-    protected Segment(String name, Float length, Intersection origin, Intersection destination) {
+    public Segment(String name, Float length, Intersection origin, Intersection destination) {
         this.name = name;
         this.length = length;
         this.origin = origin;

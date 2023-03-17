@@ -11,11 +11,11 @@ import java.util.List;
 @Getter
 public class Intersection {
     private final String id;
-    private final Float longitude;
-    private final Float latitude;
+    private final float longitude;
+    private final float latitude;
     private final List<Pair<Intersection, Segment>> reachableIntersections;
 
-    protected Intersection(String id, Float longitude, Float latitude) {
+    public Intersection(String id, Float longitude, Float latitude) {
         this.id = id;
         this.longitude = longitude;
         this.latitude = latitude;

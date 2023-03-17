@@ -22,7 +22,7 @@ public class Main extends Application {
     public void start(Stage stage) throws IOException {
         // Load map
         try {
-            URL res = Main.class.getResource("maps/largeMap.xml");
+            URL res = Main.class.getResource("maps/smallMap.xml");
             assert res != null;
             cityMap = MapFactory.createMapFromPathFile(URLDecoder.decode(res.getPath(), StandardCharsets.UTF_8));
         } catch (FileNotFoundException e) {
@@ -31,7 +31,7 @@ public class Main extends Application {
 
         // Load UI
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("views/main.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
+        Scene scene = new Scene(fxmlLoader.load(), 900, 800);
         stage.setScene(scene);
         stage.show();
         MainController controller = fxmlLoader.getController();
