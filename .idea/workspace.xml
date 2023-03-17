@@ -7,13 +7,13 @@
     <list default="true" id="f1cd6328-d35f-416f-8d05-6991fdbf0b48" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/deliverif/app/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/deliverif/app/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/deliverif/app/views/Map.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/deliverif/app/views/Map.java" afterDir="false" />
+    </list>
+    <list id="f6b6e1e5-4ec4-40d9-a423-e11b736c5345" name="Changes by user" comment="">
       <change beforePath="$PROJECT_DIR$/src/main/java/com/deliverif/app/models/map/Intersection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/deliverif/app/models/map/Intersection.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/deliverif/app/models/map/Segment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/deliverif/app/models/map/Segment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/deliverif/app/views/Map.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/deliverif/app/views/Map.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/deliverif/app/views/main.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/deliverif/app/views/main.fxml" afterDir="false" />
-    </list>
-    <list id="f6b6e1e5-4ec4-40d9-a423-e11b736c5345" name="Changes by user" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/deliverif/app/views/Map.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/deliverif/app/views/Map.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/com/deliverif/app/maps/smallMap.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/deliverif/app/maps/smallMap.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,13 +26,15 @@
   <component name="LineStatusTrackerManager">
     <file path="$PROJECT_DIR$/src/main/java/com/deliverif/app/views/Map.java">
       <ranges>
-        <range start1="3" end1="3" start2="3" end2="5" changelist="f1cd6328-d35f-416f-8d05-6991fdbf0b48" />
-        <range start1="6" end1="6" start2="8" end2="9" changelist="f6b6e1e5-4ec4-40d9-a423-e11b736c5345" />
-        <range start1="9" end1="9" start2="12" end2="14" changelist="f1cd6328-d35f-416f-8d05-6991fdbf0b48" />
-        <range start1="21" end1="22" start2="26" end2="26" changelist="f1cd6328-d35f-416f-8d05-6991fdbf0b48" />
-        <range start1="23" end1="23" start2="27" end2="28" changelist="f1cd6328-d35f-416f-8d05-6991fdbf0b48" />
-        <range start1="24" end1="37" start2="29" end2="56" changelist="f1cd6328-d35f-416f-8d05-6991fdbf0b48" />
-        <range start1="38" end1="38" start2="57" end2="71" changelist="f1cd6328-d35f-416f-8d05-6991fdbf0b48" />
+        <range start1="9" end1="9" start2="9" end2="10" changelist="f6b6e1e5-4ec4-40d9-a423-e11b736c5345" />
+        <range start1="10" end1="10" start2="11" end2="12" changelist="f6b6e1e5-4ec4-40d9-a423-e11b736c5345" />
+        <range start1="16" end1="16" start2="18" end2="23" changelist="f1cd6328-d35f-416f-8d05-6991fdbf0b48" />
+        <range start1="28" end1="50" start2="35" end2="65" changelist="f1cd6328-d35f-416f-8d05-6991fdbf0b48" />
+        <range start1="52" end1="55" start2="67" end2="70" changelist="f1cd6328-d35f-416f-8d05-6991fdbf0b48" />
+        <range start1="56" end1="56" start2="71" end2="73" changelist="f6b6e1e5-4ec4-40d9-a423-e11b736c5345" />
+        <range start1="58" end1="59" start2="75" end2="95" changelist="f1cd6328-d35f-416f-8d05-6991fdbf0b48" />
+        <range start1="72" end1="72" start2="108" end2="122" changelist="f6b6e1e5-4ec4-40d9-a423-e11b736c5345" />
+        <range start1="84" end1="84" start2="134" end2="146" changelist="f1cd6328-d35f-416f-8d05-6991fdbf0b48" />
       </ranges>
     </file>
   </component>

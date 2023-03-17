@@ -15,6 +15,7 @@ public class Intersection {
     private final float latitude;
     private final List<Pair<Intersection, Segment>> reachableIntersections;
 
+    // TODO : constructor has to be switch to protected
     public Intersection(String id, Float longitude, Float latitude) {
         this.id = id;
         this.longitude = longitude;

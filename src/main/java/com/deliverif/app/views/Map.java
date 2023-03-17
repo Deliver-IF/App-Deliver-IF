@@ -7,13 +7,20 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
 
 public class Map extends Region {
+    int numberOfCouriers = 0;
+    boolean mapDrawn = false;
+
+    public Map() {}
+
     @Getter
     @Setter
     private static class Coordinates{
@@ -26,37 +33,66 @@ public class Map extends Region {
         }
     }
 
-    static public void draw(Pane mapPane, CityMap map) {
+    /**
+     * Draw the streets of a map.
+     *
+     * @param mapPane
+     * @param map
+     */
+    public void drawBasemap(Pane mapPane, CityMap map) {
+        if (!mapDrawn) {
+            for (Segment street : map.getSegments()) {
+                displayStreet(mapPane, map, street, Color.GRAY);
+            }
+            displayWarehouse(mapPane, map, map.getWarehouse(), Color.BLACK);
 
-        // ---- Examples ----- //
-        Segment segJeanRenoir = new Segment("Rue Jean Renoir",
-                (float) 179.80255,
-                new Intersection("25336175", (float) 4.863642, (float) 45.75301),
-                new Intersection("25336178", (float) 4.8658633, (float) 45.752552)
-        );
-        Segment segClaudeRampon = new Segment("Imp. Claude Rampon",
-                (float) 70.188835,
-                new Intersection("522100855", (float) 4.866085, (float) 45.751476),
-                new Intersection("1345284783", (float) 4.8660784, (float) 45.752106)
-        );
-
-        ArrayList<Segment> segmentCollection = new ArrayList<Segment>();
-        segmentCollection.add(segJeanRenoir);
-        segmentCollection.add(segClaudeRampon);
-        // ------------------- //
-
-        // Base map
-        for (Segment street : map.getSegments()) {
-            drawLine(mapPane, map, street, Color.GRAY);
-        }
-
-        // Couriers path
-        for (Segment street : segmentCollection) {
-            drawLine(mapPane, map, street, Color.RED);
+            mapDrawn = true;
         }
     }
 
-    static private void drawLine(Pane mapPane, CityMap map, Segment street, Paint color) {
+    /**
+     * Draw the path followed of a courier.
+     *
+     * @param mapPane
+     * @param map
+     * @param streetsList
+     */
+    public void displayCourierPath(Pane mapPane, CityMap map, ArrayList<Segment> streetsList, ArrayList<Intersection> deliveryPoints) {
+        Color color = Color.rgb(joaat(numberOfCouriers+1) & 255, joaat(numberOfCouriers+1) >> 16 & 255, joaat(numberOfCouriers+1) >> 31 & 255);
+
+        // Streets
+        for (Segment street : streetsList) {
+            displayStreet(mapPane, map, street, color);
+        }
+
+        // Delivery Points
+        for (Intersection deliveryPoint : deliveryPoints) {
+            displayDeliveryPoint(mapPane, map, deliveryPoint, color);
+        }
+
+        numberOfCouriers++;
+    }
+
+    /**
+     * Remove the path followed of a courier.
+     */
+    static public void hideCourierPath() {
+        // TODO
+    }
+
+    static private void displayDeliveryPoint(Pane mapPane, CityMap map, Intersection intersection, Paint color) {
+        Coordinates origin = getCoordinates(mapPane, map, intersection.getLongitude(), intersection.getLatitude());
+        Circle point = new Circle(
+                origin.getX(),
+                origin.getY(),
+                5
+        );
+        point.setStroke(color);
+        point.setFill(color);
+        mapPane.getChildren().add(point);
+    }
+
+    static private void displayStreet(Pane mapPane, CityMap map, Segment street, Paint color) {
         Coordinates origin = getCoordinates(mapPane, map, street.getOrigin().getLongitude(), street.getOrigin().getLatitude());
         Coordinates destination = getCoordinates(mapPane, map, street.getDestination().getLongitude(), street.getDestination().getLatitude());
         Line line = new Line(
@@ -70,6 +106,20 @@ public class Map extends Region {
         mapPane.getChildren().add(line);
     }
 
+    static private void displayWarehouse(Pane mapPane, CityMap map, Intersection warehouse, Paint color) {
+        Coordinates origin = getCoordinates(mapPane, map, warehouse.getLongitude(), warehouse.getLatitude());
+
+        Rectangle rectangle = new Rectangle();
+        rectangle.setWidth(20);
+        rectangle.setHeight(20);
+        rectangle.setX(origin.getX() - rectangle.getWidth()/2.);
+        rectangle.setY(origin.getY() - rectangle.getHeight()/2.);
+
+        rectangle.setStroke(color);
+        rectangle.setFill(color);
+        mapPane.getChildren().add(rectangle);
+    }
+
     static private Coordinates getCoordinates(Pane mapPane, CityMap map, float longitude, float latitude) {
         float xRatio = map.getLongitudeRange() / (float) mapPane.getWidth();
         float yRatio = map.getLatitudeRange() / (float) mapPane.getHeight();
@@ -81,5 +131,17 @@ public class Map extends Region {
             (longitude - map.getMinLongitude()) / ratio + (mapPane.getWidth()-map.getLongitudeRange()/ratio) / 2,
             (map.getLatitudeRange() - latitude + map.getMinLatitude()) / ratio + (mapPane.getHeight()-map.getLatitudeRange()/ratio) / 2
         );
+    }
+
+    static private int joaat(int value) {
+        int hash = value;
+        hash += (hash << 10);
+        hash ^= (hash >> 6);
+
+        hash += (hash << 3);
+        hash ^= (hash >> 11);
+        hash += (hash << 15);
+
+        return hash;
     }
 }
