@@ -45,7 +45,7 @@
             </ScrollPane>
          </left>
          <center>
-            <Pane fx:id="map-pane" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER"></Pane>
+             <Pane fx:id="mapPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" />
          </center>
       </BorderPane>
    </center>
