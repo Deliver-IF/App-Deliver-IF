@@ -50,11 +50,11 @@
                               <Insets right="10.0" />
                            </HBox.margin>
                         </TextField>
-                        <ChoiceBox prefWidth="150.0">
+                        <ComboBox prefWidth="150.0">
                            <HBox.margin>
                               <Insets right="10.0" />
                            </HBox.margin>
-                        </ChoiceBox>
+                        </ComboBox>
                      </children>
                      <BorderPane.margin>
                         <Insets bottom="10.0" top="10.0" />
