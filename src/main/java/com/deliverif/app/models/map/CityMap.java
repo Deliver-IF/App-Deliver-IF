@@ -13,7 +13,7 @@ public class CityMap {
     private final ArrayList<Segment> segments;
     private final Set<Intersection> intersections;
     private final Map<String, Set<String>> connections;
-    private Map<Integer, DeliveryTour> deliveryTours;
+    private final Map<Integer, DeliveryTour> deliveryTours;
     private final Float minLatitude;
     private final Float maxLatitude;
     private final Float minLongitude;
@@ -42,8 +42,8 @@ public class CityMap {
         deliveryTours.put(deliveryTour.getIdCourier(), deliveryTour);
     }
 
-    public void addDeliveryRequest(int idCourier) {
-        DeliveryRequest deliveryRequest = new DeliveryRequest(10, this.segments.get(0).getDestination());
+    public void addDeliveryRequest(int idCourier, Intersection destination) {
+        DeliveryRequest deliveryRequest = new DeliveryRequest(10, destination);
         deliveryTours.get(idCourier).addDeliveryRequest(deliveryRequest);
     }
 }
