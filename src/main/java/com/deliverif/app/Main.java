@@ -19,6 +19,9 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
+import java.awt.Dimension;
+
+
 public class Main extends Application {
     CityMap cityMap;
 
@@ -34,7 +37,12 @@ public class Main extends Application {
         }
 
         // Load UI
+        Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+        double width = screenSize.getWidth()-screenSize.getWidth()*0.2;
+        double height = screenSize.getHeight()-screenSize.getHeight()*0.2;
+
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("views/main.fxml"));
+
         Scene scene = new Scene(fxmlLoader.load(), 900, 800);
         stage.setScene(scene);
         stage.show();
@@ -102,7 +110,7 @@ public class Main extends Application {
         map.displayCourierPath(controller.getMapPane(), cityMap, courier1streets, courier1deliverypoints);
         map.displayCourierPath(controller.getMapPane(), cityMap, courier2streets, courier2deliverypoints);
 
-        stage.setTitle("Deliver'IF");
+        stage.setTitle("DELIVR'IF");
         stage.show();
     }
 
