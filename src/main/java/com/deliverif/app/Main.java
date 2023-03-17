@@ -15,6 +15,9 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
+import java.awt.Dimension;
+
+
 public class Main extends Application {
     CityMap cityMap;
 
@@ -30,13 +33,17 @@ public class Main extends Application {
         }
 
         // Load UI
+        Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+        double width = screenSize.getWidth()-screenSize.getWidth()*0.2;
+        double height = screenSize.getHeight()-screenSize.getHeight()*0.2;
+
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("views/main.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
+        Scene scene = new Scene(fxmlLoader.load(), width, height);
         stage.setScene(scene);
         stage.show();
         MainController controller = fxmlLoader.getController();
         Map.draw(controller.getMapPane(), cityMap);
-        stage.setTitle("Hello!");
+        stage.setTitle("DELIVR'IF");
         stage.show();
     }
 

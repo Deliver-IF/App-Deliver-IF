@@ -4,6 +4,7 @@ module com.deliverif.app {
     requires static lombok;
     requires org.apache.commons.lang3;
     requires java.xml;
+    requires java.desktop;
 
 
     opens com.deliverif.app to javafx.fxml;
