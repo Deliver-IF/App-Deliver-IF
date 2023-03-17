@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import java.lang.*?>
 <?import javafx.geometry.*?>
+<?import javafx.scene.canvas.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
@@ -10,18 +12,96 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.deliverif.app.controllers.MainController">
-    <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-    </padding>
-   <children>
-      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+<BorderPane prefHeight="600.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.deliverif.app.controllers.MainController">
+   <top>
+      <VBox>
          <children>
-            <Pane fx:id="mapPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" />
+            <MenuBar prefHeight="29.0" prefWidth="379.0" BorderPane.alignment="CENTER">
+              <menus>
+                <Menu mnemonicParsing="false" text="File">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Load a map" />
+                        <MenuItem mnemonicParsing="false" text="Load a tour" />
+                        <MenuItem mnemonicParsing="false" text="Save a tour" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="About">
+                </Menu>
+              </menus>
+            </MenuBar>
+            <BorderPane style="-fx-border-style: none none solid none; -fx-border-width: 1; -fx-border-color: transparent transparent black transparent;">
+               <left>
+                  <Button mnemonicParsing="false" text="Add delivery" BorderPane.alignment="CENTER">
+                     <BorderPane.margin>
+                        <Insets left="10.0" />
+                     </BorderPane.margin>
+                  </Button>
+               </left>
+               <right>
+                  <HBox alignment="CENTER" BorderPane.alignment="CENTER">
+                     <children>
+                        <Label text="Nb of coursiers" HBox.hgrow="ALWAYS">
+                           <HBox.margin>
+                              <Insets right="10.0" />
+                           </HBox.margin>
+                        </Label>
+                        <TextField>
+                           <HBox.margin>
+                              <Insets right="10.0" />
+                           </HBox.margin>
+                        </TextField>
+                        <ComboBox prefWidth="150.0">
+                           <HBox.margin>
+                              <Insets right="10.0" />
+                           </HBox.margin>
+                        </ComboBox>
+                     </children>
+                     <BorderPane.margin>
+                        <Insets bottom="10.0" top="10.0" />
+                     </BorderPane.margin>
+                  </HBox>
+               </right>
+            </BorderPane>
          </children>
-      </HBox>
-   
-       <Label fx:id="welcomeText" />
-       <Button onAction="#onHelloButtonClick" text="Hello!" />
-   </children>
-</VBox>
+      </VBox>
+   </top>
+   <center>
+      <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <center>
+             <Pane fx:id="mapPane" style="-fx-background-color: #ECECEC;" />
+         </center>
+         <left>
+            <VBox prefHeight="300.0" prefWidth="300.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Delivery details" textAlignment="CENTER" wrappingWidth="300.0">
+                     <font>
+                        <Font name="System Bold" size="15.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets bottom="10.0" top="10.0" />
+                     </VBox.margin>
+                  </Text>
+                  <Text layoutX="10.0" layoutY="22.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text">
+                     <VBox.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </VBox.margin>
+                  </Text>
+                  <Text layoutX="10.0" layoutY="22.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Itinerary" textAlignment="CENTER" wrappingWidth="300.0">
+                     <VBox.margin>
+                        <Insets bottom="10.0" top="15.0" />
+                     </VBox.margin>
+                     <font>
+                        <Font name="System Bold" size="15.0" />
+                     </font>
+                  </Text>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Text">
+                     <VBox.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </VBox.margin>
+                  </Text>
+               </children>
+            </VBox>
+         </left>
+      </BorderPane>
+   </center>
+</BorderPane>

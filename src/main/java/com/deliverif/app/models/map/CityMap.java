@@ -18,6 +18,8 @@ public class CityMap {
     private final Float maxLatitude;
     private final Float minLongitude;
     private final Float maxLongitude;
+    private final Float latitudeRange;
+    private final Float longitudeRange;
 
 
     private CityMap(Intersection warehouse, ArrayList<Segment> segments, Set<Intersection> intersections, Map<String, Set<String>> connections, Float minLatitude, Float maxLatitude, Float minLongitude, Float maxLongitude) {
@@ -29,12 +31,15 @@ public class CityMap {
         this.maxLatitude = maxLatitude;
         this.minLongitude = minLongitude;
         this.maxLongitude = maxLongitude;
+        this.latitudeRange = maxLatitude - minLatitude;
+        this.longitudeRange = maxLongitude - minLongitude;
         this.deliveryTours = new HashMap<>();
     }
 
 
     public static CityMap create(Intersection warehouse, ArrayList<Segment> segments, Set<Intersection> intersections, Map<String, Set<String>> connections, Float minLatitude, Float maxLatitude, Float minLongitude, Float maxLongitude) {
         return new CityMap(warehouse, segments, intersections, connections, minLatitude, maxLatitude, minLongitude, maxLongitude);
+
     }
 
     public void addDeliveryTour() {
