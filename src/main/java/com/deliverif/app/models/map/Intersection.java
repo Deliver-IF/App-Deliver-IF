@@ -12,11 +12,12 @@ import java.util.Set;
 @Getter
 public class Intersection implements GraphNode {
     private final String id;
-    private final Float longitude;
-    private final Float latitude;
+    private final float longitude;
+    private final float latitude;
     private final Set<Pair<Intersection, Segment>> reachableIntersections;
 
-    protected Intersection(String id, Float longitude, Float latitude) {
+    // TODO : constructor has to be switch to protected
+    public Intersection(String id, Float longitude, Float latitude) {
         this.id = id;
         this.longitude = longitude;
         this.latitude = latitude;

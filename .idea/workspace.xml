@@ -12,10 +12,11 @@
       <change afterPath="$PROJECT_DIR$/src/main/java/com/deliverif/app/services/DeliveryService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/deliverif/app/models/map/CityMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/deliverif/app/models/map/CityMap.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/deliverif/app/models/map/Intersection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/deliverif/app/models/map/Intersection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/deliverif/app/services/MapFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/deliverif/app/services/MapFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/deliverif/app/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/deliverif/app/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/com/deliverif/app/views/main.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/deliverif/app/views/main.fxml" afterDir="false" />
     </list>
+    <list id="f6b6e1e5-4ec4-40d9-a423-e11b736c5345" name="Changes by user" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -52,6 +53,7 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
     &quot;last_opened_file_path&quot;: &quot;/Users/benchai/Workspace/DeliverIF/src/main/resources/com/deliverif/app&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
