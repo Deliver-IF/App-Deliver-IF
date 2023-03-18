@@ -1,26 +1,27 @@
 package com.deliverif.app.models.map;
 
+import com.deliverif.app.models.algorithms.astar.GraphNode;
 import lombok.Getter;
 import org.apache.commons.lang3.tuple.Pair;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
-public class Intersection {
+public class Intersection implements GraphNode {
     private final String id;
     private final float longitude;
     private final float latitude;
-    private final List<Pair<Intersection, Segment>> reachableIntersections;
+    private final Set<Pair<Intersection, Segment>> reachableIntersections;
 
     // TODO : constructor has to be switch to protected
     public Intersection(String id, Float longitude, Float latitude) {
         this.id = id;
         this.longitude = longitude;
         this.latitude = latitude;
-        this.reachableIntersections = new ArrayList<>();
+        this.reachableIntersections = new HashSet<>();
     }
 
 

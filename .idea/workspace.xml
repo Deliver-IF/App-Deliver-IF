@@ -5,6 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f1cd6328-d35f-416f-8d05-6991fdbf0b48" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/deliverif/app/models/algorithms/AbstractSearchOptimalTourAlgorithm.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/deliverif/app/models/algorithms/GreedyAlgorithm.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/deliverif/app/models/map/DeliveryRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/deliverif/app/models/map/DeliveryTour.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/deliverif/app/services/DeliveryService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/deliverif/app/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/deliverif/app/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
@@ -17,6 +23,11 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -99,6 +110,7 @@
       <updated>1678890357490</updated>
       <workItem from="1678890358662" duration="678000" />
       <workItem from="1678891787234" duration="113000" />
+      <workItem from="1678898592294" duration="1745000" />
     </task>
     <task id="LOCAL-00001" summary="maybe">
       <created>1678889874573</created>
@@ -113,8 +125,19 @@
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
-  <component name="VcsManagerConfiguration">
-    <MESSAGE value="Initialize files" />
-    <option name="LAST_COMMIT_MESSAGE" value="Initialize files" />
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>

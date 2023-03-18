@@ -13,7 +13,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class MapFactory {
 
@@ -42,6 +43,7 @@ public class MapFactory {
                 throw new Exception("Invalid number of intersections");
             }
             HashMap<String, Intersection> intersections = new HashMap<>();
+            HashMap<String, Set<String>> connections = new HashMap<>();
             for (int i = 0; i < nIntersections.getLength(); i++) {
                 Intersection intersection = Intersection.create(nIntersections.item(i));
                 if (minLatitude == null || intersection.getLatitude() < minLatitude) {
@@ -57,6 +59,7 @@ public class MapFactory {
                     maxLongitude = intersection.getLongitude();
                 }
                 intersections.put(intersection.getId(), intersection);
+                connections.put(intersection.getId(), new HashSet<>());
             }
 
             Element warehouseElement = (Element) nWarehouses.item(0);
@@ -69,13 +72,14 @@ public class MapFactory {
             if (nStreets.getLength() < 1) {
                 throw new Exception("Invalid number of segments");
             }
-            List<Segment> segments = new ArrayList<>();
+            ArrayList<Segment> segments = new ArrayList<>();
             for (int i = 0; i < nStreets.getLength(); i++) {
                 Segment segment = Segment.create(nStreets.item(i), intersections);
                 segments.add(segment);
+                connections.get(segment.getOrigin().getId()).add(segment.getDestination().getId());
             }
 
-            return CityMap.create(warehouse, segments, minLatitude, maxLatitude, minLongitude, maxLongitude);
+            return CityMap.create(warehouse, segments, new HashSet<>(intersections.values()), connections, minLatitude, maxLatitude, minLongitude, maxLongitude);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
