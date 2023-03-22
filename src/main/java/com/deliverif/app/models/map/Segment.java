@@ -21,7 +21,6 @@ public class Segment {
         this.origin = origin;
         this.origin.getReachableIntersections().add(Pair.of(destination, this));
         this.destination = destination;
-        this.destination.getReachableIntersections().add(Pair.of(origin, this));
     }
 
     public static Segment create(Node nStreet, HashMap<String, Intersection> intersections) throws Exception {
