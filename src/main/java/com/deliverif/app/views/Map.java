@@ -108,21 +108,21 @@ public class Map extends Region {
 
         if(isBaseMap) {
             point.setRadius(2);
-
         } else {
             point.setRadius(5);
-            point.toBack();
         }
+
         point.setOnMouseClicked(mouseEvent -> {
-            System.out.println("--- Intersection ---");
-            System.out.println("Id = " + intersection.getId());
-            System.out.println("Long = " + intersection.getLongitude());
-            System.out.println("Lat = " + intersection.getLatitude() + "\n");
+            logIntersections(intersection);
+
             Text text = (Text) mapPane.getScene().lookup("#deliveryWindow");
             DialogPane dialogPane = (DialogPane) mapPane.getScene().lookup("#intersectionInfoDialog");
-            dialogPane.setLayoutX(origin.getX() - (dialogPane.getWidth() / 2));
-            dialogPane.setLayoutY(origin.getY() - dialogPane.getHeight() - 20);
-            dialogPane.setVisible(true);
+            movePane(
+                    dialogPane,
+                    origin.getX() - (dialogPane.getWidth() / 2),
+                    origin.getY() - dialogPane.getHeight() - 20
+            );
+
             text.setText(intersection.getId());
             Polygon triangle = new Polygon();
             triangle.getPoints().addAll(origin.getX(), origin.getY(),
@@ -139,6 +139,19 @@ public class Map extends Region {
         intersection.setDefaultShapeOnMap(point);
 
         mapPane.getChildren().add(point);
+    }
+
+    static private void movePane(Pane paneToMove, double x, double y) {
+        paneToMove.setLayoutX(x);
+        paneToMove.setLayoutY(y);
+        paneToMove.setVisible(true);
+    }
+
+    static private void logIntersections(Intersection intersection) {
+        System.out.println("--- Intersection ---");
+        System.out.println("Id = " + intersection.getId());
+        System.out.println("Long = " + intersection.getLongitude());
+        System.out.println("Lat = " + intersection.getLatitude() + "\n");
     }
 
     static private void displaySegment(Pane mapPane, CityMap map, Segment segment, Paint color) {
