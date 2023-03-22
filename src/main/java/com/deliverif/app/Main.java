@@ -10,7 +10,6 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -45,7 +44,7 @@ public class Main extends Application {
 
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("views/main.fxml"));
 
-        Scene scene = new Scene(fxmlLoader.load(), 900, 800);
+        Scene scene = new Scene(fxmlLoader.load(), width, height);
         stage.setScene(scene);
         stage.show();
         MainController controller = fxmlLoader.getController();
@@ -79,7 +78,7 @@ public class Main extends Application {
                 intersection5
         );
 
-        ArrayList<Segment> courier1streets = new ArrayList<Segment>();
+        ArrayList<Segment> courier1streets = new ArrayList<>();
         Set<Intersection> courier1deliverypoints = new HashSet<>();
         courier1streets.add(segJeanRenoir);
         courier1streets.add(segRueDeDauphine);

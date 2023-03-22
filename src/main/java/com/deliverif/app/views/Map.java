@@ -1,12 +1,11 @@
 package com.deliverif.app.views;
 
-import com.deliverif.app.controllers.MainController;
 import com.deliverif.app.models.map.CityMap;
 import com.deliverif.app.models.map.Intersection;
 import com.deliverif.app.models.map.Segment;
 import javafx.event.EventHandler;
-import javafx.fxml.FXML;
 import javafx.scene.Cursor;
+import javafx.scene.control.DialogPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -14,6 +13,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import lombok.Getter;
@@ -24,6 +24,10 @@ import java.util.Collection;
 import java.util.Set;
 
 public class Map extends Region {
+
+    final Color BASE_MAP_STREETS_COLOR = Color.GRAY;
+    final Color BASE_MAP_INTERSECTION_COLOR = Color.BLUE;
+    final Color WAREHOUSE_COLOR = Color.BLACK;
     int numberOfCouriers = 0;
     boolean mapDrawn = false;
 
@@ -49,9 +53,9 @@ public class Map extends Region {
      */
     public void drawBasemap(Pane mapPane, CityMap map) {
         if (!mapDrawn) {
-            displayStreets(mapPane, map, map.getStreets(), Color.GRAY);
-            displayCrossings(mapPane, map, map.getIntersections(), Color.TRANSPARENT);
-            displayWarehouse(mapPane, map, map.getWarehouse(), Color.BLACK);
+            displayStreets(mapPane, map, map.getStreets(), BASE_MAP_STREETS_COLOR);
+            displayCrossings(mapPane, map, map.getIntersections(), BASE_MAP_INTERSECTION_COLOR, true);
+            displayWarehouse(mapPane, map, map.getWarehouse(), WAREHOUSE_COLOR);
             mapDrawn = true;
         }
     }
@@ -62,9 +66,9 @@ public class Map extends Region {
         }
     }
 
-    private void displayCrossings(Pane mapPane, CityMap map, Collection<Intersection> intersections, Color color) {
+    private void displayCrossings(Pane mapPane, CityMap map, Collection<Intersection> intersections, Color color, boolean isBaseMap) {
         for(Intersection intersection : intersections) {
-            displayIntersection(mapPane, map, intersection, color);
+            displayIntersection(mapPane, map, intersection, color, isBaseMap);
         }
     }
 
@@ -82,7 +86,7 @@ public class Map extends Region {
         displayStreets(mapPane, map, streetsList, color);
 
         // Delivery Points
-        displayCrossings(mapPane, map, deliveryPoints, color);
+        displayCrossings(mapPane, map, deliveryPoints, color, false);
 
         numberOfCouriers++;
     }
@@ -94,25 +98,48 @@ public class Map extends Region {
         // TODO
     }
 
-    static private void displayIntersection(Pane mapPane, CityMap map, Intersection intersection, Paint color) {
+    static private void displayIntersection(Pane mapPane, CityMap map, Intersection intersection, Paint color, boolean isBaseMap) {
         Coordinates origin = getCoordinates(mapPane, map, intersection.getLongitude(), intersection.getLatitude());
 
         // Determine all properties of the shape we will draw on map
         Circle point = intersection.getDefaultShapeOnMap();
         point.setCenterX(origin.getX());
         point.setCenterY(origin.getY());
-        point.setRadius(5);
         point.setStroke(color);
         point.setFill(color);
+
+        if(isBaseMap) {
+            point.setRadius(2);
+
+        } else {
+            point.setRadius(5);
+            point.toBack();
+        }
         point.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                System.out.println(intersection);
-                System.out.println(intersection.getId());
+                System.out.println("--- Intersection ---");
+                System.out.println("Id = " + intersection.getId());
+                System.out.println("Long = " + intersection.getLongitude());
+                System.out.println("Lat = " + intersection.getLatitude() + "\n");
                 Text text = (Text) mapPane.getScene().lookup("#deliveryWindow");
-                text.setText("Coucou minouuuuuu " + intersection.getId());
+                DialogPane dialogPane = (DialogPane) mapPane.getScene().lookup("#intersectionInfoDialog");
+                dialogPane.setLayoutX(origin.getX() - (dialogPane.getWidth() / 2));
+                dialogPane.setLayoutY(origin.getY() - dialogPane.getHeight() - 20);
+                dialogPane.setVisible(true);
+                text.setText(intersection.getId());
+                Polygon triangle = new Polygon();
+                triangle.getPoints().addAll(new Double[] {
+                   origin.getX(), origin.getY(),
+                   origin.getX() + 10, origin.getY() - 20,
+                   origin.getX() - 10, origin.getY() - 20,
+                });
+                triangle.setFill(Color.WHITE);
+                mapPane.getChildren().add(triangle);
             }
         });
+
+        // Event which change cursor on intersection hover
         point.setOnMouseEntered(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
