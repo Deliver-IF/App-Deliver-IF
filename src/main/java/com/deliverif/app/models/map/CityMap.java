@@ -1,8 +1,8 @@
 package com.deliverif.app.models.map;
 
+import javafx.util.Pair;
 import lombok.Getter;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -10,8 +10,9 @@ import java.util.Set;
 @Getter
 public class CityMap {
     private final Intersection warehouse;
-    private final ArrayList<Segment> segments;
+    private final Set<Segment> segments;
     private final Set<Intersection> intersections;
+    private final Map<Pair<String, String>, Segment> segmentsMap;
     private final Map<String, Set<String>> connections;
     private final Map<Integer, DeliveryTour> deliveryTours;
     private final Float minLatitude;
@@ -22,10 +23,11 @@ public class CityMap {
     private final Float longitudeRange;
 
 
-    private CityMap(Intersection warehouse, ArrayList<Segment> segments, Set<Intersection> intersections, Map<String, Set<String>> connections, Float minLatitude, Float maxLatitude, Float minLongitude, Float maxLongitude) {
+    private CityMap(Intersection warehouse, Set<Segment> segments, Set<Intersection> intersections,Map<Pair<String, String>, Segment> segmentsMap, Map<String, Set<String>> connections, Float minLatitude, Float maxLatitude, Float minLongitude, Float maxLongitude) {
         this.warehouse = warehouse;
         this.segments = segments;
         this.intersections = intersections;
+        this.segmentsMap = segmentsMap;
         this.connections = connections;
         this.minLatitude = minLatitude;
         this.maxLatitude = maxLatitude;
@@ -37,8 +39,8 @@ public class CityMap {
     }
 
 
-    public static CityMap create(Intersection warehouse, ArrayList<Segment> segments, Set<Intersection> intersections, Map<String, Set<String>> connections, Float minLatitude, Float maxLatitude, Float minLongitude, Float maxLongitude) {
-        return new CityMap(warehouse, segments, intersections, connections, minLatitude, maxLatitude, minLongitude, maxLongitude);
+    public static CityMap create(Intersection warehouse, Set<Segment> segments, Set<Intersection> intersections, Map<Pair<String, String>, Segment> segmentsMap, Map<String, Set<String>> connections, Float minLatitude, Float maxLatitude, Float minLongitude, Float maxLongitude) {
+        return new CityMap(warehouse, segments, intersections, segmentsMap, connections, minLatitude, maxLatitude, minLongitude, maxLongitude);
 
     }
 
