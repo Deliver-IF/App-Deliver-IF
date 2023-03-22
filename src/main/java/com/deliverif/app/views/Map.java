@@ -3,10 +3,8 @@ package com.deliverif.app.views;
 import com.deliverif.app.models.map.CityMap;
 import com.deliverif.app.models.map.Intersection;
 import com.deliverif.app.models.map.Segment;
-import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.control.DialogPane;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
@@ -115,43 +113,28 @@ public class Map extends Region {
             point.setRadius(5);
             point.toBack();
         }
-        point.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                System.out.println("--- Intersection ---");
-                System.out.println("Id = " + intersection.getId());
-                System.out.println("Long = " + intersection.getLongitude());
-                System.out.println("Lat = " + intersection.getLatitude() + "\n");
-                Text text = (Text) mapPane.getScene().lookup("#deliveryWindow");
-                DialogPane dialogPane = (DialogPane) mapPane.getScene().lookup("#intersectionInfoDialog");
-                dialogPane.setLayoutX(origin.getX() - (dialogPane.getWidth() / 2));
-                dialogPane.setLayoutY(origin.getY() - dialogPane.getHeight() - 20);
-                dialogPane.setVisible(true);
-                text.setText(intersection.getId());
-                Polygon triangle = new Polygon();
-                triangle.getPoints().addAll(new Double[] {
-                   origin.getX(), origin.getY(),
-                   origin.getX() + 10, origin.getY() - 20,
-                   origin.getX() - 10, origin.getY() - 20,
-                });
-                triangle.setFill(Color.WHITE);
-                mapPane.getChildren().add(triangle);
-            }
+        point.setOnMouseClicked(mouseEvent -> {
+            System.out.println("--- Intersection ---");
+            System.out.println("Id = " + intersection.getId());
+            System.out.println("Long = " + intersection.getLongitude());
+            System.out.println("Lat = " + intersection.getLatitude() + "\n");
+            Text text = (Text) mapPane.getScene().lookup("#deliveryWindow");
+            DialogPane dialogPane = (DialogPane) mapPane.getScene().lookup("#intersectionInfoDialog");
+            dialogPane.setLayoutX(origin.getX() - (dialogPane.getWidth() / 2));
+            dialogPane.setLayoutY(origin.getY() - dialogPane.getHeight() - 20);
+            dialogPane.setVisible(true);
+            text.setText(intersection.getId());
+            Polygon triangle = new Polygon();
+            triangle.getPoints().addAll(origin.getX(), origin.getY(),
+                    origin.getX() + 10, origin.getY() - 20,
+                    origin.getX() - 10, origin.getY() - 20);
+            triangle.setFill(Color.WHITE);
+            mapPane.getChildren().add(triangle);
         });
 
         // Event which change cursor on intersection hover
-        point.setOnMouseEntered(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                mapPane.getScene().setCursor(Cursor.HAND);
-            }
-        });
-        point.setOnMouseExited(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                mapPane.getScene().setCursor(Cursor.DEFAULT);
-            }
-        });
+        point.setOnMouseEntered(mouseEvent -> mapPane.getScene().setCursor(Cursor.HAND));
+        point.setOnMouseExited(mouseEvent -> mapPane.getScene().setCursor(Cursor.DEFAULT));
 
         intersection.setDefaultShapeOnMap(point);
 
