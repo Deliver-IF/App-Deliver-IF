@@ -40,16 +40,26 @@
                <right>
                   <HBox alignment="CENTER" BorderPane.alignment="CENTER">
                      <children>
-                        <Label text="Nb of coursiers" HBox.hgrow="ALWAYS">
+                        <Label text="Nb of coursiers:" HBox.hgrow="ALWAYS">
                            <HBox.margin>
                               <Insets right="10.0" />
                            </HBox.margin>
                         </Label>
-                        <TextField>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="0">
                            <HBox.margin>
                               <Insets right="10.0" />
                            </HBox.margin>
-                        </TextField>
+                        </Text>
+                        <Button mnemonicParsing="false" text="+">
+                           <HBox.margin>
+                              <Insets right="10.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Button mnemonicParsing="false" text=" - ">
+                           <HBox.margin>
+                              <Insets right="10.0" />
+                           </HBox.margin>
+                        </Button>
                         <ComboBox prefWidth="150.0">
                            <HBox.margin>
                               <Insets right="10.0" />
