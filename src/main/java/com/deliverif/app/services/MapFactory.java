@@ -72,7 +72,7 @@ public class MapFactory {
             if (nStreets.getLength() < 1) {
                 throw new Exception("Invalid number of segments");
             }
-            ArrayList<Segment> segments = new ArrayList<>();
+            Set<Segment> segments = new HashSet<>();
             for (int i = 0; i < nStreets.getLength(); i++) {
                 Segment segment = Segment.create(nStreets.item(i), intersections);
                 segments.add(segment);

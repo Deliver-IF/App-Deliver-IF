@@ -20,6 +20,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 import java.awt.Dimension;
+import java.util.HashSet;
+import java.util.Set;
 
 
 public class Main extends Application {
@@ -78,7 +80,7 @@ public class Main extends Application {
         );
 
         ArrayList<Segment> courier1streets = new ArrayList<Segment>();
-        ArrayList<Intersection> courier1deliverypoints = new ArrayList<Intersection>();
+        Set<Intersection> courier1deliverypoints = new HashSet<>();
         courier1streets.add(segJeanRenoir);
         courier1streets.add(segRueDeDauphine);
         courier1streets.add(segRueRogerBrechan);

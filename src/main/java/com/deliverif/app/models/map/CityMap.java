@@ -10,7 +10,7 @@ import java.util.Set;
 @Getter
 public class CityMap {
     private final Intersection warehouse;
-    private final ArrayList<Segment> segments;
+    private final Set<Segment> streets;
     private final Set<Intersection> intersections;
     private final Map<String, Set<String>> connections;
     private final Map<Integer, DeliveryTour> deliveryTours;
@@ -22,9 +22,9 @@ public class CityMap {
     private final Float longitudeRange;
 
 
-    private CityMap(Intersection warehouse, ArrayList<Segment> segments, Set<Intersection> intersections, Map<String, Set<String>> connections, Float minLatitude, Float maxLatitude, Float minLongitude, Float maxLongitude) {
+    private CityMap(Intersection warehouse, Set<Segment> segments, Set<Intersection> intersections, Map<String, Set<String>> connections, Float minLatitude, Float maxLatitude, Float minLongitude, Float maxLongitude) {
         this.warehouse = warehouse;
-        this.segments = segments;
+        this.streets = segments;
         this.intersections = intersections;
         this.connections = connections;
         this.minLatitude = minLatitude;
@@ -37,7 +37,7 @@ public class CityMap {
     }
 
 
-    public static CityMap create(Intersection warehouse, ArrayList<Segment> segments, Set<Intersection> intersections, Map<String, Set<String>> connections, Float minLatitude, Float maxLatitude, Float minLongitude, Float maxLongitude) {
+    public static CityMap create(Intersection warehouse, Set<Segment> segments, Set<Intersection> intersections, Map<String, Set<String>> connections, Float minLatitude, Float maxLatitude, Float minLongitude, Float maxLongitude) {
         return new CityMap(warehouse, segments, intersections, connections, minLatitude, maxLatitude, minLongitude, maxLongitude);
 
     }
