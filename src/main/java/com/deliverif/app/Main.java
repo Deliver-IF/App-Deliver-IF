@@ -87,7 +87,7 @@ public class Main extends Application {
         courier1deliverypoints.add(intersection2);
         courier1deliverypoints.add(intersection5);
 
-        ArrayList<Segment> courier2streets = new ArrayList<Segment>();
+        /*ArrayList<Segment> courier2streets = new ArrayList<Segment>();
         ArrayList<Intersection> courier2deliverypoints = new ArrayList<Intersection>();
         Segment originSegment = cityMap.getSegments().get(15);
 
@@ -101,14 +101,14 @@ public class Main extends Application {
             courier2streets.add(currentPair.getRight());
             originSegment = currentPair.getRight();
         }
-        courier2deliverypoints.add(originSegment.getOrigin());
+        courier2deliverypoints.add(originSegment.getOrigin());*/
         // ------------------- //
 
         Map map = new Map();
         map.drawBasemap(controller.getMapPane(), cityMap);
 
         map.displayCourierPath(controller.getMapPane(), cityMap, courier1streets, courier1deliverypoints);
-        map.displayCourierPath(controller.getMapPane(), cityMap, courier2streets, courier2deliverypoints);
+       // map.displayCourierPath(controller.getMapPane(), cityMap, courier2streets, courier2deliverypoints);
 
         stage.setTitle("DELIVR'IF");
         stage.show();
