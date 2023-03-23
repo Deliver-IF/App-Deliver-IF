@@ -125,6 +125,7 @@ public class Map extends Region {
             // Move dialog pane
             DialogPane dialogPane = (DialogPane) mapPane.getScene().lookup("#intersectionInfoDialog");
             movePane(
+                    mapPane,
                     dialogPane,
                     origin.getX() - (dialogPane.getWidth() / 2),
                     origin.getY() - dialogPane.getHeight() - 20
