@@ -2,6 +2,7 @@ package com.deliverif.app.views;
 
 import com.deliverif.app.models.map.*;
 import com.deliverif.app.services.DeliveryService;
+import javafx.animation.TranslateTransition;
 import javafx.scene.Cursor;
 import javafx.scene.control.DialogPane;
 import javafx.scene.layout.Pane;
@@ -13,6 +14,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -152,6 +154,7 @@ public class Map extends Region {
         point.setRadius(5);
 
         point.setOnMouseClicked(mouseEvent -> {
+            System.out.println(origin.getX() + " " + origin.getY());
 
             Text deliveryWindowText = (Text) mapPane.getScene().lookup("#deliveryWindow");
 
@@ -165,6 +168,7 @@ public class Map extends Region {
 
             DialogPane dialogPane = (DialogPane) mapPane.getScene().lookup("#intersectionInfoDialog");
             movePane(
+                    mapPane,
                     dialogPane,
                     origin.getX() - (dialogPane.getWidth() / 2),
                     origin.getY() - dialogPane.getHeight() - 20
@@ -186,9 +190,14 @@ public class Map extends Region {
         mapPane.getChildren().add(point);
     }
 
-    static private void movePane(DialogPane paneToMove, double x, double y) {
-        paneToMove.setLayoutX(x);
-        paneToMove.setLayoutY(y);
+    static private void movePane(Pane mapPane, DialogPane paneToMove, double x, double y) {
+        TranslateTransition tt = new TranslateTransition(Duration.millis(1), paneToMove);
+        tt.setToX(x - (mapPane.getWidth() / 2.0) + (paneToMove.getWidth() / 2.0));
+        tt.setToY(y - (mapPane.getHeight() / 2.0) + (paneToMove.getHeight() / 2.0) - 10.0);
+        tt.setCycleCount(1);
+        tt.setAutoReverse(false);
+        tt.play();
+
         paneToMove.setVisible(true);
     }
 

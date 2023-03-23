@@ -5,16 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f1cd6328-d35f-416f-8d05-6991fdbf0b48" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/deliverif/app/models/algorithms/AbstractSearchOptimalTourAlgorithm.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/deliverif/app/models/algorithms/GreedyAlgorithm.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/deliverif/app/models/map/DeliveryRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/deliverif/app/models/map/DeliveryTour.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/deliverif/app/services/DeliveryService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/deliverif/app/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/deliverif/app/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/deliverif/app/views/main.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/deliverif/app/views/main.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/deliverif/app/views/Map.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/deliverif/app/views/Map.java" afterDir="false" />
     </list>
     <list id="f6b6e1e5-4ec4-40d9-a423-e11b736c5345" name="Changes by user" comment="" />
     <option name="SHOW_DIALOG" value="false" />
