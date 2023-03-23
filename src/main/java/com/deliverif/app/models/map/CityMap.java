@@ -47,6 +47,10 @@ public class CityMap {
         deliveryTours.put(deliveryTour.getIdCourier(), deliveryTour);
     }
 
+    public void addDeliveryTourTest(DeliveryTour deliveryTour) {
+        deliveryTours.put(deliveryTour.getIdCourier(), deliveryTour);
+    }
+
     public void addDeliveryRequest(int idCourier, Intersection destination) {
         DeliveryRequest deliveryRequest = new DeliveryRequest(10, destination);
         deliveryTours.get(idCourier).addDeliveryRequest(deliveryRequest);

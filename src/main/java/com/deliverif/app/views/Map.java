@@ -26,10 +26,13 @@ public class Map extends Region {
     final Color BASE_MAP_STREETS_COLOR = Color.GRAY;
     final Color BASE_MAP_INTERSECTION_COLOR = Color.BLUE;
     final Color WAREHOUSE_COLOR = Color.BLACK;
+
     int numberOfCouriers = 0;
     boolean mapDrawn = false;
 
-    static ArrayList<DeliveryRequest> currentDeliveryRequests = new ArrayList<>();
+    public static ArrayList<DeliveryRequest> currentDeliveryRequests = new ArrayList<>();
+
+    public static int currentIndex = 0;
 
     public Map() {}
 
@@ -46,7 +49,7 @@ public class Map extends Region {
     }
 
     /**
-     * Draw the streets of a map.
+     * Draw the all the streets of the map
      *
      * @param mapPane
      * @param map
@@ -54,7 +57,7 @@ public class Map extends Region {
     public void drawBasemap(Pane mapPane, CityMap map) {
         if (!mapDrawn) {
             displayStreets(mapPane, map, map.getStreets(), BASE_MAP_STREETS_COLOR);
-            displayCrossings(mapPane, map, map.getIntersections(), BASE_MAP_INTERSECTION_COLOR, true);
+            displayCrossings(mapPane, map, map.getIntersections(), BASE_MAP_INTERSECTION_COLOR);
             displayWarehouse(mapPane, map, map.getWarehouse(), WAREHOUSE_COLOR);
             mapDrawn = true;
         }
@@ -66,9 +69,9 @@ public class Map extends Region {
         }
     }
 
-    private void displayCrossings(Pane mapPane, CityMap map, Collection<Intersection> intersections, Color color, boolean isBaseMap) {
+    private void displayCrossings(Pane mapPane, CityMap map, Collection<Intersection> intersections, Color color) {
         for(Intersection intersection : intersections) {
-            displayIntersection(mapPane, map, intersection, color, isBaseMap, null);
+            displayIntersection(mapPane, map, intersection, color);
         }
     }
 
@@ -83,11 +86,11 @@ public class Map extends Region {
 
         // Streets
         displayStreets(mapPane, map, deliveryTour.getTour(), color);
-
         // Delivery Points
         for (DeliveryRequest deliveryRequest : deliveryTour.getStops()) {
-            displayIntersection(mapPane, map, deliveryRequest.getIntersection(), color, false, deliveryRequest);
+            displayDeliveryPoint(mapPane, map, deliveryRequest.getIntersection(), color, deliveryRequest);
         }
+        System.out.println("Test 3");
 
         numberOfCouriers++;
     }
@@ -100,8 +103,7 @@ public class Map extends Region {
     }
 
     static private void displayIntersection(
-            Pane mapPane, CityMap map, Intersection intersection, Paint color, boolean isBaseMap,
-            DeliveryRequest deliveryRequest
+            Pane mapPane, CityMap map, Intersection intersection, Paint color
     ) {
         Coordinates origin = getCoordinates(mapPane, map, intersection.getLongitude(), intersection.getLatitude());
 
@@ -111,43 +113,20 @@ public class Map extends Region {
         point.setCenterY(origin.getY());
         point.setStroke(color);
         point.setFill(color);
+        point.setRadius(2);
 
-        if(isBaseMap) {
-            point.setRadius(2);
-        } else {
-            point.setRadius(5);
-        }
-
+        // Click on an intersection
         point.setOnMouseClicked(mouseEvent -> {
-
+            // Change text on dialog
             Text deliveryWindowText = (Text) mapPane.getScene().lookup("#deliveryWindow");
-
-            if(!isBaseMap) {
-                DeliveryService deliveryService = DeliveryService.getInstance();
-
-                Map.currentDeliveryRequests = deliveryService.getAllDeliveryRequestFromIntersection(map, intersection);
-//                logDeliveryRequest(deliveryRequest);
-
-                deliveryWindowText.setText("Delivery Window : " + deliveryRequest.getStartTimeWindow() + "h-"
-                                + (deliveryRequest.getStartTimeWindow() + 1) + "h\n"
-                );
-            } else {
-                deliveryWindowText.setText("No delivery at this intersection");
-            }
-
+            deliveryWindowText.setText("No delivery at this intersection");
+            // Move dialog pane
             DialogPane dialogPane = (DialogPane) mapPane.getScene().lookup("#intersectionInfoDialog");
             movePane(
                     dialogPane,
                     origin.getX() - (dialogPane.getWidth() / 2),
                     origin.getY() - dialogPane.getHeight() - 20
             );
-
-//            Polygon triangle = new Polygon();
-//            triangle.getPoints().addAll(origin.getX(), origin.getY(),
-//                    origin.getX() + 10, origin.getY() - 20,
-//                    origin.getX() - 10, origin.getY() - 20);
-//            triangle.setFill(Color.WHITE);
-//            mapPane.getChildren().add(triangle);
         });
 
         // Event which change cursor on intersection hover
@@ -159,11 +138,58 @@ public class Map extends Region {
         mapPane.getChildren().add(point);
     }
 
+    static private void displayDeliveryPoint(
+            Pane mapPane, CityMap map, Intersection intersection, Paint color, DeliveryRequest deliveryRequest
+    ) {
+        Coordinates origin = getCoordinates(mapPane, map, intersection.getLongitude(), intersection.getLatitude());
+
+        // Determine all properties of the shape we will draw on map
+        Circle point = intersection.getDefaultShapeOnMap();
+        point.setCenterX(origin.getX());
+        point.setCenterY(origin.getY());
+        point.setStroke(color);
+        point.setFill(color);
+        point.setRadius(5);
+
+        point.setOnMouseClicked(mouseEvent -> {
+
+            Text deliveryWindowText = (Text) mapPane.getScene().lookup("#deliveryWindow");
+
+            currentDeliveryRequests = DeliveryService.getInstance().getAllDeliveryRequestFromIntersection(map, intersection);
+            currentIndex = currentDeliveryRequests.size() - 1;
+//                logDeliveryRequest(deliveryRequest);
+
+            deliveryWindowText.setText("Delivery Window : " + deliveryRequest.getStartTimeWindow() + "h-"
+                            + (deliveryRequest.getStartTimeWindow() + 1) + "h\n"
+            );
+
+            DialogPane dialogPane = (DialogPane) mapPane.getScene().lookup("#intersectionInfoDialog");
+            movePane(
+                    dialogPane,
+                    origin.getX() - (dialogPane.getWidth() / 2),
+                    origin.getY() - dialogPane.getHeight() - 20
+            );
+
+            System.out.println("--- Logs ---");
+            System.out.println(currentIndex);
+            System.out.println(currentDeliveryRequests);
+
+        });
+
+        // Event which change cursor on intersection hover
+        point.setOnMouseEntered(mouseEvent -> mapPane.getScene().setCursor(Cursor.HAND));
+        point.setOnMouseExited(mouseEvent -> mapPane.getScene().setCursor(Cursor.DEFAULT));
+
+        intersection.setDefaultShapeOnMap(point);
+
+        System.out.println(point);
+        mapPane.getChildren().add(point);
+    }
+
     static private void movePane(DialogPane paneToMove, double x, double y) {
         paneToMove.setLayoutX(x);
         paneToMove.setLayoutY(y);
         paneToMove.setVisible(true);
-        System.out.println("Moove");
     }
 
     static private void logDeliveryRequest(DeliveryRequest deliveryRequest) {

@@ -75,38 +75,59 @@ public class Main extends Application {
                 intersection5
         );
 
-        DeliveryRequest dr1 = new DeliveryRequest(
+        DeliveryRequest dr10 = new DeliveryRequest(
           8,
           intersection1
         );
-        DeliveryRequest dr2 = new DeliveryRequest(
+        DeliveryRequest dr20 = new DeliveryRequest(
           9,
           intersection2
         );
-        DeliveryRequest dr3 = new DeliveryRequest(
+        DeliveryRequest dr30 = new DeliveryRequest(
           10,
+          intersection3
+        );
+        DeliveryRequest dr40 = new DeliveryRequest(
+          10,
+          intersection4
+        );
+        DeliveryRequest dr50 = new DeliveryRequest(
+          10,
+          intersection5
+        );
+        DeliveryRequest dr51 = new DeliveryRequest(
+          14,
           intersection5
         );
 
         DeliveryTour dt1 = new DeliveryTour(cityMap);
-        dt1.addDeliveryRequest(dr1);
-        dt1.addDeliveryRequest(dr2);
-        dt1.addDeliveryRequest(dr3);
+        dt1.addDeliveryRequest(dr10);
+        dt1.addDeliveryRequest(dr20);
+        dt1.addDeliveryRequest(dr50);
 
         dt1.addTour(segJeanRenoir);
         dt1.addTour(segRueDeDauphine);
         dt1.addTour(segRueRogerBrechan);
         dt1.addTour(segClaudeRampon);
 
+        DeliveryTour dt2 = new DeliveryTour(cityMap);
+        dt2.addDeliveryRequest(dr40);
+        dt2.addDeliveryRequest(dr51);
+
+        dt2.addTour(segRueRogerBrechan);
+        dt2.addTour(segClaudeRampon);
+
         Set<Intersection> courier1deliverypoints = new HashSet<>();
 
         // ------------------- //
 
         Map map = new Map();
+        cityMap.addDeliveryTourTest(dt1);
+        cityMap.addDeliveryTourTest(dt2);
         map.drawBasemap(controller.getMapPane(), cityMap);
 
-        map.displayDeliveryTour(controller.getMapPane(), cityMap, dt1);
-       // map.displayCourierPath(controller.getMapPane(), cityMap, courier2streets, courier2deliverypoints);
+//        map.displayDeliveryTour(controller.getMapPane(), cityMap, dt1);
+        map.displayDeliveryTour(controller.getMapPane(), cityMap, dt2);
 
         stage.setTitle("DELIVR'IF");
         stage.show();

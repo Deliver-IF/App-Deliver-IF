@@ -42,7 +42,7 @@ public class DeliveryService {
             // For each stops
             for (DeliveryRequest deliveryRequest : deliveryTour.getStops()) {
                 // If delivery request intersection is the current intersection
-                if(deliveryRequest.getIntersection().equals(intersection)) {
+                if(deliveryRequest.getIntersection().getId() == intersection.getId()) {
                     currentDeliveryRequests.add(deliveryRequest);
                 }
             }
