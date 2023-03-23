@@ -12,7 +12,8 @@ public class DeliveryTour {
     private ArrayList<DeliveryRequest> stops;
     private ArrayList<Segment> tour;
 
-    protected DeliveryTour(CityMap cityMap) {
+    // TODO : switch to protected
+    public DeliveryTour(CityMap cityMap) {
         this.idCourier = idCounter++;
         this.cityMap = cityMap;
         this.stops = new ArrayList<>();
@@ -21,6 +22,11 @@ public class DeliveryTour {
 
     public void addDeliveryRequest(DeliveryRequest deliveryRequest) {
         stops.add(deliveryRequest);
+    }
+
+    // TODO : remove method
+    public void addTour(Segment segment) {
+        tour.add(segment);
     }
 
     public static void resetIdCounter() {

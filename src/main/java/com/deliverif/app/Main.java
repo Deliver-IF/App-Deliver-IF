@@ -1,9 +1,7 @@
 package com.deliverif.app;
 
 import com.deliverif.app.controllers.MainController;
-import com.deliverif.app.models.map.CityMap;
-import com.deliverif.app.models.map.Intersection;
-import com.deliverif.app.models.map.Segment;
+import com.deliverif.app.models.map.*;
 import com.deliverif.app.services.MapFactory;
 import com.deliverif.app.views.Map;
 import javafx.application.Application;
@@ -16,7 +14,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 
 import java.awt.Dimension;
 import java.util.HashSet;
@@ -78,37 +75,37 @@ public class Main extends Application {
                 intersection5
         );
 
-        ArrayList<Segment> courier1streets = new ArrayList<>();
+        DeliveryRequest dr1 = new DeliveryRequest(
+          8,
+          intersection1
+        );
+        DeliveryRequest dr2 = new DeliveryRequest(
+          9,
+          intersection2
+        );
+        DeliveryRequest dr3 = new DeliveryRequest(
+          10,
+          intersection5
+        );
+
+        DeliveryTour dt1 = new DeliveryTour(cityMap);
+        dt1.addDeliveryRequest(dr1);
+        dt1.addDeliveryRequest(dr2);
+        dt1.addDeliveryRequest(dr3);
+
+        dt1.addTour(segJeanRenoir);
+        dt1.addTour(segRueDeDauphine);
+        dt1.addTour(segRueRogerBrechan);
+        dt1.addTour(segClaudeRampon);
+
         Set<Intersection> courier1deliverypoints = new HashSet<>();
-        courier1streets.add(segJeanRenoir);
-        courier1streets.add(segRueDeDauphine);
-        courier1streets.add(segRueRogerBrechan);
-        courier1streets.add(segClaudeRampon);
-        courier1deliverypoints.add(intersection1);
-        courier1deliverypoints.add(intersection2);
-        courier1deliverypoints.add(intersection5);
 
-        /*ArrayList<Segment> courier2streets = new ArrayList<Segment>();
-        ArrayList<Intersection> courier2deliverypoints = new ArrayList<Intersection>();
-        Segment originSegment = cityMap.getSegments().get(15);
-
-        Pair<Intersection, Segment> currentPair = null;
-        for (int i = 0; i < 9; i++) {
-            currentPair = originSegment.getDestination().getReachableIntersections().get(0);
-            if (currentPair.getRight() == originSegment) {
-                currentPair = originSegment.getDestination().getReachableIntersections().get(1);
-            }
-
-            courier2streets.add(currentPair.getRight());
-            originSegment = currentPair.getRight();
-        }
-        courier2deliverypoints.add(originSegment.getOrigin());*/
         // ------------------- //
 
         Map map = new Map();
         map.drawBasemap(controller.getMapPane(), cityMap);
 
-        map.displayCourierPath(controller.getMapPane(), cityMap, courier1streets, courier1deliverypoints);
+        map.displayDeliveryTour(controller.getMapPane(), cityMap, dt1);
        // map.displayCourierPath(controller.getMapPane(), cityMap, courier2streets, courier2deliverypoints);
 
         stage.setTitle("DELIVR'IF");

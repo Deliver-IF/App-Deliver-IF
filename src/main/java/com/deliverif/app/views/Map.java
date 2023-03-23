@@ -1,8 +1,7 @@
 package com.deliverif.app.views;
 
-import com.deliverif.app.models.map.CityMap;
-import com.deliverif.app.models.map.Intersection;
-import com.deliverif.app.models.map.Segment;
+import com.deliverif.app.models.map.*;
+import com.deliverif.app.services.DeliveryService;
 import javafx.scene.Cursor;
 import javafx.scene.control.DialogPane;
 import javafx.scene.layout.Pane;
@@ -19,7 +18,8 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Set;
+import java.util.Collections;
+import java.util.HashSet;
 
 public class Map extends Region {
 
@@ -28,6 +28,8 @@ public class Map extends Region {
     final Color WAREHOUSE_COLOR = Color.BLACK;
     int numberOfCouriers = 0;
     boolean mapDrawn = false;
+
+    static ArrayList<DeliveryRequest> currentDeliveryRequests = new ArrayList<>();
 
     public Map() {}
 
@@ -66,7 +68,7 @@ public class Map extends Region {
 
     private void displayCrossings(Pane mapPane, CityMap map, Collection<Intersection> intersections, Color color, boolean isBaseMap) {
         for(Intersection intersection : intersections) {
-            displayIntersection(mapPane, map, intersection, color, isBaseMap);
+            displayIntersection(mapPane, map, intersection, color, isBaseMap, null);
         }
     }
 
@@ -75,16 +77,17 @@ public class Map extends Region {
      *
      * @param mapPane
      * @param map
-     * @param streetsList
      */
-    public void displayCourierPath(Pane mapPane, CityMap map, ArrayList<Segment> streetsList, Set<Intersection> deliveryPoints) {
+    public void displayDeliveryTour(Pane mapPane, CityMap map, DeliveryTour deliveryTour) {
         Color color = Color.rgb(joaat(numberOfCouriers+1) & 255, joaat(numberOfCouriers+1) >> 16 & 255, joaat(numberOfCouriers+1) >> 31 & 255);
 
         // Streets
-        displayStreets(mapPane, map, streetsList, color);
+        displayStreets(mapPane, map, deliveryTour.getTour(), color);
 
         // Delivery Points
-        displayCrossings(mapPane, map, deliveryPoints, color, false);
+        for (DeliveryRequest deliveryRequest : deliveryTour.getStops()) {
+            displayIntersection(mapPane, map, deliveryRequest.getIntersection(), color, false, deliveryRequest);
+        }
 
         numberOfCouriers++;
     }
@@ -96,7 +99,10 @@ public class Map extends Region {
         // TODO
     }
 
-    static private void displayIntersection(Pane mapPane, CityMap map, Intersection intersection, Paint color, boolean isBaseMap) {
+    static private void displayIntersection(
+            Pane mapPane, CityMap map, Intersection intersection, Paint color, boolean isBaseMap,
+            DeliveryRequest deliveryRequest
+    ) {
         Coordinates origin = getCoordinates(mapPane, map, intersection.getLongitude(), intersection.getLatitude());
 
         // Determine all properties of the shape we will draw on map
@@ -113,9 +119,22 @@ public class Map extends Region {
         }
 
         point.setOnMouseClicked(mouseEvent -> {
-            logIntersections(intersection);
 
-            Text text = (Text) mapPane.getScene().lookup("#deliveryWindow");
+            Text deliveryWindowText = (Text) mapPane.getScene().lookup("#deliveryWindow");
+
+            if(!isBaseMap) {
+                DeliveryService deliveryService = DeliveryService.getInstance();
+
+                Map.currentDeliveryRequests = deliveryService.getAllDeliveryRequestFromIntersection(map, intersection);
+//                logDeliveryRequest(deliveryRequest);
+
+                deliveryWindowText.setText("Delivery Window : " + deliveryRequest.getStartTimeWindow() + "h-"
+                                + (deliveryRequest.getStartTimeWindow() + 1) + "h\n"
+                );
+            } else {
+                deliveryWindowText.setText("No delivery at this intersection");
+            }
+
             DialogPane dialogPane = (DialogPane) mapPane.getScene().lookup("#intersectionInfoDialog");
             movePane(
                     dialogPane,
@@ -123,13 +142,12 @@ public class Map extends Region {
                     origin.getY() - dialogPane.getHeight() - 20
             );
 
-            text.setText(intersection.getId());
-            Polygon triangle = new Polygon();
-            triangle.getPoints().addAll(origin.getX(), origin.getY(),
-                    origin.getX() + 10, origin.getY() - 20,
-                    origin.getX() - 10, origin.getY() - 20);
-            triangle.setFill(Color.WHITE);
-            mapPane.getChildren().add(triangle);
+//            Polygon triangle = new Polygon();
+//            triangle.getPoints().addAll(origin.getX(), origin.getY(),
+//                    origin.getX() + 10, origin.getY() - 20,
+//                    origin.getX() - 10, origin.getY() - 20);
+//            triangle.setFill(Color.WHITE);
+//            mapPane.getChildren().add(triangle);
         });
 
         // Event which change cursor on intersection hover
@@ -141,17 +159,21 @@ public class Map extends Region {
         mapPane.getChildren().add(point);
     }
 
-    static private void movePane(Pane paneToMove, double x, double y) {
+    static private void movePane(DialogPane paneToMove, double x, double y) {
         paneToMove.setLayoutX(x);
         paneToMove.setLayoutY(y);
         paneToMove.setVisible(true);
+        System.out.println("Moove");
     }
 
-    static private void logIntersections(Intersection intersection) {
+    static private void logDeliveryRequest(DeliveryRequest deliveryRequest) {
         System.out.println("--- Intersection ---");
-        System.out.println("Id = " + intersection.getId());
-        System.out.println("Long = " + intersection.getLongitude());
-        System.out.println("Lat = " + intersection.getLatitude() + "\n");
+        System.out.println("Id = " + deliveryRequest.getIntersection().getId());
+        System.out.println("Long = " + deliveryRequest.getIntersection().getLongitude());
+        System.out.println("Lat = " + deliveryRequest.getIntersection().getLatitude());
+        System.out.println("Time Window = " + deliveryRequest.getStartTimeWindow() + "h-"
+                + (deliveryRequest.getStartTimeWindow() + 1)
+                + "h\n");
     }
 
     static private void displaySegment(Pane mapPane, CityMap map, Segment segment, Paint color) {
