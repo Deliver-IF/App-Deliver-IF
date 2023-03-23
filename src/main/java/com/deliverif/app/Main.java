@@ -41,10 +41,10 @@ public class Main extends Application {
         double width = screenSize.getWidth()-screenSize.getWidth()*0.2;
         double height = screenSize.getHeight()-screenSize.getHeight()*0.2;
 
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("views/main.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("views/add_delivery_request.fxml"));
 
-        Scene scene = new Scene(fxmlLoader.load(), 900, 800);
-        stage.setScene(scene);
+        Scene defaultScene = new Scene(fxmlLoader.load(), 900, 800);
+        stage.setScene(defaultScene);
         stage.show();
         MainController controller = fxmlLoader.getController();
 
@@ -87,28 +87,10 @@ public class Main extends Application {
         courier1deliverypoints.add(intersection2);
         courier1deliverypoints.add(intersection5);
 
-        /*ArrayList<Segment> courier2streets = new ArrayList<Segment>();
-        ArrayList<Intersection> courier2deliverypoints = new ArrayList<Intersection>();
-        Segment originSegment = cityMap.getSegments().get(15);
-
-        Pair<Intersection, Segment> currentPair = null;
-        for (int i = 0; i < 9; i++) {
-            currentPair = originSegment.getDestination().getReachableIntersections().get(0);
-            if (currentPair.getRight() == originSegment) {
-                currentPair = originSegment.getDestination().getReachableIntersections().get(1);
-            }
-
-            courier2streets.add(currentPair.getRight());
-            originSegment = currentPair.getRight();
-        }
-        courier2deliverypoints.add(originSegment.getOrigin());*/
-        // ------------------- //
-
         Map map = new Map();
         map.drawBasemap(controller.getMapPane(), cityMap);
 
         map.displayCourierPath(controller.getMapPane(), cityMap, courier1streets, courier1deliverypoints);
-       // map.displayCourierPath(controller.getMapPane(), cityMap, courier2streets, courier2deliverypoints);
 
         stage.setTitle("DELIVR'IF");
         stage.show();
