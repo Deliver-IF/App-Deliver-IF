@@ -29,6 +29,8 @@ public class BaseMap extends Region {
     final Color BASE_MAP_STREETS_COLOR = Color.GRAY;
     final Color BASE_MAP_INTERSECTION_COLOR = Color.BLUE;
     final Color WAREHOUSE_COLOR = Color.BLACK;
+    final int INTERSECTION_SHAPE_RADIUS = 2;
+    final int DELIVERY_REQUEST_SHAPE_RADIUS = 5;
 
     int numberOfCouriers = 0;
     boolean mapDrawn = false;
@@ -59,8 +61,8 @@ public class BaseMap extends Region {
      */
     public void drawBasemap(Pane mapPane, CityMap map) {
         if (!mapDrawn) {
-            displayStreets(mapPane, map, map.getStreets(), BASE_MAP_STREETS_COLOR);
             displayCrossings(mapPane, map, map.getIntersections(), BASE_MAP_INTERSECTION_COLOR);
+            displayStreets(mapPane, map, map.getStreets(), BASE_MAP_STREETS_COLOR);
             displayWarehouse(mapPane, map, map.getWarehouse(), WAREHOUSE_COLOR);
             mapDrawn = true;
         }
@@ -105,18 +107,18 @@ public class BaseMap extends Region {
         // TODO
     }
 
-    static private void displayIntersection(
+    private void displayIntersection(
             Pane mapPane, CityMap map, Intersection intersection, Paint color
     ) {
         Coordinates origin = getCoordinates(mapPane, map, intersection.getLongitude(), intersection.getLatitude());
 
         // Determine all properties of the shape we will draw on map
-        Circle point = intersection.getDefaultShapeOnMap();
+        Circle point = new Circle();
         point.setCenterX(origin.getX());
         point.setCenterY(origin.getY());
         point.setStroke(color);
         point.setFill(color);
-        point.setRadius(2);
+        point.setRadius(INTERSECTION_SHAPE_RADIUS);
 
         // Click on an intersection
         point.setOnMouseClicked(mouseEvent -> {
@@ -152,21 +154,22 @@ public class BaseMap extends Region {
      *
      * @param mapPane       the map pane to display the delivery point on.
      * @param map           the map containing the data (coordinates) of the different objects displayed on the map pane.
-     * @param deliveryPoint the Intersection representing the delivery point.
+     * @param intersection the Intersection representing the delivery point.
      * @param color         the color that has to be used to draw the delivery point.
+     * @param deliveryRequest the delivery request we try to display, in order to retrieve all the information related to it
      */
-    static private void displayDeliveryPoint(
+    private void displayDeliveryPoint(
             Pane mapPane, CityMap map, Intersection intersection, Paint color, DeliveryRequest deliveryRequest
     ) {
         Coordinates origin = getCoordinates(mapPane, map, intersection.getLongitude(), intersection.getLatitude());
 
         // Determine all properties of the shape we will draw on map
-        Circle point = intersection.getDefaultShapeOnMap();
+        Circle point = new Circle();
         point.setCenterX(origin.getX());
         point.setCenterY(origin.getY());
         point.setStroke(color);
         point.setFill(color);
-        point.setRadius(5);
+        point.setRadius(DELIVERY_REQUEST_SHAPE_RADIUS);
 
         point.setOnMouseClicked(mouseEvent -> {
             System.out.println(origin.getX() + " " + origin.getY());
@@ -240,7 +243,7 @@ public class BaseMap extends Region {
      *
      * @param mapPane   the map pane to draw the street on.
      * @param map       the map containing the data (coordinates) of the different objects displayed on the map pane.
-     * @param street    the Segment representing the street.
+     * @param segment    the Segment representing the street.
      * @param color     the color that has to be used to draw the street.
      */
     static private void displaySegment(Pane mapPane, CityMap map, Segment segment, Paint color) {
@@ -255,6 +258,13 @@ public class BaseMap extends Region {
         line.setStroke(color);
         line.setStrokeWidth(3);
         mapPane.getChildren().add(line);
+
+        Circle originSegment = segment.getOrigin().getDefaultShapeOnMap();
+        Circle destinationSegment = segment.getDestination().getDefaultShapeOnMap();
+        mapPane.getChildren().remove(originSegment);
+        mapPane.getChildren().add(originSegment);
+        mapPane.getChildren().remove(destinationSegment);
+        mapPane.getChildren().add(destinationSegment);
     }
 
     /**

@@ -127,6 +127,7 @@ public class Main extends Application {
         cityMap.addDeliveryTourTest(dt2);
         baseMap.drawBasemap(controller.getMapPane(), cityMap);
 
+        baseMap.displayDeliveryTour(controller.getMapPane(), cityMap, dt1);
         baseMap.displayDeliveryTour(controller.getMapPane(), cityMap, dt2);
 
         stage.setTitle("DELIVR'IF");
