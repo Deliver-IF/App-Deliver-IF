@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<deliveries>
+    <delivery-tour id="0">
+        <requests>
+            <request id="0" startTimeWindow="10" idIntersection="5"/>
+            <request id="1" startTimeWindow="9" idIntersection="6"/>
+            <request id="2" startTimeWindow="11" idIntersection="6"/>
+        </requests>
+        <segments>
+            <segment idOrigin="1" idDestination="3"/>
+            <segment idOrigin="3" idDestination="9"/>
+            <segment idOrigin="9" idDestination="6"/>
+            <segment idOrigin="6" idDestination="5"/>
+            <segment idOrigin="5" idDestination="6"/>
+            <segment idOrigin="6" idDestination="4"/>
+            <segment idOrigin="4" idDestination="1"/>
+        </segments>
+    </delivery-tour>
+    <delivery-tour id="23">
+        <requests>
+            <request id="12" startTimeWindow="9" idIntersection="2"/>
+        </requests>
+        <segments>
+            <segment idOrigin="1" idDestination="2"/>
+            <segment idOrigin="2" idDestination="1"/>
+        </segments>
+    </delivery-tour>
+</deliveries>
+

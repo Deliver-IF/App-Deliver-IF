@@ -11,7 +11,7 @@ import java.util.Set;
 public class CityMap {
     private final Intersection warehouse;
     private final Set<Segment> streets;
-    private final Set<Intersection> intersections;
+    private final Map<String, Intersection> intersections;
     private final Map<Pair<String, String>, Segment> segmentsMap;
     private final Map<String, Set<String>> connections;
     private final Map<Integer, DeliveryTour> deliveryTours;
@@ -34,7 +34,7 @@ public class CityMap {
      * @param minLongitude  the minimum longitude accessible on the map.
      * @param maxLongitude  the maximum longitude accessible on the map.
      */
-    private CityMap(Intersection warehouse, Set<Segment> segments, Set<Intersection> intersections, Map<Pair<String, String>, Segment> segmentsMap, Map<String, Set<String>> connections, Float minLatitude, Float maxLatitude, Float minLongitude, Float maxLongitude) {
+    private CityMap(Intersection warehouse, Set<Segment> segments, Map<String, Intersection> intersections, Map<Pair<String, String>, Segment> segmentsMap, Map<String, Set<String>> connections, Float minLatitude, Float maxLatitude, Float minLongitude, Float maxLongitude) {
         this.warehouse = warehouse;
         this.streets = segments;
         this.intersections = intersections;
@@ -64,19 +64,35 @@ public class CityMap {
      * @param maxLongitude  the maximum longitude accessible on the map.
      * @return              the newly created CityMap object.
      */
-    public static CityMap create(Intersection warehouse, Set<Segment> segments, Set<Intersection> intersections, Map<Pair<String, String>, Segment> segmentsMap, Map<String, Set<String>> connections, Float minLatitude, Float maxLatitude, Float minLongitude, Float maxLongitude) {
+    public static CityMap create(Intersection warehouse, Set<Segment> segments, Map<String, Intersection> intersections, Map<Pair<String, String>, Segment> segmentsMap, Map<String, Set<String>> connections, Float minLatitude, Float maxLatitude, Float minLongitude, Float maxLongitude) {
         return new CityMap(warehouse, segments, intersections, segmentsMap, connections, minLatitude, maxLatitude, minLongitude, maxLongitude);
     }
 
     /**
      * Add a new DeliveryTour object to the current list of DeliveryTour objects.
      */
-    public void addDeliveryTour() {
+    public DeliveryTour addDeliveryTour() {
         DeliveryTour deliveryTour = new DeliveryTour(this);
         deliveryTours.put(deliveryTour.getIdCourier(), deliveryTour);
+        return deliveryTour;
     }
 
+    /**
+     * Add a new DeliveryTour object to the current list of DeliveryTour objects.
+     *
+     * @param idCourier     the id of the courier that has to manage the new delivery tour.
+     */
+    public DeliveryTour addDeliveryTour(Integer idCourier) {
+        DeliveryTour deliveryTour = new DeliveryTour(this, idCourier);
+        deliveryTours.put(deliveryTour.getIdCourier(), deliveryTour);
+        return deliveryTour;
+    }
 
+    /**
+     * Delete a DeliveryTour object from the current list of DeliveryTour objects.
+     *
+     * @throws NoCourierUnavailableException
+     */
     public void deleteDeliveryTour() throws NoCourierUnavailableException {
         boolean emptyDeliveryTour = false;
         for(Map.Entry<Integer, DeliveryTour> deliveryTourEntry : deliveryTours.entrySet()) {

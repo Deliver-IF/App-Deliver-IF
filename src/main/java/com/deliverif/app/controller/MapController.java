@@ -53,7 +53,7 @@ public class MapController {
      */
     public void drawBasemap(Pane mapPane, CityMap map) {
         if (!mapDrawn) {
-            displayCrossings(mapPane, map, map.getIntersections());
+            displayCrossings(mapPane, map, map.getIntersections().values());
             displayStreets(mapPane, map, map.getStreets(), Constants.BASE_MAP_STREETS_COLOR);
             displayWarehouse(mapPane, map, map.getWarehouse(), Constants.WAREHOUSE_COLOR);
             mapDrawn = true;
@@ -185,7 +185,6 @@ public class MapController {
         for (DeliveryRequest deliveryRequest : deliveryTour.getStops()) {
             displayDeliveryPoint(mapPane, map, deliveryRequest.getIntersection(), color, deliveryRequest);
         }
-        System.out.println("Test 3");
     }
 
     /**

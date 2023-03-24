@@ -1,11 +1,30 @@
 package com.deliverif.app.services;
 
 import com.deliverif.app.algorithm.NaiveAlgorithm;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
+import java.util.*;
 import com.deliverif.app.model.CityMap;
 import com.deliverif.app.model.DeliveryRequest;
 import com.deliverif.app.model.DeliveryTour;
 import com.deliverif.app.model.Intersection;
-import org.apache.commons.lang3.NotImplementedException;
+import com.deliverif.app.model.Segment;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -35,12 +54,127 @@ public class DeliveryService {
         NaiveAlgorithm.getInstance().optimize(deliveryTour);
     }
 
-    public DeliveryTour loadDeliveryFromFile(String filePath) {
-        throw new NotImplementedException();
+    public void loadDeliveriesFromFile(File file, CityMap cityMap) throws FileNotFoundException {
+        // load the delivery tours from a xml file
+        if (!file.exists()) {
+            throw new FileNotFoundException(file.getPath());
+        }
+
+        // clean the city map
+        cityMap.getDeliveryTours().clear();
+
+        try {
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(file);
+
+            doc.getDocumentElement().normalize();
+
+            NodeList nDeliveries = doc.getElementsByTagName("deliveries");
+            if (nDeliveries.getLength() != 1) {
+                throw new Exception("Invalid number of deliveries");
+            }
+
+            Element deliveries = (Element) nDeliveries.item(0);
+            NodeList deliveryTours = deliveries.getElementsByTagName("delivery-tour");
+
+            for(int iTour = 0; iTour < deliveryTours.getLength(); iTour++) {
+                Element deliveryTourElement = (Element) deliveryTours.item(iTour);
+                int idDeliveryTour = Integer.parseInt(deliveryTourElement.getAttribute("id"));
+                DeliveryTour newDeliveryTour = cityMap.addDeliveryTour(idDeliveryTour);
+
+                NodeList nRequestsParent = deliveryTourElement.getElementsByTagName("requests");
+                if (nRequestsParent.getLength() != 1) {
+                    throw new Exception("Invalid number of requests node");
+                }
+
+                NodeList nSegmentsParent = deliveryTourElement.getElementsByTagName("segments");
+                if (nSegmentsParent.getLength() != 1) {
+                    throw new Exception("Invalid number of segments node");
+                }
+
+                NodeList requests = ((Element) nRequestsParent.item(0)).getElementsByTagName("request");
+                for(int i = 0; i < requests.getLength(); i++) {
+                    Element request = (Element) requests.item(i);
+                    int idRequest = Integer.parseInt(request.getAttribute("id"));
+                    int startTimeWindow = Integer.parseInt(request.getAttribute("startTimeWindow"));
+                    String idIntersection = request.getAttribute("idIntersection");
+                    newDeliveryTour.addDeliveryRequest(idRequest, startTimeWindow, cityMap.getIntersections().get(idIntersection));
+                }
+
+                NodeList segments = ((Element) nSegmentsParent.item(0)).getElementsByTagName("segment");
+                for(int i = 0; i < segments.getLength(); i++) {
+                    Element segment = (Element) segments.item(i);
+                    String idIntersection1 = segment.getAttribute("idOrigin");
+                    String idIntersection2 = segment.getAttribute("idDestination");
+                    newDeliveryTour.addSegment(cityMap.getIntersections().get(idIntersection1), cityMap.getIntersections().get(idIntersection2));
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public void saveDeliveryToFile(String filePath, DeliveryTour deliveryTour) {
-        throw new NotImplementedException();
+    public void saveDeliveriesToFile(File file, Collection<DeliveryTour> deliveryTours) throws FileAlreadyExistsException {
+        // store the delivery tours in a xml file
+        if (file.exists()) {
+            throw new FileAlreadyExistsException(file.getPath());
+        }
+
+
+        try {
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document document = dBuilder.newDocument();
+            Element rootElement = document.createElement("deliveries");
+            for(DeliveryTour deliveryTour : deliveryTours)
+            {
+                Element deliveryTourElement = document.createElement("delivery-tour");
+                deliveryTourElement.setAttribute("id", String.valueOf(deliveryTour.getIdCourier()));
+
+                Element deliveryRequestsElement = document.createElement("requests");
+                for(DeliveryRequest deliveryRequest : deliveryTour.getStops())
+                {
+                    Element deliveryRequestElement = document.createElement("request");
+                    deliveryRequestElement.setAttribute("id", String.valueOf(deliveryRequest.getId()));
+                    deliveryRequestElement.setAttribute("startTimeWindow", String.valueOf(deliveryRequest.getStartTimeWindow()));
+                    deliveryRequestElement.setAttribute("idIntersection", String.valueOf(deliveryRequest.getIntersection().getId()));
+                    deliveryRequestsElement.appendChild(deliveryRequestElement);
+                }
+                deliveryTourElement.appendChild(deliveryRequestsElement);
+
+                Element deliverySegmentsElement = document.createElement("segments");
+                for(Segment segment : deliveryTour.getTour())
+                {
+                    Element deliverySegmentElement = document.createElement("segment");
+                    deliverySegmentElement.setAttribute("idOrigin", String.valueOf(segment.getOrigin().getId()));
+                    deliverySegmentElement.setAttribute("idDestination", String.valueOf(segment.getDestination().getId()));
+                    deliverySegmentsElement.appendChild(deliverySegmentElement);
+                }
+                deliveryTourElement.appendChild(deliverySegmentsElement);
+                rootElement.appendChild(deliveryTourElement);
+            }
+            document.appendChild(rootElement);
+
+            try {
+                Transformer tr = TransformerFactory.newInstance().newTransformer();
+                tr.setOutputProperty(OutputKeys.INDENT, "yes");
+                tr.setOutputProperty(OutputKeys.METHOD, "xml");
+                tr.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+                tr.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+
+                // send DOM to file
+                tr.transform(new DOMSource(document),
+                        new StreamResult(new FileOutputStream(file)));
+                System.out.println("File saved!");
+
+            } catch (TransformerException | IOException te) {
+                System.out.println(te.getMessage());
+            }
+
+        } catch (ParserConfigurationException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

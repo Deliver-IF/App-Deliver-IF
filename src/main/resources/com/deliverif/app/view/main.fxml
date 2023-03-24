@@ -27,8 +27,8 @@
                   <Menu mnemonicParsing="false" text="File">
                      <items>
                         <MenuItem fx:id="loadMapMenuItem" mnemonicParsing="false" text="Load a map" onAction="#loadMapAction"/>
-                        <MenuItem fx:id="loadTourMenuItem" mnemonicParsing="false" text="Load a tour" />
-                        <MenuItem fx:id="saveTourMenuItem" mnemonicParsing="false" text="Save a tour" />
+                        <MenuItem fx:id="loadTourMenuItem" mnemonicParsing="false" text="Load a tour" onAction="#loadTourAction"/>
+                        <MenuItem fx:id="saveTourMenuItem" mnemonicParsing="false" text="Save a tour" onAction="#saveTourAction"/>
                      </items>
                   </Menu>
                   <Menu fx:id="aboutMenu" mnemonicParsing="false" text="About">

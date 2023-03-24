@@ -2,6 +2,8 @@ package com.deliverif.app.model;
 
 import lombok.Getter;
 
+import java.util.Random;
+
 /**
  * Represents an order made by a client.
  */
@@ -11,11 +13,6 @@ public class DeliveryRequest {
      * Time needed by a courier to realize a delivery once they arrived at the specified intersection.
      */
     private final int DELIVERY_TIME = 5;
-
-    /**
-     * The id of the last created delivery request.
-     */
-    private static int idCounter = 0;
 
     /**
      * The id of the delivery request.
@@ -34,15 +31,13 @@ public class DeliveryRequest {
 
     public DeliveryRequest(int startTimeWindow, Intersection intersection) {
         this.startTimeWindow = startTimeWindow;
-        this.id = idCounter++;
+        this.id = new Random().nextInt(1000000000);
         this.intersection = intersection;
     }
 
-    /**
-     * Reset the counter of delivery requests back to its original value.
-     * (Before the first delivery request was created)
-     */
-    public static void resetIdCounter() {
-        idCounter = 0;
+    protected DeliveryRequest(int idRequest, int startTimeWindow, Intersection intersection) {
+        this.startTimeWindow = startTimeWindow;
+        this.id = idRequest;
+        this.intersection = intersection;
     }
 }
