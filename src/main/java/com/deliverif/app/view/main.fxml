@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="600.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.deliverif.app.controller.MainController">
+   <top>
+      <VBox>
+         <children>
+            <MenuBar prefHeight="29.0" prefWidth="379.0" BorderPane.alignment="CENTER" fx:id="menuBar" >
+              <menus>
+                <Menu mnemonicParsing="false" text="File">
+                  <items>
+                        <MenuItem fx:id="loadMapMenuItem" mnemonicParsing="false" text="Load a map" onAction="#loadMapAction"/>
+                        <MenuItem fx:id="loadTourMenuItem" mnemonicParsing="false" text="Load a tour" />
+                        <MenuItem fx:id="saveTourMenuItem" mnemonicParsing="false" text="Save a tour" />
+                  </items>
+                </Menu>
+                <Menu fx:id="aboutMenu" mnemonicParsing="false" text="About">
+                </Menu>
+              </menus>
+            </MenuBar>
+            <BorderPane style="-fx-border-style: none none solid none; -fx-border-width: 1; -fx-border-color: transparent transparent black transparent;">
+               <left>
+                  <Button fx:id="addDeliveryButton" mnemonicParsing="false" text="Add delivery" BorderPane.alignment="CENTER">
+                     <BorderPane.margin>
+                        <Insets left="10.0" />
+                     </BorderPane.margin>
+                  </Button>
+               </left>
+               <right>
+                  <HBox alignment="CENTER" BorderPane.alignment="CENTER">
+                     <children>
+                        <Label text="Nb of coursiers:" HBox.hgrow="ALWAYS">
+                           <HBox.margin>
+                              <Insets right="10.0" />
+                           </HBox.margin>
+                        </Label>
+                        <Text fx:id="nbCourierText" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
+                           <HBox.margin>
+                              <Insets right="10.0" />
+                           </HBox.margin>
+                        </Text>
+                        <Button fx:id="increaseCourierButton" mnemonicParsing="false" text="+">
+                           <HBox.margin>
+                              <Insets right="10.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Button fx:id="decreaseCourierButton" mnemonicParsing="false" text=" - ">
+                           <HBox.margin>
+                              <Insets right="10.0" />
+                           </HBox.margin>
+                        </Button>
+                        <ComboBox fx:id="selectCourierButton" prefWidth="150.0">
+                           <HBox.margin>
+                              <Insets right="10.0" />
+                           </HBox.margin>
+                        </ComboBox>
+                     </children>
+                     <BorderPane.margin>
+                        <Insets bottom="10.0" top="10.0" />
+                     </BorderPane.margin>
+                  </HBox>
+               </right>
+            </BorderPane>
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <center>
+             <Pane fx:id="mapPane" style="-fx-background-color: #ECECEC;" />
+         </center>
+         <left>
+            <VBox prefHeight="300.0" prefWidth="300.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Delivery details" textAlignment="CENTER" wrappingWidth="300.0">
+                     <font>
+                        <Font name="System Bold" size="15.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets bottom="10.0" top="10.0" />
+                     </VBox.margin>
+                  </Text>
+                  <Text fx:id="deliveryDetailsText" layoutX="10.0" layoutY="22.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text">
+                     <VBox.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </VBox.margin>
+                  </Text>
+                  <Text layoutX="10.0" layoutY="22.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Itinerary" textAlignment="CENTER" wrappingWidth="300.0">
+                     <VBox.margin>
+                        <Insets bottom="10.0" top="15.0" />
+                     </VBox.margin>
+                     <font>
+                        <Font name="System Bold" size="15.0" />
+                     </font>
+                  </Text>
+                  <Text fx:id="itineraryText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text">
+                     <VBox.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </VBox.margin>
+                  </Text>
+               </children>
+            </VBox>
+         </left>
+      </BorderPane>
+   </center>
+</BorderPane>
