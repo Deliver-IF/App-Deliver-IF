@@ -10,8 +10,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class Main extends Application {
-    private double screenWidth;
-    private double screenHeight;
+    private double screenWidth, screenHeight;
 
     @Override
     public void init() throws Exception {
