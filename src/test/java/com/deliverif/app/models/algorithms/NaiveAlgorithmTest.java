@@ -38,12 +38,19 @@ public class NaiveAlgorithmTest {
     }
     @Test
     public void testOptimize() {
-        NaiveAlgorithm naiveAlgorithm = new NaiveAlgorithm();
         cityMap.addDeliveryRequest(0, mappedIntersections.get("3"));
         cityMap.addDeliveryRequest(0, mappedIntersections.get("4"));
         DeliveryTour deliveryTour = cityMap.getDeliveryTours().get(0);
-        naiveAlgorithm.optimize(deliveryTour);
-
+        NaiveAlgorithm.getInstance().optimize(deliveryTour);
+        assert deliveryTour.getTour().size() == 4;
+        assert deliveryTour.getTour().get(0).getOrigin().getId().equals("1");
+        assert deliveryTour.getTour().get(1).getOrigin().getId().equals("3");
+        assert deliveryTour.getTour().get(2).getOrigin().getId().equals("2");
+        assert deliveryTour.getTour().get(3).getOrigin().getId().equals("4");
+        assert deliveryTour.getTour().get(0).getDestination().getId().equals("3");
+        assert deliveryTour.getTour().get(1).getDestination().getId().equals("2");
+        assert deliveryTour.getTour().get(2).getDestination().getId().equals("4");
+        assert deliveryTour.getTour().get(3).getDestination().getId().equals("1");
     }
 
     @Test
