@@ -66,8 +66,8 @@ public class MainController {
 
     // Method called by the FXML loader after ressource file reading
     public void initialize() {
-        dummyFunction();
-        System.out.println(courier1streets.toString());
+//        dummyFunction();
+//        System.out.println(courier1streets.toString());
     }
 
     @FXML
