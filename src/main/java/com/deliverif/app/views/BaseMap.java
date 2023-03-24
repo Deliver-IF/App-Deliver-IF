@@ -123,6 +123,8 @@ public class BaseMap extends Region {
 
         // Click on an intersection
         point.setOnMouseClicked(mouseEvent -> {
+            currentlySelectedIntersection = intersection;
+
             // Change text on dialog
             Text deliveryWindowText = (Text) mapPane.getScene().lookup("#deliveryWindow");
             deliveryWindowText.setText("No delivery at this intersection");

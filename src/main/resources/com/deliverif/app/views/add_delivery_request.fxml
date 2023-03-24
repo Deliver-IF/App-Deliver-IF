@@ -93,7 +93,7 @@
                                     </HBox>
                                     <HBox alignment="TOP_CENTER" prefHeight="20.0" prefWidth="339.0">
                                        <children>
-                                          <Button mnemonicParsing="false" onMouseClicked="#add_delivery_request" prefHeight="24.0" prefWidth="29.0" text="Add" />
+                                          <Button mnemonicParsing="false" onMouseClicked="#addDeliveryRequest" prefHeight="24.0" prefWidth="29.0" text="Add" />
                                        </children>
                                     </HBox>
                                  </children>

@@ -18,6 +18,7 @@ import lombok.Getter;
 import javafx.event.*;
 import lombok.Setter;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Getter
@@ -46,6 +47,7 @@ public class MainController {
     private ChoiceBox timeWindowChoiceBox;
     @FXML
     private Button closeAddDeliveryRequestDialogPane;
+    private HashMap<String, Integer> timeWindows = new HashMap<String, Integer>();
 
     @FXML
     protected void hideIntersectionInfoDialog() {
@@ -82,21 +84,12 @@ public class MainController {
         System.out.println("Prev");
     }
 
-    /*@FXML
-    public void handleButtonPress(ActionEvent event) {
-        //closeNewDeliveryRequestDialogButton.getParent().getParent().setVisible(false);
-
-        Map<Integer, DeliveryTour> deliveryTourMap =  cityMap.getDeliveryTours();
-
-        DeliveryService deliveryService = DeliveryService.getInstance();
-        deliveryService.searchOptimalDeliveryTour(deliveryTourMap.get(0));
-    }*/
-
     @FXML
     protected void addDeliveryPointDialog() {
         newDeliveryRequestDialogPane.setVisible(true);
         int start_hour = 8;
         int limit_hour = 12;
+        timeWindows.clear();
 
         courierChoiceBox.getItems().clear();
         timeWindowChoiceBox.getItems().clear();
@@ -108,7 +101,9 @@ public class MainController {
         for (int hour = start_hour; hour + 1 <= limit_hour; hour++) {
             String start_am_or_pm = hour <= 11 ? "am" : "pm";
             String end_am_or_pm = (hour + 1) <= 11 ? "am" : "pm";
-            timeWindowChoiceBox.getItems().add(hour + ".00 " + start_am_or_pm + " - " + (hour + 1) + ".00 " + end_am_or_pm);
+            String timeWindowText = hour + ".00 " + start_am_or_pm + " - " + (hour + 1) + ".00 " + end_am_or_pm;
+            timeWindowChoiceBox.getItems().add(timeWindowText);
+            timeWindows.put(timeWindowText, hour);
         }
     }
 
@@ -118,12 +113,14 @@ public class MainController {
     }
 
     @FXML
-    protected void add_delivery_request() {
+    protected void addDeliveryRequest() {
         DeliveryService deliveryService = DeliveryService.getInstance();
         DeliveryTour deliveryTour = cityMap.getDeliveryTours().get(courierChoiceBox.getValue());
-        DeliveryRequest deliveryRequest = new DeliveryRequest(8, BaseMap.currentlySelectedIntersection);
-        cityMap.addDeliveryRequest((int) courierChoiceBox.getValue(), BaseMap.currentlySelectedIntersection);
+        DeliveryRequest deliveryRequest = new DeliveryRequest(timeWindows.get(timeWindowChoiceBox.getValue()), BaseMap.currentlySelectedIntersection);
+        deliveryTour.addDeliveryRequest(deliveryRequest);
         deliveryService.searchOptimalDeliveryTour(deliveryTour);
         closeAddDeliveryRequestDialogPane();
+        BaseMap baseMap = new BaseMap();
+        baseMap.displayDeliveryTour(mapPane, cityMap, deliveryTour);
     }
 }
