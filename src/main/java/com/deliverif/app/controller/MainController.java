@@ -1,11 +1,6 @@
 package com.deliverif.app.controller;
 
-import com.deliverif.app.Main;
-import com.deliverif.app.model.CityMap;
 import com.deliverif.app.model.DataModel;
-import com.deliverif.app.model.Intersection;
-import com.deliverif.app.model.Segment;
-import com.deliverif.app.services.MapFactory;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -15,16 +10,10 @@ import javafx.stage.FileChooser;
 import lombok.Getter;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 
 @Getter
 public class MainController {
     DataModel dataModel;
-
 
     // Map pane
     @FXML
@@ -56,11 +45,6 @@ public class MainController {
     @FXML
     private Text deliveryDetailsText;
     @FXML Text itineraryText;
-
-    ArrayList<Segment> courier1streets = new ArrayList<Segment>();
-    ArrayList<Intersection> courier1deliverypoints = new ArrayList<Intersection>();
-
-    MapController map = new MapController();
 
     public MainController() {
         this.dataModel = new DataModel();

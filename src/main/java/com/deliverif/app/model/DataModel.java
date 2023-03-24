@@ -6,8 +6,6 @@ import lombok.Getter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 
 public class DataModel {
     @Getter
