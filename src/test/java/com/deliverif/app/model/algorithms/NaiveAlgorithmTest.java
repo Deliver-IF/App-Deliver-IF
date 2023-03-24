@@ -4,15 +4,12 @@ import com.deliverif.app.algorithm.NaiveAlgorithm;
 import com.deliverif.app.model.CityMap;
 import com.deliverif.app.model.DeliveryTour;
 import com.deliverif.app.model.Intersection;
-import com.deliverif.app.services.MapFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 

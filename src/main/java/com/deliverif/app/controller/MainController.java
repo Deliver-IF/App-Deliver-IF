@@ -66,6 +66,7 @@ public class MainController {
                 // handle exception...
             }
         }
+        //TODO: controller in model...
         this.dataModel.getMapController().drawBasemap(this.mapPane, this.dataModel.getCityMap());
     }
 }
