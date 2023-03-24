@@ -36,6 +36,7 @@ public class BaseMap extends Region {
     boolean mapDrawn = false;
 
     public static ArrayList<DeliveryRequest> currentDeliveryRequests = new ArrayList<>();
+    public static Intersection currentlySelectedIntersection;
 
     public static int currentIndex = 0;
 
@@ -177,6 +178,7 @@ public class BaseMap extends Region {
             Text deliveryWindowText = (Text) mapPane.getScene().lookup("#deliveryWindow");
 
             currentDeliveryRequests = DeliveryService.getInstance().getAllDeliveryRequestFromIntersection(map, intersection);
+            currentlySelectedIntersection = intersection;
             currentIndex = currentDeliveryRequests.size() - 1;
 //                logDeliveryRequest(deliveryRequest);
 
