@@ -16,8 +16,8 @@ import java.util.*;
 
 public class MapFactory {
 
-    public static CityMap createMapFromPathFile(String pathFile) throws FileNotFoundException {
-        File file = new File(pathFile);
+    public static CityMap createMapFromPathFile(File file) throws FileNotFoundException {
+        // TODO: file is a valid XML map
         if (!file.exists()) {
             throw new FileNotFoundException();
         }

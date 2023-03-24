@@ -2,6 +2,7 @@ package com.deliverif.app.controller;
 
 import com.deliverif.app.Main;
 import com.deliverif.app.model.CityMap;
+import com.deliverif.app.model.DataModel;
 import com.deliverif.app.model.Intersection;
 import com.deliverif.app.model.Segment;
 import com.deliverif.app.services.MapFactory;
@@ -22,6 +23,8 @@ import java.util.ArrayList;
 
 @Getter
 public class MainController {
+    DataModel dataModel;
+
     // Map pane
     @FXML
     private Pane mapPane;
@@ -61,12 +64,13 @@ public class MainController {
     MapController map = new MapController();
 
     public MainController() {
-
+        this.dataModel = new DataModel();
     }
 
     // Method called by the FXML loader after ressource file reading
     public void initialize() {
-//        dummyFunction();
+
+        //        dummyFunction();
 //        System.out.println(courier1streets.toString());
     }
 
@@ -75,21 +79,23 @@ public class MainController {
         FileChooser chooser = new FileChooser();
         File file = chooser.showOpenDialog(menuBar.getScene().getWindow());
         if (file != null) {
-/*            try {
-                ;
-            } catch (IOException exc) {
+           try {
+                this.dataModel.loadMapFromFile(file);
+                System.out.println(dataModel);
+            } catch (Exception exc) {
                 // handle exception...
-            }*/
+            }
         }
     }
+
+
 
     public void dummyFunction() {
         // TODO: Move to model, nothing showing because it's during init... so the windows isn't opened yet and the pane size = 0
         try {
             URL res = Main.class.getResource("maps/smallMap.xml");
             assert res != null;
-            cityMap = MapFactory.createMapFromPathFile(URLDecoder.decode(res.getPath(), StandardCharsets.UTF_8));
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
 

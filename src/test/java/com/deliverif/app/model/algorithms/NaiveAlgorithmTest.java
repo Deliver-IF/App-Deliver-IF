@@ -25,7 +25,8 @@ public class NaiveAlgorithmTest {
     public void setUp() throws FileNotFoundException {
         URL res = NaiveAlgorithmTest.class.getResource("NaiveAlgorithmOptimizeMap.xml");
         assert res != null;
-        cityMap = MapFactory.createMapFromPathFile(URLDecoder.decode(res.getPath(), StandardCharsets.UTF_8));
+        // TODO : to modify
+        //  cityMap = MapFactory.createMapFromPathFile(URLDecoder.decode(res.getPath(), StandardCharsets.UTF_8));
         cityMap.addDeliveryTour();
         mappedIntersections = new HashMap<>();
         for (Intersection intersection : cityMap.getIntersections()) {
