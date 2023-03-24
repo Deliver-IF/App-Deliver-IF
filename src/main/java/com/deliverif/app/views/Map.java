@@ -4,6 +4,7 @@ import com.deliverif.app.models.map.*;
 import com.deliverif.app.services.DeliveryService;
 import javafx.animation.TranslateTransition;
 import javafx.scene.Cursor;
+import javafx.scene.control.Button;
 import javafx.scene.control.DialogPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -122,6 +123,11 @@ public class Map extends Region {
             // Change text on dialog
             Text deliveryWindowText = (Text) mapPane.getScene().lookup("#deliveryWindow");
             deliveryWindowText.setText("No delivery at this intersection");
+
+            Button prevDeliveryPointInfo = (Button) mapPane.getScene().lookup("#prevDeliveryPointInfo");
+            Button nextDeliveryPointInfo = (Button) mapPane.getScene().lookup("#nextDeliveryPointInfo");
+            prevDeliveryPointInfo.setVisible(false);
+            nextDeliveryPointInfo.setVisible(false);
             // Move dialog pane
             DialogPane dialogPane = (DialogPane) mapPane.getScene().lookup("#intersectionInfoDialog");
             movePane(
@@ -166,6 +172,15 @@ public class Map extends Region {
             deliveryWindowText.setText("Delivery Window : " + deliveryRequest.getStartTimeWindow() + "h-"
                             + (deliveryRequest.getStartTimeWindow() + 1) + "h\n"
             );
+
+            Button prevDeliveryPointInfo = (Button) mapPane.getScene().lookup("#prevDeliveryPointInfo");
+            Button nextDeliveryPointInfo = (Button) mapPane.getScene().lookup("#nextDeliveryPointInfo");
+            if(currentIndex == 0) {
+                prevDeliveryPointInfo.setVisible(false);
+            } else {
+                prevDeliveryPointInfo.setVisible(true);
+            }
+            nextDeliveryPointInfo.setVisible(false);
 
             DialogPane dialogPane = (DialogPane) mapPane.getScene().lookup("#intersectionInfoDialog");
             movePane(

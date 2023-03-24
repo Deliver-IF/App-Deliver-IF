@@ -40,7 +40,7 @@
             <StackPane prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                <children>
                    <Pane fx:id="mapPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="481.0" prefWidth="617.0" style="-fx-background-color: #ECECEC;" />
-                  <DialogPane fx:id="intersectionInfoDialog" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="112.0" prefWidth="339.0" style="-fx-background-color: ffffff;">
+                  <DialogPane fx:id="intersectionInfoDialog" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="112.0" prefWidth="339.0" style="-fx-background-color: ffffff;" visible="false">
                      <header>
                         <HBox alignment="TOP_RIGHT" prefHeight="19.0" prefWidth="421.0">
                            <children>
@@ -54,9 +54,9 @@
                      <content>
                         <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="339.0">
                            <children>
-                              <Button layoutX="3.0" layoutY="24.0" mnemonicParsing="false" onMouseClicked="#prevDeliveryPointInfoDialog" prefHeight="24.0" prefWidth="0.0" text="&lt;" />
+                              <Button fx:id="prevDeliveryPointInfo" layoutX="3.0" layoutY="24.0" mnemonicParsing="false" onMouseClicked="#prevDeliveryPointInfoDialog" prefHeight="24.0" prefWidth="0.0" text="&lt;" />
                               <Text fx:id="deliveryWindow" layoutX="55.0" layoutY="39.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Delivery Window : XXh-XXh" textAlignment="CENTER" wrappingWidth="228.28125" />
-                              <Button layoutX="308.0" layoutY="22.0" mnemonicParsing="false" onMouseClicked="#nextDeliveryPointInfoDialog" prefHeight="24.0" prefWidth="29.0" text="&gt;" />
+                              <Button fx:id="nextDeliveryPointInfo" layoutX="308.0" layoutY="22.0" mnemonicParsing="false" onMouseClicked="#nextDeliveryPointInfoDialog" prefHeight="24.0" prefWidth="29.0" text="&gt;" />
                               <Button layoutX="308.0" layoutY="67.0" mnemonicParsing="false" onMouseClicked="#addDeliveryPointDialog" prefHeight="24.0" prefWidth="29.0" text="+" />
                            </children>
                         </AnchorPane>
