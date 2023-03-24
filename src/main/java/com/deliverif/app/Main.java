@@ -47,6 +47,7 @@ public class Main extends Application {
         stage.setScene(defaultScene);
         stage.show();
         MainController controller = fxmlLoader.getController();
+        controller.setMap(this.cityMap);
 
         // ---- Examples ----- //
 
