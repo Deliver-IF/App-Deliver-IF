@@ -10,8 +10,10 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 
+import javafx.stage.FileChooser;
 import lombok.Getter;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -25,6 +27,8 @@ public class MainController {
     private Pane mapPane;
 
     // Menu bar
+    @FXML
+    private MenuBar  menuBar;
     @FXML
     private MenuItem loadMapMenuItem;
     @FXML
@@ -66,8 +70,21 @@ public class MainController {
         System.out.println(courier1streets.toString());
     }
 
+    @FXML
+    public void loadMapAction() {
+        FileChooser chooser = new FileChooser();
+        File file = chooser.showOpenDialog(menuBar.getScene().getWindow());
+        if (file != null) {
+/*            try {
+                ;
+            } catch (IOException exc) {
+                // handle exception...
+            }*/
+        }
+    }
+
     public void dummyFunction() {
-        // TODO: Move to model
+        // TODO: Move to model, nothing showing because it's during init... so the windows isn't opened yet and the pane size = 0
         try {
             URL res = Main.class.getResource("maps/smallMap.xml");
             assert res != null;
