@@ -1,19 +1,17 @@
 package com.deliverif.app.controllers;
 
-import com.deliverif.app.views.Map;
 import com.deliverif.app.models.map.CityMap;
 import com.deliverif.app.models.map.DeliveryTour;
 import com.deliverif.app.services.DeliveryService;
+import com.deliverif.app.views.BaseMap;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.DialogPane;
-import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import lombok.Getter;
 
 import javafx.event.*;
-import javafx.scene.control.Button;
 import lombok.Setter;
 
 import java.util.Map;
@@ -46,14 +44,14 @@ public class MainController {
 
     @FXML
     protected void nextDeliveryPointInfoDialog() {
-        if(Map.currentIndex == 0) {
+        if(BaseMap.currentIndex == 0) {
             prevDeliveryPointInfo.setVisible(true);
         }
-        Map.currentIndex++;
-        deliveryWindow.setText("Delivery Window : " + Map.currentDeliveryRequests.get(Map.currentIndex).getStartTimeWindow() + "h-"
-                + (Map.currentDeliveryRequests.get(Map.currentIndex).getStartTimeWindow() + 1) + "h\n"
+        BaseMap.currentIndex++;
+        deliveryWindow.setText("Delivery Window : " + BaseMap.currentDeliveryRequests.get(BaseMap.currentIndex).getStartTimeWindow() + "h-"
+                + (BaseMap.currentDeliveryRequests.get(BaseMap.currentIndex).getStartTimeWindow() + 1) + "h\n"
         );
-        if(Map.currentIndex == Map.currentDeliveryRequests.size() - 1) {
+        if(BaseMap.currentIndex == BaseMap.currentDeliveryRequests.size() - 1) {
             nextDeliveryPointInfo.setVisible(false);
         }
         System.out.println("Next");
@@ -61,14 +59,14 @@ public class MainController {
 
     @FXML
     protected void prevDeliveryPointInfoDialog() {
-        if(Map.currentIndex == Map.currentDeliveryRequests.size() - 1) {
+        if(BaseMap.currentIndex == BaseMap.currentDeliveryRequests.size() - 1) {
             nextDeliveryPointInfo.setVisible(true);
         }
-        Map.currentIndex--;
-        deliveryWindow.setText("Delivery Window : " + Map.currentDeliveryRequests.get(Map.currentIndex).getStartTimeWindow() + "h-"
-                + (Map.currentDeliveryRequests.get(Map.currentIndex).getStartTimeWindow() + 1) + "h\n"
+        BaseMap.currentIndex--;
+        deliveryWindow.setText("Delivery Window : " + BaseMap.currentDeliveryRequests.get(BaseMap.currentIndex).getStartTimeWindow() + "h-"
+                + (BaseMap.currentDeliveryRequests.get(BaseMap.currentIndex).getStartTimeWindow() + 1) + "h\n"
         );
-        if(Map.currentIndex == 0) {
+        if(BaseMap.currentIndex == 0) {
             prevDeliveryPointInfo.setVisible(false);
         }
         System.out.println("Prev");

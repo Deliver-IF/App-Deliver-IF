@@ -23,7 +23,7 @@
               <menus>
                 <Menu mnemonicParsing="false" text="File">
                   <items>
-                    <MenuItem mnemonicParsing="false" text="Load a map" />
+                    <MenuItem mnemonicParsing="false" text="Load a baseMap" />
                         <MenuItem mnemonicParsing="false" text="Load a tour" />
                         <MenuItem mnemonicParsing="false" text="Save a tour" />
                   </items>

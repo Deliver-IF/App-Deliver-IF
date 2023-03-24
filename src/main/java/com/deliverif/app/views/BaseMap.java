@@ -15,7 +15,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
@@ -24,10 +23,8 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
 
-public class Map extends Region {
+public class BaseMap extends Region {
 
     final Color BASE_MAP_STREETS_COLOR = Color.GRAY;
     final Color BASE_MAP_INTERSECTION_COLOR = Color.BLUE;
@@ -40,7 +37,7 @@ public class Map extends Region {
 
     public static int currentIndex = 0;
 
-    public Map() {}
+    public BaseMap() {}
 
     @Getter
     @Setter

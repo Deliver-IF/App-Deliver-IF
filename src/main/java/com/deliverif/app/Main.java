@@ -3,7 +3,7 @@ package com.deliverif.app;
 import com.deliverif.app.controllers.MainController;
 import com.deliverif.app.models.map.*;
 import com.deliverif.app.services.MapFactory;
-import com.deliverif.app.views.Map;
+import com.deliverif.app.views.BaseMap;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -45,7 +45,7 @@ public class Main extends Application {
         stage.setScene(defaultScene);
         stage.show();
         MainController controller = fxmlLoader.getController();
-        controller.setMap(this.cityMap);
+        controller.setCityMap(this.cityMap);
 
         // ---- Examples ----- //
 
@@ -122,12 +122,12 @@ public class Main extends Application {
 
         // ------------------- //
 
-        Map map = new Map();
+        BaseMap baseMap = new BaseMap();
         cityMap.addDeliveryTourTest(dt1);
         cityMap.addDeliveryTourTest(dt2);
-        map.drawBasemap(controller.getMapPane(), cityMap);
+        baseMap.drawBasemap(controller.getMapPane(), cityMap);
 
-        map.displayDeliveryTour(controller.getMapPane(), cityMap, dt2);
+        baseMap.displayDeliveryTour(controller.getMapPane(), cityMap, dt2);
 
         stage.setTitle("DELIVR'IF");
         stage.show();
