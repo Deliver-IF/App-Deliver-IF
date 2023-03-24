@@ -1,7 +1,7 @@
 package com.deliverif.app.services;
 
-import com.deliverif.app.models.algorithms.NaiveAlgorithm;
-import com.deliverif.app.models.map.DeliveryTour;
+import com.deliverif.app.algorithm.NaiveAlgorithm;
+import com.deliverif.app.model.DeliveryTour;
 import org.apache.commons.lang3.NotImplementedException;
 
 public class DeliveryService {

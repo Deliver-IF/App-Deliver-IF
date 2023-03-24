@@ -1,6 +1,6 @@
-package com.deliverif.app.models.map;
+package com.deliverif.app.model;
 
-import com.deliverif.app.models.algorithms.astar.GraphNode;
+import com.deliverif.app.algorithm.astar.GraphNode;
 import lombok.Getter;
 import org.apache.commons.lang3.tuple.Pair;
 import org.w3c.dom.Element;

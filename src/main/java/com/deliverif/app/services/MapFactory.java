@@ -1,8 +1,8 @@
 package com.deliverif.app.services;
 
-import com.deliverif.app.models.map.CityMap;
-import com.deliverif.app.models.map.Intersection;
-import com.deliverif.app.models.map.Segment;
+import com.deliverif.app.model.CityMap;
+import com.deliverif.app.model.Intersection;
+import com.deliverif.app.model.Segment;
 import javafx.util.Pair;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

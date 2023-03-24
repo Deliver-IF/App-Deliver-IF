@@ -1,4 +1,4 @@
-package com.deliverif.app.models.map;
+package com.deliverif.app.model;
 
 import lombok.Getter;
 import org.apache.commons.lang3.tuple.Pair;

@@ -1,6 +1,6 @@
-package com.deliverif.app.models.algorithms.astar;
+package com.deliverif.app.algorithm.astar;
 
-import com.deliverif.app.models.map.Intersection;
+import com.deliverif.app.model.Intersection;
 
 public class HaversineScorer implements Scorer<Intersection> {
     @Override

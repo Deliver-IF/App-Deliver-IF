@@ -12,7 +12,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="600.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.deliverif.app.controllers.MainController">
+<BorderPane prefHeight="600.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.deliverif.app.controller.MainController">
    <top>
       <VBox>
          <children>
@@ -20,18 +20,18 @@
               <menus>
                 <Menu mnemonicParsing="false" text="File">
                   <items>
-                    <MenuItem mnemonicParsing="false" text="Load a map" />
-                        <MenuItem mnemonicParsing="false" text="Load a tour" />
-                        <MenuItem mnemonicParsing="false" text="Save a tour" />
+                    <MenuItem fx:id="loadMapMenuItem" mnemonicParsing="false" text="Load a map" />
+                        <MenuItem fx:id="loadTourMenuItem" mnemonicParsing="false" text="Load a tour" />
+                        <MenuItem fx:id="saveTourMenuItem" mnemonicParsing="false" text="Save a tour" />
                   </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="About">
+                <Menu fx:id="aboutMenu" mnemonicParsing="false" text="About">
                 </Menu>
               </menus>
             </MenuBar>
             <BorderPane style="-fx-border-style: none none solid none; -fx-border-width: 1; -fx-border-color: transparent transparent black transparent;">
                <left>
-                  <Button mnemonicParsing="false" text="Add delivery" BorderPane.alignment="CENTER">
+                  <Button fx:id="addDeliveryButton" mnemonicParsing="false" text="Add delivery" BorderPane.alignment="CENTER">
                      <BorderPane.margin>
                         <Insets left="10.0" />
                      </BorderPane.margin>
@@ -45,22 +45,22 @@
                               <Insets right="10.0" />
                            </HBox.margin>
                         </Label>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="0">
+                        <Text fx:id="nbCourierText" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
                            <HBox.margin>
                               <Insets right="10.0" />
                            </HBox.margin>
                         </Text>
-                        <Button mnemonicParsing="false" text="+">
+                        <Button fx:id="increaseCourierButton" mnemonicParsing="false" text="+">
                            <HBox.margin>
                               <Insets right="10.0" />
                            </HBox.margin>
                         </Button>
-                        <Button mnemonicParsing="false" text=" - ">
+                        <Button fx:id="decreaseCourierButton" mnemonicParsing="false" text=" - ">
                            <HBox.margin>
                               <Insets right="10.0" />
                            </HBox.margin>
                         </Button>
-                        <ComboBox prefWidth="150.0">
+                        <ComboBox fx:id="selectCourierButton" prefWidth="150.0">
                            <HBox.margin>
                               <Insets right="10.0" />
                            </HBox.margin>
@@ -91,7 +91,7 @@
                         <Insets bottom="10.0" top="10.0" />
                      </VBox.margin>
                   </Text>
-                  <Text layoutX="10.0" layoutY="22.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text">
+                  <Text fx:id="deliveryDetailsText" layoutX="10.0" layoutY="22.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text">
                      <VBox.margin>
                         <Insets left="10.0" right="10.0" />
                      </VBox.margin>
@@ -104,7 +104,7 @@
                         <Font name="System Bold" size="15.0" />
                      </font>
                   </Text>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Text">
+                  <Text fx:id="itineraryText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text">
                      <VBox.margin>
                         <Insets left="10.0" right="10.0" />
                      </VBox.margin>

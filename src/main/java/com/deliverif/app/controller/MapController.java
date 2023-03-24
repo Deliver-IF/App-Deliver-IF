@@ -1,10 +1,9 @@
-package com.deliverif.app.views;
+package com.deliverif.app.controller;
 
-import com.deliverif.app.models.map.CityMap;
-import com.deliverif.app.models.map.Intersection;
-import com.deliverif.app.models.map.Segment;
+import com.deliverif.app.model.CityMap;
+import com.deliverif.app.model.Intersection;
+import com.deliverif.app.model.Segment;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
@@ -15,11 +14,11 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 
-public class Map extends Region {
+public class MapController {
     int numberOfCouriers = 0;
     boolean mapDrawn = false;
 
-    public Map() {}
+    public MapController() {}
 
     @Getter
     @Setter

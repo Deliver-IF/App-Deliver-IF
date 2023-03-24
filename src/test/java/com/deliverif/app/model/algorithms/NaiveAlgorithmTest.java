@@ -1,8 +1,9 @@
-package com.deliverif.app.models.algorithms;
+package com.deliverif.app.model.algorithms;
 
-import com.deliverif.app.models.map.CityMap;
-import com.deliverif.app.models.map.DeliveryTour;
-import com.deliverif.app.models.map.Intersection;
+import com.deliverif.app.algorithm.NaiveAlgorithm;
+import com.deliverif.app.model.CityMap;
+import com.deliverif.app.model.DeliveryTour;
+import com.deliverif.app.model.Intersection;
 import com.deliverif.app.services.MapFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

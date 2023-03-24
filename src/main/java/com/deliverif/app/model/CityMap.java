@@ -1,4 +1,4 @@
-package com.deliverif.app.models.map;
+package com.deliverif.app.model;
 
 import javafx.util.Pair;
 import lombok.Getter;
