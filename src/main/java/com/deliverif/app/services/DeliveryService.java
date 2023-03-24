@@ -2,6 +2,7 @@ package com.deliverif.app.services;
 
 import com.deliverif.app.models.map.CityMap;
 import com.deliverif.app.models.map.DeliveryRequest;
+import com.deliverif.app.models.algorithms.NaiveAlgorithm;
 import com.deliverif.app.models.map.DeliveryTour;
 import com.deliverif.app.models.map.Intersection;
 import org.apache.commons.lang3.NotImplementedException;
@@ -22,8 +23,8 @@ public class DeliveryService {
         return instance;
     }
 
-    public void searchOptimalDeliveryTour() {
-        throw new NotImplementedException();
+    public void searchOptimalDeliveryTour(DeliveryTour deliveryTour) {
+        NaiveAlgorithm.getInstance().optimize(deliveryTour);
     }
 
     public DeliveryTour loadDeliveryFromFile(String filePath) {

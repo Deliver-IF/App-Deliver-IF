@@ -1,5 +1,8 @@
 package com.deliverif.app.views;
 
+import com.deliverif.app.models.map.CityMap;
+import com.deliverif.app.models.map.Intersection;
+import com.deliverif.app.models.map.Segment;
 import com.deliverif.app.models.map.*;
 import com.deliverif.app.services.DeliveryService;
 import javafx.animation.TranslateTransition;
@@ -99,7 +102,7 @@ public class Map extends Region {
     }
 
     /**
-     * Remove the path followed of a courier.
+     * Remove the path followed by a courier.
      */
     static public void hideCourierPath() {
         // TODO
@@ -147,6 +150,14 @@ public class Map extends Region {
         mapPane.getChildren().add(point);
     }
 
+    /**
+     * Display a delivery point on the map pane.
+     *
+     * @param mapPane       the map pane to display the delivery point on.
+     * @param map           the map containing the data (coordinates) of the different objects displayed on the map pane.
+     * @param deliveryPoint the Intersection representing the delivery point.
+     * @param color         the color that has to be used to draw the delivery point.
+     */
     static private void displayDeliveryPoint(
             Pane mapPane, CityMap map, Intersection intersection, Paint color, DeliveryRequest deliveryRequest
     ) {
@@ -227,6 +238,14 @@ public class Map extends Region {
                 + "h\n");
     }
 
+    /**
+     * Display a street on the map pane.
+     *
+     * @param mapPane   the map pane to draw the street on.
+     * @param map       the map containing the data (coordinates) of the different objects displayed on the map pane.
+     * @param street    the Segment representing the street.
+     * @param color     the color that has to be used to draw the street.
+     */
     static private void displaySegment(Pane mapPane, CityMap map, Segment segment, Paint color) {
         Coordinates origin = getCoordinates(mapPane, map, segment.getOrigin().getLongitude(), segment.getOrigin().getLatitude());
         Coordinates destination = getCoordinates(mapPane, map, segment.getDestination().getLongitude(), segment.getDestination().getLatitude());
@@ -241,6 +260,14 @@ public class Map extends Region {
         mapPane.getChildren().add(line);
     }
 
+    /**
+     * Display the warehouse on the map. It is represented by a big square.
+     *
+     * @param mapPane   the map pane to draw the warehouse on.
+     * @param map       the map containing the data of the map.
+     * @param warehouse the intersection representing the warehouse.
+     * @param color     the color that has to be used to draw the warehouse.
+     */
     static private void displayWarehouse(Pane mapPane, CityMap map, Intersection warehouse, Paint color) {
         Coordinates origin = getCoordinates(mapPane, map, warehouse.getLongitude(), warehouse.getLatitude());
 
@@ -255,6 +282,15 @@ public class Map extends Region {
         mapPane.getChildren().add(rectangle);
     }
 
+    /**
+     * Returns the coordinates of a point on the map, from its latitude and longitude.
+     *
+     * @param mapPane   the map pane of a controller.
+     * @param map       the map where the point will be drawn on.
+     * @param longitude the longitude of the point to convert
+     * @param latitude  the latitude of the point to convert
+     * @return
+     */
     static private Coordinates getCoordinates(Pane mapPane, CityMap map, float longitude, float latitude) {
         float xRatio = map.getLongitudeRange() / (float) mapPane.getWidth();
         float yRatio = map.getLatitudeRange() / (float) mapPane.getHeight();
@@ -268,6 +304,12 @@ public class Map extends Region {
         );
     }
 
+    /**
+     *  Jenkins One-At-A-Time hash function.
+     *
+     * @param value the value to be hashed.
+     * @return      the hashed value
+     */
     static private int joaat(int value) {
         int hash = value;
         hash += (hash << 10);

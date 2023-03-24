@@ -39,12 +39,13 @@ public class Main extends Application {
         double width = screenSize.getWidth()-screenSize.getWidth()*0.2;
         double height = screenSize.getHeight()-screenSize.getHeight()*0.2;
 
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("views/main.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("views/add_delivery_request.fxml"));
 
-        Scene scene = new Scene(fxmlLoader.load(), width, height);
-        stage.setScene(scene);
+        Scene defaultScene = new Scene(fxmlLoader.load(), width, height);
+        stage.setScene(defaultScene);
         stage.show();
         MainController controller = fxmlLoader.getController();
+        controller.setMap(this.cityMap);
 
         // ---- Examples ----- //
 
@@ -126,7 +127,6 @@ public class Main extends Application {
         cityMap.addDeliveryTourTest(dt2);
         map.drawBasemap(controller.getMapPane(), cityMap);
 
-//        map.displayDeliveryTour(controller.getMapPane(), cityMap, dt1);
         map.displayDeliveryTour(controller.getMapPane(), cityMap, dt2);
 
         stage.setTitle("DELIVR'IF");
