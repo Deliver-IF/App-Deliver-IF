@@ -1,11 +1,11 @@
 package com.deliverif.app.model;
 
+import javafx.scene.shape.Circle;
 import com.deliverif.app.algorithm.astar.GraphNode;
 import lombok.Getter;
 import org.apache.commons.lang3.tuple.Pair;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,15 +15,19 @@ public class Intersection implements GraphNode {
     private final float longitude;
     private final float latitude;
     private final Set<Pair<Intersection, Segment>> reachableIntersections;
+    private Circle defaultShapeOnMap;
 
-    // TODO : constructor has to be switch to protected
-    public Intersection(String id, Float longitude, Float latitude) {
+    private Intersection(String id, Float longitude, Float latitude) {
         this.id = id;
         this.longitude = longitude;
         this.latitude = latitude;
         this.reachableIntersections = new HashSet<>();
+        this.defaultShapeOnMap = new Circle();
     }
 
+    public void setDefaultShapeOnMap(Circle point) {
+        this.defaultShapeOnMap = point;
+    }
 
     public static Intersection create(Node node) throws Exception {
         if (node == null || node.getNodeType() != Node.ELEMENT_NODE) {

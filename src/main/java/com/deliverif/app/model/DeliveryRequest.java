@@ -10,7 +10,7 @@ public class DeliveryRequest {
     private final int startTimeWindow;
     private final Intersection intersection;
 
-    protected DeliveryRequest(int startTimeWindow, Intersection intersection) {
+    public DeliveryRequest(int startTimeWindow, Intersection intersection) {
         this.startTimeWindow = startTimeWindow;
         this.id = idCounter++;
         this.intersection = intersection;

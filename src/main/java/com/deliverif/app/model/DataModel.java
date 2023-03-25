@@ -6,7 +6,6 @@ import lombok.Getter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
@@ -89,7 +88,8 @@ public class DataModel {
                 segmentsMap.put(new Pair<>(segment.getOrigin().getId(), segment.getDestination().getId()), segment);
             }
 
-            this.cityMap = new CityMap(warehouse, segments, new HashSet<>(intersections.values()), segmentsMap, connections, minLatitude, maxLatitude, minLongitude, maxLongitude);
+            this.cityMap = CityMap.create(warehouse, segments, new HashSet<>(intersections.values()), segmentsMap, connections, minLatitude, maxLatitude, minLongitude, maxLongitude);
+            cityMap.addDeliveryTour();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

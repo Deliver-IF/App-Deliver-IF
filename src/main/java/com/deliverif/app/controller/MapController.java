@@ -1,23 +1,33 @@
 package com.deliverif.app.controller;
 
-import com.deliverif.app.model.CityMap;
-import com.deliverif.app.model.Intersection;
-import com.deliverif.app.model.Segment;
+import com.deliverif.app.model.*;
+import com.deliverif.app.services.DeliveryService;
+import com.deliverif.app.utils.Constants;
+import javafx.animation.TranslateTransition;
+import javafx.scene.Cursor;
+import javafx.scene.control.Button;
+import javafx.scene.control.DialogPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
+import javafx.util.Duration;
 import lombok.Getter;
 import lombok.Setter;
-
 import java.util.ArrayList;
+import java.util.Collection;
+
 
 public class MapController {
     int numberOfCouriers = 0;
     boolean mapDrawn = false;
+    public static ArrayList<DeliveryRequest> currentDeliveryRequests = new ArrayList<>();
+    public static Intersection currentlySelectedIntersection;
 
+    public static int currentIndex = 0;
     public MapController() {}
 
     @Getter
@@ -32,100 +42,102 @@ public class MapController {
         }
     }
 
+    // ------------------------------------------- //
+    // ------------- Base of the Map ------------- //
+    // ------------------------------------------- //
+
     /**
-     * Draw the streets of a map.
+     * Draw the whole map (streets, warehouse, etc.)
      *
-     * @param mapPane
-     * @param map
+     * @param mapPane the javafx graphic element where the map and all streets and intersections are drawn
+     * @param map the object with all map elements
      */
     public void drawBasemap(Pane mapPane, CityMap map) {
         if (!mapDrawn) {
-            for (Segment street : map.getSegments()) {
-                displayStreet(mapPane, map, street, Color.GRAY);
-            }
-            displayWarehouse(mapPane, map, map.getWarehouse(), Color.BLACK);
-
+            displayCrossings(mapPane, map, map.getIntersections());
+            displayStreets(mapPane, map, map.getStreets(), Constants.BASE_MAP_STREETS_COLOR);
+            displayWarehouse(mapPane, map, map.getWarehouse(), Constants.WAREHOUSE_COLOR);
             mapDrawn = true;
         }
     }
 
     /**
-     * Draw the path followed of a courier.
+     * Draw a collecion of intersections. Those intersections are the default one. They are invisible but allow
+     * the user to interact with them.
      *
-     * @param mapPane
-     * @param map
-     * @param streetsList
+     * @param mapPane the javafx graphic element where the map and all streets and intersections are drawn
+     * @param map the object with all map elements
+     * @param intersections collection of streets we want to draw
      */
-    public void displayCourierPath(Pane mapPane, CityMap map, ArrayList<Segment> streetsList, ArrayList<Intersection> deliveryPoints) {
-        Color color = Color.rgb(joaat(numberOfCouriers+1) & 255, joaat(numberOfCouriers+1) >> 16 & 255, joaat(numberOfCouriers+1) >> 31 & 255);
-
-        // Streets
-        for (Segment street : streetsList) {
-            displayStreet(mapPane, map, street, color);
+    private void displayCrossings(Pane mapPane, CityMap map, Collection<Intersection> intersections) {
+        for(Intersection intersection : intersections) {
+            displayIntersection(mapPane, map, intersection);
         }
-
-        // Delivery Points
-        for (Intersection deliveryPoint : deliveryPoints) {
-            displayDeliveryPoint(mapPane, map, deliveryPoint, color);
-        }
-
-        numberOfCouriers++;
     }
 
     /**
-     * Remove the path followed by a courier.
-     */
-    static public void hideCourierPath() {
-        // TODO
-    }
-
-    /**
-     * Display a delivery point on the map pane.
+     * Draw a specific intersection. This intersection is a default one. It is invisible but allow
+     *      * the user to interact with it.
      *
-     * @param mapPane       the map pane to display the delivery point on.
-     * @param map           the map containing the data (coordinates) of the different objects displayed on the map pane.
-     * @param deliveryPoint the Intersection representing the delivery point.
-     * @param color         the color that has to be used to draw the delivery point.
+     * @param mapPane the javafx graphic element where the map and all streets and intersections are drawn
+     * @param map the object with all map elements
+     * @param intersection the intersection we are drawing
      */
-    static private void displayDeliveryPoint(Pane mapPane, CityMap map, Intersection deliveryPoint, Paint color) {
-        Coordinates origin = getCoordinates(mapPane, map, deliveryPoint.getLongitude(), deliveryPoint.getLatitude());
-        Circle point = new Circle(
-                origin.getX(),
-                origin.getY(),
-                5
-        );
-        point.setStroke(color);
-        point.setFill(color);
+    private void displayIntersection(
+            Pane mapPane, CityMap map, Intersection intersection
+    ) {
+        Coordinates origin = getCoordinates(mapPane, map, intersection.getLongitude(), intersection.getLatitude());
+
+        // Determine all properties of the shape we will draw on map
+        Circle point = new Circle();
+        point.setCenterX(origin.getX());
+        point.setCenterY(origin.getY());
+        point.setFill(Constants.BASE_MAP_INTERSECTION_COLOR);
+        point.setRadius(Constants.INTERSECTION_SHAPE_RADIUS);
+
+        // Click on an intersection
+        point.setOnMouseClicked(mouseEvent -> {
+            currentlySelectedIntersection = intersection;
+
+            // Change text on dialog
+            Text deliveryWindowText = (Text) mapPane.getScene().lookup("#deliveryWindow");
+            deliveryWindowText.setText("No delivery at this intersection");
+
+            Button prevDeliveryPointInfo = (Button) mapPane.getScene().lookup("#prevDeliveryPointInfo");
+            Button nextDeliveryPointInfo = (Button) mapPane.getScene().lookup("#nextDeliveryPointInfo");
+            prevDeliveryPointInfo.setVisible(false);
+            nextDeliveryPointInfo.setVisible(false);
+
+            // Move dialog pane
+            DialogPane dialogPane = (DialogPane) mapPane.getScene().lookup("#intersectionInfoDialog");
+            movePane(
+                    mapPane,
+                    dialogPane,
+                    origin.getX() - (dialogPane.getWidth() / 2),
+                    origin.getY() - dialogPane.getHeight() - 20
+            );
+        });
+
+        // Event which change cursor on intersection hover
+        point.setOnMouseEntered(mouseEvent -> {
+            mapPane.getScene().setCursor(Cursor.HAND);
+            intersection.getDefaultShapeOnMap().setFill(Constants.BASE_MAP_INTERSECTION_COLOR_HOVER);
+        });
+        point.setOnMouseExited(mouseEvent -> {
+            mapPane.getScene().setCursor(Cursor.DEFAULT);
+            intersection.getDefaultShapeOnMap().setFill(Constants.BASE_MAP_INTERSECTION_COLOR);
+        });
+
+        intersection.setDefaultShapeOnMap(point);
+
         mapPane.getChildren().add(point);
-    }
-
-    /**
-     * Display a street on the map pane.
-     *
-     * @param mapPane   the map pane to draw the street on.
-     * @param map       the map containing the data (coordinates) of the different objects displayed on the map pane.
-     * @param street    the Segment representing the street.
-     * @param color     the color that has to be used to draw the street.
-     */
-    static private void displayStreet(Pane mapPane, CityMap map, Segment street, Paint color) {
-        Coordinates origin = getCoordinates(mapPane, map, street.getOrigin().getLongitude(), street.getOrigin().getLatitude());
-        Coordinates destination = getCoordinates(mapPane, map, street.getDestination().getLongitude(), street.getDestination().getLatitude());
-        Line line = new Line(
-                origin.getX(),
-                origin.getY(),
-                destination.getX(),
-                destination.getY()
-        );
-        line.setStroke(color);
-        line.setStrokeWidth(3);
-        mapPane.getChildren().add(line);
     }
 
     /**
      * Display the warehouse on the map. It is represented by a big square.
      *
-     * @param mapPane   the map pane to draw the warehouse on.
-     * @param map       the map containing the data of the map.
+     * @param mapPane the javafx graphic element where the map and all streets and intersections are drawn
+     * @param map the object with all map elements
      * @param warehouse the intersection representing the warehouse.
      * @param color     the color that has to be used to draw the warehouse.
      */
@@ -143,11 +155,177 @@ public class MapController {
         mapPane.getChildren().add(rectangle);
     }
 
+    // ------------------------------------------- //
+    // -------------- Delivery Tour -------------- //
+    // ------------------------------------------- //
+
     /**
-     * Returns the coordinates of a point on the map, from its latitude and longitude.
+     * Draw the path followed by a courier and all stops
      *
-     * @param mapPane   the map pane of a controller.
-     * @param map       the map where the point will be drawn on.
+     * @param mapPane the javafx graphic element where the map and all streets and intersections are drawn
+     * @param map the object with all map elements
+     * @param deliveryTour the deliveryTour to draw
+     */
+    public void displayDeliveryTour(Pane mapPane, CityMap map, DeliveryTour deliveryTour) {
+        Color color = Color.rgb(joaat(numberOfCouriers+1) & 255, joaat(numberOfCouriers+1) >> 16 & 255, joaat(numberOfCouriers+1) >> 31 & 255);
+
+        // Streets
+        displayStreets(mapPane, map, deliveryTour.getTour(), color);
+        // Delivery Points
+        for (DeliveryRequest deliveryRequest : deliveryTour.getStops()) {
+            displayDeliveryPoint(mapPane, map, deliveryRequest.getIntersection(), color, deliveryRequest);
+        }
+        System.out.println("Test 3");
+
+        numberOfCouriers++;
+    }
+
+    /**
+     * Remove the path followed by a courier.
+     */
+    static public void hideCourierPath() {
+        // TODO
+    }
+
+    /**
+     * Display a delivery point on the map pane.
+     *
+     * @param mapPane the javafx graphic element where the map and all streets and intersections are drawn
+     * @param map the object with all map elements
+     * @param intersection the Intersection representing the delivery point.
+     * @param color         the color that has to be used to draw the delivery point.
+     * @param deliveryRequest the delivery request we try to display, in order to retrieve all the information related to it
+     */
+    private void displayDeliveryPoint(
+            Pane mapPane, CityMap map, Intersection intersection, Paint color, DeliveryRequest deliveryRequest
+    ) {
+        Coordinates origin = getCoordinates(mapPane, map, intersection.getLongitude(), intersection.getLatitude());
+
+        // Determine all properties of the shape we will draw on map
+        Circle point = new Circle();
+        point.setCenterX(origin.getX());
+        point.setCenterY(origin.getY());
+        point.setStroke(color);
+        point.setFill(color);
+        point.setRadius(Constants.DELIVERY_REQUEST_SHAPE_RADIUS);
+
+        point.setOnMouseClicked(mouseEvent -> {
+            System.out.println(origin.getX() + " " + origin.getY());
+
+            Text deliveryWindowText = (Text) mapPane.getScene().lookup("#deliveryWindow");
+
+            currentDeliveryRequests = DeliveryService.getInstance().getAllDeliveryRequestFromIntersection(map, intersection);
+            currentlySelectedIntersection = intersection;
+            currentIndex = currentDeliveryRequests.size() - 1;
+
+            deliveryWindowText.setText("Delivery Window : " + deliveryRequest.getStartTimeWindow() + "h-"
+                    + (deliveryRequest.getStartTimeWindow() + 1) + "h\n"
+            );
+
+            Button prevDeliveryPointInfo = (Button) mapPane.getScene().lookup("#prevDeliveryPointInfo");
+            Button nextDeliveryPointInfo = (Button) mapPane.getScene().lookup("#nextDeliveryPointInfo");
+            if(currentIndex == 0) {
+                prevDeliveryPointInfo.setVisible(false);
+            } else {
+                prevDeliveryPointInfo.setVisible(true);
+            }
+            nextDeliveryPointInfo.setVisible(false);
+
+            DialogPane dialogPane = (DialogPane) mapPane.getScene().lookup("#intersectionInfoDialog");
+            movePane(
+                    mapPane,
+                    dialogPane,
+                    origin.getX() - (dialogPane.getWidth() / 2),
+                    origin.getY() - dialogPane.getHeight() - 20
+            );
+
+        });
+
+        // Event which change cursor on intersection hover
+        point.setOnMouseEntered(mouseEvent -> mapPane.getScene().setCursor(Cursor.HAND));
+        point.setOnMouseExited(mouseEvent -> mapPane.getScene().setCursor(Cursor.DEFAULT));
+
+        intersection.setDefaultShapeOnMap(point);
+
+        mapPane.getChildren().add(point);
+    }
+
+    // ------------------------------------------- //
+    // ----- Base of the Map & Delivery Tour ----- //
+    // ------------------------------------------- //
+
+    /**
+     * Draw a collecion of streets
+     *
+     * @param mapPane the javafx graphic element where the map and all streets and intersections are drawn
+     * @param map the object with all map elements
+     * @param streets collection of streets we want to draw
+     * @param color which color we want to draw the streets with
+     */
+    private void displayStreets(Pane mapPane, CityMap map, Collection<Segment> streets, Color color) {
+        for (Segment street : streets) {
+            displaySegment(mapPane, map, street, color);
+        }
+    }
+
+    /**
+     * Display a street on the map pane.
+     *
+     * @param mapPane the javafx graphic element where the map and all streets and intersections are drawn
+     * @param map the object with all map elements
+     * @param segment    the Segment representing the street.
+     * @param color     the color that has to be used to draw the street.
+     */
+    static private void displaySegment(Pane mapPane, CityMap map, Segment segment, Paint color) {
+        Coordinates origin = getCoordinates(mapPane, map, segment.getOrigin().getLongitude(), segment.getOrigin().getLatitude());
+        Coordinates destination = getCoordinates(mapPane, map, segment.getDestination().getLongitude(), segment.getDestination().getLatitude());
+        Line line = new Line(
+                origin.getX(),
+                origin.getY(),
+                destination.getX(),
+                destination.getY()
+        );
+        line.setStroke(color);
+        line.setStrokeWidth(3);
+        mapPane.getChildren().add(line);
+
+        Circle originSegment = segment.getOrigin().getDefaultShapeOnMap();
+        Circle destinationSegment = segment.getDestination().getDefaultShapeOnMap();
+        mapPane.getChildren().remove(originSegment);
+        mapPane.getChildren().add(originSegment);
+        mapPane.getChildren().remove(destinationSegment);
+        mapPane.getChildren().add(destinationSegment);
+    }
+
+    // ------------------------------------------- //
+    // ---------------- Utilities ---------------- //
+    // ------------------------------------------- //
+
+    /**
+     * Move the Dialog Pane which display information about Delivery Requests above and about the selected intersection.
+     *
+     * @param mapPane the javafx graphic element where the map and all streets and intersections are drawn
+     * @param paneToMove the javafx pane we want to move (Dialog Pane in that case)
+     * @param x abscissa coordinates where we want to move the pane on
+     * @param y ordinate coordinates where we want to move the pane on
+     */
+    static private void movePane(Pane mapPane, DialogPane paneToMove, double x, double y) {
+        TranslateTransition tt = new TranslateTransition(Duration.millis(1), paneToMove);
+        tt.setToX(x - (mapPane.getWidth() / 2.0) + (paneToMove.getWidth() / 2.0));
+        tt.setToY(y - (mapPane.getHeight() / 2.0) + (paneToMove.getHeight() / 2.0) - 10.0);
+        tt.setCycleCount(1);
+        tt.setAutoReverse(false);
+        tt.play();
+
+        paneToMove.setVisible(true);
+    }
+
+    /**
+     * Returns the coordinates of a point on the map, from its latitude and longitude. The coordinates are relative to
+     * the window
+     *
+     * @param mapPane the javafx graphic element where the map and all streets and intersections are drawn
+     * @param map the object with all map elements
      * @param longitude the longitude of the point to convert
      * @param latitude  the latitude of the point to convert
      * @return
@@ -160,8 +338,8 @@ public class MapController {
 
         // For each coordinate we get the corresponding pixel position and we center it
         return new Coordinates(
-            (longitude - map.getMinLongitude()) / ratio + (mapPane.getWidth()-map.getLongitudeRange()/ratio) / 2,
-            (map.getLatitudeRange() - latitude + map.getMinLatitude()) / ratio + (mapPane.getHeight()-map.getLatitudeRange()/ratio) / 2
+                (longitude - map.getMinLongitude()) / ratio + (mapPane.getWidth()-map.getLongitudeRange()/ratio) / 2,
+                (map.getLatitudeRange() - latitude + map.getMinLatitude()) / ratio + (mapPane.getHeight()-map.getLatitudeRange()/ratio) / 2
         );
     }
 

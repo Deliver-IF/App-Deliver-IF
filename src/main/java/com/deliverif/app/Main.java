@@ -1,12 +1,12 @@
 package com.deliverif.app;
 
+import com.deliverif.app.utils.Constants;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 
 public class Main extends Application {
@@ -23,12 +23,13 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
+
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("view/main.fxml"));
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root, screenWidth, screenHeight);
 
         primaryStage.setScene(scene);
-        primaryStage.setTitle("DELIVR'IF");
+        primaryStage.setTitle(Constants.APP_NAME);
         primaryStage.show();
     }
 
