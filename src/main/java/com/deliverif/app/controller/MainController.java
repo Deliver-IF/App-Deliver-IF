@@ -68,11 +68,17 @@ public class MainController {
         this.dataModel = new DataModel();
     }
 
-    // Method called by the FXML loader after ressource file reading
+    /**
+     * Method called by the FXML loader after ressource file reading
+     */
     public void initialize() {
 
     }
 
+    /**
+     * Display a dialog window to select a map on the user's device.
+     * If the map is successfully loaded, it is displayed on the map pane.
+     */
     @FXML
     public void loadMapAction() {
         FileChooser chooser = new FileChooser();
@@ -88,11 +94,18 @@ public class MainController {
         this.dataModel.getMapController().drawBasemap(this.mapPane, this.dataModel.getCityMap());
     }
 
+    /**
+     * Close the currently open "Intersection info" pop-up.
+     */
     @FXML
     protected void hideIntersectionInfoDialog() {
         intersectionInfoDialog.setVisible(false);
     }
 
+    /**
+     * If the user clicks on the "next delivery request button" (<), the pop-up loads the information
+     * of the next delivery request on the schedule and displays it.
+     */
     @FXML
     protected void nextDeliveryPointInfoDialog() {
         if(MapController.currentIndex == 0) {
@@ -108,6 +121,10 @@ public class MainController {
         System.out.println("Next");
     }
 
+    /**
+     * If the user clicks on the "previous delivery request button" (<), the pop-up loads the information
+     * of the previous delivery request on the schedule and displays it.
+     */
     @FXML
     protected void prevDeliveryPointInfoDialog() {
         if(MapController.currentIndex == MapController.currentDeliveryRequests.size() - 1) {
@@ -123,6 +140,11 @@ public class MainController {
         System.out.println("Prev");
     }
 
+    /**
+     * Display a pop-up when the user clicks on an intersection / delivery point.
+     * If they are some delivery request at this intersection, they are displayed.
+     * The user can also use this pop-up to create a new delivery request.
+     */
     @FXML
     protected void addDeliveryPointDialog() {
         newDeliveryRequestDialogPane.setVisible(true);
@@ -150,11 +172,18 @@ public class MainController {
         }
     }
 
+    /**
+     * Close the currently open "Add a new delivery request" pop-up.
+     */
     @FXML
     protected void closeAddDeliveryRequestDialogPane() {
         newDeliveryRequestDialogPane.setVisible(false);
     }
 
+    /**
+     * Get the data from the currently open "Add new delivery request pop-up" and add the delivery request
+     * to the selected courier.
+     */
     @FXML
     protected void addDeliveryRequest() {
         DeliveryService deliveryService = DeliveryService.getInstance();
@@ -162,9 +191,10 @@ public class MainController {
         DeliveryRequest deliveryRequest = new DeliveryRequest(timeWindows.get(timeWindowChoiceBox.getValue()), MapController.currentlySelectedIntersection);
         deliveryTour.addDeliveryRequest(deliveryRequest);
         deliveryService.searchOptimalDeliveryTour(deliveryTour);
-        closeAddDeliveryRequestDialogPane();
         MapController MapController = new MapController();
         MapController.displayDeliveryTour(mapPane, dataModel.getCityMap(), deliveryTour);
+        closeAddDeliveryRequestDialogPane();
+        intersectionInfoDialog.setVisible(false);
     }
 
 

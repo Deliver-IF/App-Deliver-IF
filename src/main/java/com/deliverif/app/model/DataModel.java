@@ -25,6 +25,12 @@ public class DataModel {
         this.mapController = new MapController();
     }
 
+    /**
+     * Set a new CityMap object to the DataModel object.
+     *
+     * @param file                      the file containing the data of the new map to load.
+     * @throws FileNotFoundException    the file is missing on the user's device.
+     */
     public void loadMapFromFile(File file) throws FileNotFoundException {
         // TODO: file is a valid XML map
         if (!file.exists()) {
