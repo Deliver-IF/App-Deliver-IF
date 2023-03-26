@@ -1,4 +1,4 @@
-package com.deliverif.app.model.algorithms;
+package com.deliverif.app.algorithm;
 
 import org.junit.jupiter.api.Test;
 

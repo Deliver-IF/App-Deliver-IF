@@ -1,5 +1,7 @@
 package com.deliverif.app.controller;
 
+import com.deliverif.app.exceptions.NoCourierUnavailableException;
+import com.deliverif.app.model.CityMap;
 import com.deliverif.app.model.DataModel;
 import com.deliverif.app.model.DeliveryRequest;
 import com.deliverif.app.model.DeliveryTour;
@@ -86,12 +88,45 @@ public class MainController {
         if (file != null) {
            try {
                 this.dataModel.loadMapFromFile(file);
+                CityMap citymap = this.dataModel.getCityMap();
+                if(citymap != null) {
+                    citymap.addDeliveryTour();
+                    this.nbCourierText.setText(Integer.toString(citymap.getDeliveryTours().size()));
+                }
             } catch (Exception exc) {
                 // handle exception...
             }
         }
         //TODO: controller in model...
         this.dataModel.getMapController().drawBasemap(this.mapPane, this.dataModel.getCityMap());
+    }
+
+    @FXML
+    public void addCourier() {
+        CityMap citymap = this.dataModel.getCityMap();
+        if(citymap != null) {
+           citymap.addDeliveryTour();
+            int nbCourier = citymap.getDeliveryTours().size();
+            this.nbCourierText.setText(Integer.toString(nbCourier));
+        }
+    }
+
+    @FXML
+    public void deleteCourier() {
+        CityMap citymap = this.dataModel.getCityMap();
+        if(citymap != null) {
+            int nbCourier = citymap.getDeliveryTours().size();
+            if(nbCourier > 1){
+                try {
+                    citymap.deleteDeliveryTour();
+                    nbCourier = citymap.getDeliveryTours().size();
+                    this.nbCourierText.setText(Integer.toString(nbCourier));
+                } catch (NoCourierUnavailableException e) {
+
+                }
+            }
+        }
+
     }
 
     /**

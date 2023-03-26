@@ -1,6 +1,5 @@
-package com.deliverif.app.model.algorithms;
+package com.deliverif.app.algorithm;
 
-import com.deliverif.app.algorithm.NaiveAlgorithm;
 import com.deliverif.app.model.CityMap;
 import com.deliverif.app.model.DeliveryTour;
 import com.deliverif.app.model.Intersection;
