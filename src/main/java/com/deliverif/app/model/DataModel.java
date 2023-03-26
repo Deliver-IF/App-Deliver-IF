@@ -1,23 +1,38 @@
-package com.deliverif.app.services;
+package com.deliverif.app.model;
 
-import com.deliverif.app.models.map.CityMap;
-import com.deliverif.app.models.map.Intersection;
-import com.deliverif.app.models.map.Segment;
+import com.deliverif.app.controller.MapController;
 import javafx.util.Pair;
+import lombok.Getter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
-public class MapFactory {
+public class DataModel {
+    @Getter
+    CityMap cityMap;
+    @Getter
+    MapController mapController;
+    public DataModel() {
+        this.cityMap = null;
+        this.mapController = new MapController();
+    }
 
-    public static CityMap createMapFromPathFile(String pathFile) throws FileNotFoundException {
-        File file = new File(pathFile);
+    /**
+     * Set a new CityMap object to the DataModel object.
+     *
+     * @param file                      the file containing the data of the new map to load.
+     * @throws FileNotFoundException    the file is missing on the user's device.
+     */
+    public void loadMapFromFile(File file) throws FileNotFoundException {
+        // TODO: file is a valid XML map
         if (!file.exists()) {
             throw new FileNotFoundException();
         }
@@ -79,7 +94,8 @@ public class MapFactory {
                 segmentsMap.put(new Pair<>(segment.getOrigin().getId(), segment.getDestination().getId()), segment);
             }
 
-            return CityMap.create(warehouse, segments, new HashSet<>(intersections.values()), segmentsMap, connections, minLatitude, maxLatitude, minLongitude, maxLongitude);
+            this.cityMap = CityMap.create(warehouse, segments, new HashSet<>(intersections.values()), segmentsMap, connections, minLatitude, maxLatitude, minLongitude, maxLongitude);
+            cityMap.addDeliveryTour();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

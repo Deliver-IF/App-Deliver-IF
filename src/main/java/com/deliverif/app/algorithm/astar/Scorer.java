@@ -1,4 +1,4 @@
-package com.deliverif.app.models.algorithms.astar;
+package com.deliverif.app.algorithm.astar;
 
 public interface Scorer<T extends GraphNode> {
     double computeCost(T from, T to);

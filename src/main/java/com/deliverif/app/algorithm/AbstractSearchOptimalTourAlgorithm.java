@@ -1,6 +1,6 @@
-package com.deliverif.app.models.algorithms;
+package com.deliverif.app.algorithm;
 
-import com.deliverif.app.models.map.DeliveryTour;
+import com.deliverif.app.model.DeliveryTour;
 
 public interface AbstractSearchOptimalTourAlgorithm {
     public void optimize(DeliveryTour deliveryTour);

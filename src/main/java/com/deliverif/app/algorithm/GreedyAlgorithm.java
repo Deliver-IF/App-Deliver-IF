@@ -1,6 +1,6 @@
-package com.deliverif.app.models.algorithms;
+package com.deliverif.app.algorithm;
 
-import com.deliverif.app.models.map.DeliveryTour;
+import com.deliverif.app.model.DeliveryTour;
 import lombok.Getter;
 import org.apache.commons.lang3.NotImplementedException;
 

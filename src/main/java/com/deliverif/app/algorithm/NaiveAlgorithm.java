@@ -1,10 +1,10 @@
-package com.deliverif.app.models.algorithms;
+package com.deliverif.app.algorithm;
 
-import com.deliverif.app.models.algorithms.astar.Graph;
-import com.deliverif.app.models.algorithms.astar.HaversineScorer;
-import com.deliverif.app.models.algorithms.astar.RouteFinder;
-import com.deliverif.app.models.map.DeliveryTour;
-import com.deliverif.app.models.map.Intersection;
+import com.deliverif.app.algorithm.astar.Graph;
+import com.deliverif.app.algorithm.astar.HaversineScorer;
+import com.deliverif.app.algorithm.astar.RouteFinder;
+import com.deliverif.app.model.DeliveryTour;
+import com.deliverif.app.model.Intersection;
 import javafx.util.Pair;
 import lombok.Getter;
 

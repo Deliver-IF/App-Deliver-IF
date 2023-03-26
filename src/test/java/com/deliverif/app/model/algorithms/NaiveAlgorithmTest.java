@@ -1,17 +1,15 @@
-package com.deliverif.app.models.algorithms;
+package com.deliverif.app.model.algorithms;
 
-import com.deliverif.app.models.map.CityMap;
-import com.deliverif.app.models.map.DeliveryTour;
-import com.deliverif.app.models.map.Intersection;
-import com.deliverif.app.services.MapFactory;
+import com.deliverif.app.algorithm.NaiveAlgorithm;
+import com.deliverif.app.model.CityMap;
+import com.deliverif.app.model.DeliveryTour;
+import com.deliverif.app.model.Intersection;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +22,8 @@ public class NaiveAlgorithmTest {
     public void setUp() throws FileNotFoundException {
         URL res = NaiveAlgorithmTest.class.getResource("NaiveAlgorithmOptimizeMap.xml");
         assert res != null;
-        cityMap = MapFactory.createMapFromPathFile(URLDecoder.decode(res.getPath(), StandardCharsets.UTF_8));
+        // TODO : to modify
+        //  cityMap = MapFactory.createMapFromPathFile(URLDecoder.decode(res.getPath(), StandardCharsets.UTF_8));
         cityMap.addDeliveryTour();
         mappedIntersections = new HashMap<>();
         for (Intersection intersection : cityMap.getIntersections()) {
