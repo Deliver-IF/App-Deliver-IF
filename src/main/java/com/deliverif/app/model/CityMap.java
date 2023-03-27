@@ -1,5 +1,6 @@
 package com.deliverif.app.model;
 
+import com.deliverif.app.exceptions.NoCourierUnavailableException;
 import javafx.util.Pair;
 import lombok.Getter;
 import java.util.HashMap;
@@ -73,6 +74,23 @@ public class CityMap {
     public void addDeliveryTour() {
         DeliveryTour deliveryTour = new DeliveryTour(this);
         deliveryTours.put(deliveryTour.getIdCourier(), deliveryTour);
+    }
+
+
+    public void deleteDeliveryTour() throws NoCourierUnavailableException {
+        boolean emptyDeliveryTour = false;
+        for(Map.Entry<Integer, DeliveryTour> deliveryTourEntry : deliveryTours.entrySet()) {
+            DeliveryTour currentDeliveryTour = deliveryTourEntry.getValue();
+            if(currentDeliveryTour.getStops().size() == 0) {
+                deliveryTours.remove(deliveryTourEntry.getKey(), deliveryTourEntry.getValue());
+                emptyDeliveryTour = true;
+                break;
+            }
+        }
+        if(!emptyDeliveryTour) {
+            throw new NoCourierUnavailableException();
+        }
+
     }
 
     /**

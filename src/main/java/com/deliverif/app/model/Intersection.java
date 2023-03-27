@@ -40,7 +40,7 @@ public class Intersection implements GraphNode {
      */
     private Circle defaultShapeOnMap;
 
-    private Intersection(String id, Float longitude, Float latitude) {
+    public Intersection(String id, Float longitude, Float latitude) {
         this.id = id;
         this.longitude = longitude;
         this.latitude = latitude;
