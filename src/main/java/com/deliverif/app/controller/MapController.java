@@ -167,7 +167,11 @@ public class MapController {
      * @param deliveryTour the deliveryTour to draw
      */
     public void displayDeliveryTour(Pane mapPane, CityMap map, DeliveryTour deliveryTour) {
-        Color color = Color.rgb(joaat(numberOfCouriers+1) & 255, joaat(numberOfCouriers+1) >> 16 & 255, joaat(numberOfCouriers+1) >> 31 & 255);
+        Color color = Color.rgb(
+            joaat(deliveryTour.getIdCourier()) & 255,
+            joaat(deliveryTour.getIdCourier()) >> 16 & 255,
+            joaat(deliveryTour.getIdCourier()) >> 31 & 255
+        );
 
         // Streets
         displayStreets(mapPane, map, deliveryTour.getTour(), color);
