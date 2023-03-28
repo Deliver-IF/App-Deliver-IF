@@ -22,7 +22,6 @@ import java.util.Collection;
 
 
 public class MapController {
-    int numberOfCouriers = 0;
     boolean mapDrawn = false;
     public static ArrayList<DeliveryRequest> currentDeliveryRequests = new ArrayList<>();
     public static Intersection currentlySelectedIntersection;
