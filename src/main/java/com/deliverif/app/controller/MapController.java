@@ -171,6 +171,7 @@ public class MapController {
 
         // First, we erase the current route as adding a new delivery request often changes the original route.
         eraseLines(mapPane, deliveryTour.getLines());
+        deliveryTour.getLines().clear();
 
         // Streets
         for (Segment segment : deliveryTour.getTour()) {
