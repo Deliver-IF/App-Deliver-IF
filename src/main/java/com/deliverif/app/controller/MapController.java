@@ -169,15 +169,19 @@ public class MapController {
     public void displayDeliveryTour(Pane mapPane, CityMap map, DeliveryTour deliveryTour) {
         Color color = Color.rgb(joaat(numberOfCouriers+1) & 255, joaat(numberOfCouriers+1) >> 16 & 255, joaat(numberOfCouriers+1) >> 31 & 255);
 
+        // First, we erase the current route as adding a new delivery request often changes the original route.
+        eraseLines(mapPane, deliveryTour.getLines());
+
         // Streets
-        displayStreets(mapPane, map, deliveryTour.getTour(), color);
+        for (Segment segment : deliveryTour.getTour()) {
+            Line lineDrawn = displaySegment(mapPane, map, segment, color);
+            deliveryTour.addLine(lineDrawn);
+        }
         // Delivery Points
         for (DeliveryRequest deliveryRequest : deliveryTour.getStops()) {
             displayDeliveryPoint(mapPane, map, deliveryRequest.getIntersection(), color, deliveryRequest);
         }
         System.out.println("Test 3");
-
-        numberOfCouriers++;
     }
 
     /**
@@ -255,28 +259,29 @@ public class MapController {
     // ------------------------------------------- //
 
     /**
-     * Draw a collecion of streets
+     * Draw a collection of segments representing the streets of a map.
      *
      * @param mapPane the javafx graphic element where the map and all streets and intersections are drawn
      * @param map the object with all map elements
-     * @param streets collection of streets we want to draw
+     * @param segments collection of streets we want to draw
      * @param color which color we want to draw the streets with
      */
-    private void displayStreets(Pane mapPane, CityMap map, Collection<Segment> streets, Color color) {
-        for (Segment street : streets) {
-            displaySegment(mapPane, map, street, color);
+    private void displayStreets(Pane mapPane, CityMap map, Collection<Segment> segments, Color color) {
+        for (Segment segment : segments) {
+            displaySegment(mapPane, map, segment, color);
         }
     }
 
     /**
-     * Display a street on the map pane.
+     * Display a segment on the map pane.
      *
      * @param mapPane the javafx graphic element where the map and all streets and intersections are drawn
      * @param map the object with all map elements
      * @param segment    the Segment representing the street.
      * @param color     the color that has to be used to draw the street.
+     * @return          the Line object that has been drawn on the map pane.
      */
-    static private void displaySegment(Pane mapPane, CityMap map, Segment segment, Paint color) {
+    static private Line displaySegment(Pane mapPane, CityMap map, Segment segment, Paint color) {
         Coordinates origin = getCoordinates(mapPane, map, segment.getOrigin().getLongitude(), segment.getOrigin().getLatitude());
         Coordinates destination = getCoordinates(mapPane, map, segment.getDestination().getLongitude(), segment.getDestination().getLatitude());
         Line line = new Line(
@@ -295,6 +300,20 @@ public class MapController {
         mapPane.getChildren().add(originSegment);
         mapPane.getChildren().remove(destinationSegment);
         mapPane.getChildren().add(destinationSegment);
+
+        return line;
+    }
+
+    /**
+     * Erase a specific set of segments on the map
+     *
+     * @param mapPane   the map pane where the segments are drawn on.
+     * @param lines     a collection of lines to remove.
+     */
+    public void eraseLines(Pane mapPane, Collection<Line> lines) {
+        for (Line line : lines) {
+            mapPane.getChildren().remove(line);
+        }
     }
 
     // ------------------------------------------- //

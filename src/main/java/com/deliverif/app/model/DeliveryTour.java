@@ -1,7 +1,11 @@
 package com.deliverif.app.model;
 
+import javafx.scene.shape.Line;
 import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Represents a tour to deliver all the requested content and which is done by a specific courier.
@@ -34,12 +38,18 @@ public class DeliveryTour {
      */
     private ArrayList<Segment> tour;
 
+    /**
+     * The javafx objects drawn on the map pane to display the delivery tour.
+     */
+    private Collection<Line> lines;
+
     // TODO : switch to protected
     public DeliveryTour(CityMap cityMap) {
         this.idCourier = idCounter++;
         this.cityMap = cityMap;
         this.stops = new ArrayList<>();
         this.tour = new ArrayList<>();
+        this.lines = new ArrayList<>();
     }
 
     /**
@@ -62,4 +72,12 @@ public class DeliveryTour {
     public static void resetIdCounter() {
         idCounter = 0;
     } // Todo : why is it not 1 like variable declaration ?
+
+    public void addLine(Line line) {
+        lines.add(line);
+    }
+
+    public Collection<Line> getLines() {
+        return lines;
+    }
 }
