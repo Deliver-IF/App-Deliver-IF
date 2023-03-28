@@ -10,4 +10,5 @@ public class Constants {
     public static final Color WAREHOUSE_COLOR = Color.BLACK;
     public static final int INTERSECTION_SHAPE_RADIUS = 4;
     public static final int DELIVERY_REQUEST_SHAPE_RADIUS = 5;
+    public static final double DEFAULT_SHIFT_DELIVERY_POINT_DIALOG = 10.0;
 }
