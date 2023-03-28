@@ -3,11 +3,10 @@ package com.deliverif.app.model;
 import javafx.scene.shape.Circle;
 import com.deliverif.app.algorithm.astar.GraphNode;
 import lombok.Getter;
-import org.apache.commons.lang3.tuple.Pair;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Represents a common point between multiple segments / streets.
@@ -33,7 +32,7 @@ public class Intersection implements GraphNode {
      * A set of pairs of the intersections accessible from the intersection and the corresponding segments
      * leading to them.
      */
-    private final Set<Pair<Intersection, Segment>> reachableIntersections;
+    private final Map<Intersection, Segment> reachableIntersections;
 
     /**
      * The default shape that is used to represent an intersection on a map pane.
@@ -44,7 +43,7 @@ public class Intersection implements GraphNode {
         this.id = id;
         this.longitude = longitude;
         this.latitude = latitude;
-        this.reachableIntersections = new HashSet<>();
+        this.reachableIntersections = new HashMap<>();
         this.defaultShapeOnMap = new Circle();
     }
 
