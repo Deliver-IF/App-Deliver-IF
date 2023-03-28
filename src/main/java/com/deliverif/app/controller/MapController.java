@@ -22,7 +22,6 @@ import java.util.Collection;
 
 
 public class MapController {
-    int numberOfCouriers = 0;
     boolean mapDrawn = false;
     public static ArrayList<DeliveryRequest> currentDeliveryRequests = new ArrayList<>();
     public static Intersection currentlySelectedIntersection;
@@ -180,8 +179,6 @@ public class MapController {
             displayDeliveryPoint(mapPane, map, deliveryRequest.getIntersection(), color, deliveryRequest);
         }
         System.out.println("Test 3");
-
-        numberOfCouriers++;
     }
 
     /**
