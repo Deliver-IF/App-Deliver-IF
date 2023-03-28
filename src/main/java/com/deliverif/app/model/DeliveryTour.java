@@ -76,8 +76,4 @@ public class DeliveryTour {
     public void addLine(Line line) {
         lines.add(line);
     }
-
-    public Collection<Line> getLines() {
-        return lines;
-    }
 }
