@@ -226,11 +226,12 @@ public class MainController {
         DeliveryRequest deliveryRequest = new DeliveryRequest(timeWindows.get(timeWindowChoiceBox.getValue()), MapController.currentlySelectedIntersection);
         deliveryTour.addDeliveryRequest(deliveryRequest);
         deliveryService.searchOptimalDeliveryTour(deliveryTour);
+
+        // Draw the delivery tour on the map
         MapController MapController = new MapController();
         MapController.displayDeliveryTour(mapPane, dataModel.getCityMap(), deliveryTour);
+
         closeAddDeliveryRequestDialogPane();
         intersectionInfoDialog.setVisible(false);
     }
-
-
 }
