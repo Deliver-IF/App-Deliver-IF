@@ -92,7 +92,6 @@ public class DataModel {
             }
 
             this.cityMap = CityMap.create(warehouse, segments, new HashSet<>(intersections.values()), connections, minLatitude, maxLatitude, minLongitude, maxLongitude);
-            //cityMap.addDeliveryTour();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

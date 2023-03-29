@@ -22,7 +22,6 @@ import java.util.Collection;
 
 
 public class MapController {
-    int numberOfCouriers = 0;
     boolean mapDrawn = false;
     public static ArrayList<DeliveryRequest> currentDeliveryRequests = new ArrayList<>();
     public static Intersection currentlySelectedIntersection;
@@ -97,7 +96,13 @@ public class MapController {
 
         // Click on an intersection
         point.setOnMouseClicked(mouseEvent -> {
+            if(currentlySelectedIntersection != null) {
+                currentlySelectedIntersection.getDefaultShapeOnMap().setFill(Constants.BASE_MAP_INTERSECTION_COLOR);
+            }
             currentlySelectedIntersection = intersection;
+
+            // Leave the selected intersection colored
+            intersection.getDefaultShapeOnMap().setFill(Constants.BASE_MAP_INTERSECTION_COLOR_HOVER);
 
             // Change text on dialog
             Text deliveryWindowText = (Text) mapPane.getScene().lookup("#deliveryWindow");
@@ -125,7 +130,9 @@ public class MapController {
         });
         point.setOnMouseExited(mouseEvent -> {
             mapPane.getScene().setCursor(Cursor.DEFAULT);
-            intersection.getDefaultShapeOnMap().setFill(Constants.BASE_MAP_INTERSECTION_COLOR);
+            if(currentlySelectedIntersection == null || currentlySelectedIntersection != intersection) {
+                intersection.getDefaultShapeOnMap().setFill(Constants.BASE_MAP_INTERSECTION_COLOR);
+            }
         });
 
         intersection.setDefaultShapeOnMap(point);
@@ -167,17 +174,26 @@ public class MapController {
      * @param deliveryTour the deliveryTour to draw
      */
     public void displayDeliveryTour(Pane mapPane, CityMap map, DeliveryTour deliveryTour) {
-        Color color = Color.rgb(joaat(numberOfCouriers+1) & 255, joaat(numberOfCouriers+1) >> 16 & 255, joaat(numberOfCouriers+1) >> 31 & 255);
+        Color color = Color.rgb(
+            joaat(deliveryTour.getIdCourier()) & 255,
+            joaat(deliveryTour.getIdCourier()) >> 16 & 255,
+            joaat(deliveryTour.getIdCourier()) >> 31 & 255
+        );
+
+        // First, we erase the current route as adding a new delivery request often changes the original route.
+        eraseLines(mapPane, deliveryTour.getLines());
+        deliveryTour.getLines().clear();
 
         // Streets
-        displayStreets(mapPane, map, deliveryTour.getTour(), color);
+        for (Segment segment : deliveryTour.getTour()) {
+            Line lineDrawn = displaySegment(mapPane, map, segment, color);
+            deliveryTour.addLine(lineDrawn);
+        }
         // Delivery Points
         for (DeliveryRequest deliveryRequest : deliveryTour.getStops()) {
             displayDeliveryPoint(mapPane, map, deliveryRequest.getIntersection(), color, deliveryRequest);
         }
         System.out.println("Test 3");
-
-        numberOfCouriers++;
     }
 
     /**
@@ -255,28 +271,29 @@ public class MapController {
     // ------------------------------------------- //
 
     /**
-     * Draw a collecion of streets
+     * Draw a collection of segments representing the streets of a map.
      *
      * @param mapPane the javafx graphic element where the map and all streets and intersections are drawn
      * @param map the object with all map elements
-     * @param streets collection of streets we want to draw
+     * @param segments collection of streets we want to draw
      * @param color which color we want to draw the streets with
      */
-    private void displayStreets(Pane mapPane, CityMap map, Collection<Segment> streets, Color color) {
-        for (Segment street : streets) {
-            displaySegment(mapPane, map, street, color);
+    private void displayStreets(Pane mapPane, CityMap map, Collection<Segment> segments, Color color) {
+        for (Segment segment : segments) {
+            displaySegment(mapPane, map, segment, color);
         }
     }
 
     /**
-     * Display a street on the map pane.
+     * Display a segment on the map pane.
      *
      * @param mapPane the javafx graphic element where the map and all streets and intersections are drawn
      * @param map the object with all map elements
      * @param segment    the Segment representing the street.
      * @param color     the color that has to be used to draw the street.
+     * @return          the Line object that has been drawn on the map pane.
      */
-    static private void displaySegment(Pane mapPane, CityMap map, Segment segment, Paint color) {
+    static private Line displaySegment(Pane mapPane, CityMap map, Segment segment, Paint color) {
         Coordinates origin = getCoordinates(mapPane, map, segment.getOrigin().getLongitude(), segment.getOrigin().getLatitude());
         Coordinates destination = getCoordinates(mapPane, map, segment.getDestination().getLongitude(), segment.getDestination().getLatitude());
         Line line = new Line(
@@ -295,6 +312,20 @@ public class MapController {
         mapPane.getChildren().add(originSegment);
         mapPane.getChildren().remove(destinationSegment);
         mapPane.getChildren().add(destinationSegment);
+
+        return line;
+    }
+
+    /**
+     * Erase a specific set of segments on the map
+     *
+     * @param mapPane   the map pane where the segments are drawn on.
+     * @param lines     a collection of lines to remove.
+     */
+    public void eraseLines(Pane mapPane, Collection<Line> lines) {
+        for (Line line : lines) {
+            mapPane.getChildren().remove(line);
+        }
     }
 
     // ------------------------------------------- //
@@ -312,7 +343,7 @@ public class MapController {
     static private void movePane(Pane mapPane, DialogPane paneToMove, double x, double y) {
         TranslateTransition tt = new TranslateTransition(Duration.millis(1), paneToMove);
         tt.setToX(x - (mapPane.getWidth() / 2.0) + (paneToMove.getWidth() / 2.0));
-        tt.setToY(y - (mapPane.getHeight() / 2.0) + (paneToMove.getHeight() / 2.0) - 10.0);
+        tt.setToY(y - (mapPane.getHeight() / 2.0) + (paneToMove.getHeight() / 2.0) - Constants.DEFAULT_SHIFT_DELIVERY_POINT_DIALOG);
         tt.setCycleCount(1);
         tt.setAutoReverse(false);
         tt.play();
