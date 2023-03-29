@@ -68,7 +68,7 @@ public class MapController {
      *
      * @param mapPane the javafx graphic element where the map and all streets and intersections are drawn
      * @param map the object with all map elements
-     * @param intersections collection of streets we want to draw
+     * @param intersections collectionintersection.setDefaultShapeOnMap(point); of streets we want to draw
      */
     private void displayCrossings(Pane mapPane, CityMap map, Collection<Intersection> intersections) {
         for(Intersection intersection : intersections) {
@@ -327,12 +327,12 @@ public class MapController {
         line.setStrokeWidth(3);
         mapPane.getChildren().add(line);
 
-        Circle originSegment = segment.getOrigin().getDefaultShapeOnMap();
-        Circle destinationSegment = segment.getDestination().getDefaultShapeOnMap();
-        mapPane.getChildren().remove(originSegment);
-        mapPane.getChildren().add(originSegment);
-        mapPane.getChildren().remove(destinationSegment);
-        mapPane.getChildren().add(destinationSegment);
+        Circle originPoint = segment.getOrigin().getDefaultShapeOnMap();
+        Circle destinationPoint = segment.getDestination().getDefaultShapeOnMap();
+        mapPane.getChildren().remove(originPoint);
+        mapPane.getChildren().add(originPoint);
+        mapPane.getChildren().remove(destinationPoint);
+        mapPane.getChildren().add(destinationPoint);
 
         return line;
     }
