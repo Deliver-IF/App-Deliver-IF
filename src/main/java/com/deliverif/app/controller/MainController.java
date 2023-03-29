@@ -230,6 +230,13 @@ public class MainController {
                     alert.showAndWait();
                 }
             }
+            else if(nbCourier == 1){
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Information");
+                alert.setHeaderText(null);
+                alert.setContentText("It is not possible to delete a courier. There must always be at least 1 courier available to respond to delivery requests");
+                alert.showAndWait();
+            }
         }
 
     }
