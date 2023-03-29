@@ -38,4 +38,14 @@ public class Intersection implements GraphNode {
                 Float.parseFloat(element.getAttribute("latitude"))
         );
     }
+
+    public Segment getSegmentTo(Intersection key) {
+        for (Pair<Intersection, Segment> pair : reachableIntersections) {
+            if (pair.getLeft().equals(key)) {
+                return pair.getRight();
+            }
+        }
+
+        return null;
+    }
 }

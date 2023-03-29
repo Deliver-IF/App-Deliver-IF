@@ -19,4 +19,8 @@ public class DeliveryRequest {
     public static void resetIdCounter() {
         idCounter = 0;
     }
+
+    public float getDeliveryDuration() {
+        return DELIVERY_TIME;
+    }
 }
