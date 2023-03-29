@@ -195,6 +195,9 @@ public class MainController {
         }
     }
 
+    /**
+     * Adds 1 to the number of couriers displayed
+     */
     @FXML
     public void addCourier() {
         CityMap citymap = this.dataModel.getCityMap();
@@ -205,6 +208,10 @@ public class MainController {
         }
     }
 
+    /**
+     * Deduct 1 from the number of couriers displayed
+     * If all couriers have at least one delivery assigned, an alert window opens to indicate that no courier can be deleted..
+     */
     @FXML
     public void deleteCourier() {
         CityMap citymap = this.dataModel.getCityMap();
