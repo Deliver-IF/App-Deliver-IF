@@ -146,7 +146,11 @@ public class MainController {
                     nbCourier = citymap.getDeliveryTours().size();
                     this.nbCourierText.setText(Integer.toString(nbCourier));
                 } catch (NoCourierUnavailableException e) {
-
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle("Information");
+                    alert.setHeaderText(null);
+                    alert.setContentText(e.getMessage());
+                    alert.showAndWait();
                 }
             }
         }
