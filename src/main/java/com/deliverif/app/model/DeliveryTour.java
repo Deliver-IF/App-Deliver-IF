@@ -1,6 +1,7 @@
 package com.deliverif.app.model;
 
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Shape;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -41,7 +42,7 @@ public class DeliveryTour {
     /**
      * The javafx objects drawn on the map pane to display the delivery tour.
      */
-    private Collection<Line> lines;
+    private Collection<Shape> shapes;
 
     // TODO : switch to protected
     public DeliveryTour(CityMap cityMap) {
@@ -49,7 +50,7 @@ public class DeliveryTour {
         this.cityMap = cityMap;
         this.stops = new ArrayList<>();
         this.tour = new ArrayList<>();
-        this.lines = new ArrayList<>();
+        this.shapes = new ArrayList<>();
     }
 
     /**
@@ -82,7 +83,7 @@ public class DeliveryTour {
         idCounter = 0;
     } // Todo : why is it not 1 like variable declaration ?
 
-    public void addLine(Line line) {
-        lines.add(line);
+    public void addShape(Shape shape) {
+        shapes.add(shape);
     }
 }

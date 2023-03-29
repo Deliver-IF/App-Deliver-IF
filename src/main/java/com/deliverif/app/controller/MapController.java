@@ -13,6 +13,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import lombok.Getter;
@@ -181,17 +182,18 @@ public class MapController {
         );
 
         // First, we erase the current route as adding a new delivery request often changes the original route.
-        eraseLines(mapPane, deliveryTour.getLines());
-        deliveryTour.getLines().clear();
+        eraseShapes(mapPane, deliveryTour.getShapes());
+        deliveryTour.getShapes().clear();
 
         // Streets
         for (Segment segment : deliveryTour.getTour()) {
             Line lineDrawn = displaySegment(mapPane, map, segment, color);
-            deliveryTour.addLine(lineDrawn);
+            deliveryTour.addShape(lineDrawn);
         }
         // Delivery Points
         for (DeliveryRequest deliveryRequest : deliveryTour.getStops()) {
-            displayDeliveryPoint(mapPane, map, deliveryRequest.getIntersection(), color, deliveryRequest);
+            Circle deliveryPoint = displayDeliveryPoint(mapPane, map, deliveryRequest.getIntersection(), color, deliveryRequest);
+            deliveryTour.addShape(deliveryPoint);
         }
         System.out.println("Test 3");
     }
@@ -212,7 +214,7 @@ public class MapController {
      * @param color         the color that has to be used to draw the delivery point.
      * @param deliveryRequest the delivery request we try to display, in order to retrieve all the information related to it
      */
-    private void displayDeliveryPoint(
+    private Circle displayDeliveryPoint(
             Pane mapPane, CityMap map, Intersection intersection, Paint color, DeliveryRequest deliveryRequest
     ) {
         Coordinates origin = getCoordinates(mapPane, map, intersection.getLongitude(), intersection.getLatitude());
@@ -264,6 +266,8 @@ public class MapController {
         intersection.setDefaultShapeOnMap(point);
 
         mapPane.getChildren().add(point);
+
+        return point;
     }
 
     // ------------------------------------------- //
@@ -317,14 +321,14 @@ public class MapController {
     }
 
     /**
-     * Erase a specific set of segments on the map
+     * Erase a specific set of shapes on the map
      *
      * @param mapPane   the map pane where the segments are drawn on.
-     * @param lines     a collection of lines to remove.
+     * @param shapes     a collection of shapes to remove.
      */
-    public void eraseLines(Pane mapPane, Collection<Line> lines) {
-        for (Line line : lines) {
-            mapPane.getChildren().remove(line);
+    public void eraseShapes(Pane mapPane, Collection<Shape> shapes) {
+        for (Shape shape : shapes) {
+            mapPane.getChildren().remove(shape);
         }
     }
 
