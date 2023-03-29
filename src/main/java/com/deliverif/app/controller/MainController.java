@@ -98,13 +98,13 @@ public class MainController {
 
     @FXML
     public void loadMediumMap() throws URISyntaxException {
-        File file = new File(System.getProperty("user.dir") + "/src/main/resources/com/deliverif/app/maps/smallMap.xml");
+        File file = new File(System.getProperty("user.dir") + "/src/main/resources/com/deliverif/app/maps/mediumMap.xml");
         loadFile(file);
     }
 
     @FXML
     public void loadLargeMap() {
-        File file = new File(System.getProperty("user.dir") + "/src/main/resources/com/deliverif/app/maps/smallMap.xml");
+        File file = new File(System.getProperty("user.dir") + "/src/main/resources/com/deliverif/app/maps/largeMap.xml");
         loadFile(file);
     }
 
