@@ -88,6 +88,7 @@ public class DataModel {
                 Segment segment = Segment.create(nStreets.item(i), intersections);
                 segments.add(segment);
                 connections.get(segment.getOrigin().getId()).add(segment.getDestination().getId());
+                connections.get(segment.getDestination().getId()).add(segment.getOrigin().getId());
             }
 
             this.cityMap = CityMap.create(warehouse, segments, new HashSet<>(intersections.values()), connections, minLatitude, maxLatitude, minLongitude, maxLongitude);
