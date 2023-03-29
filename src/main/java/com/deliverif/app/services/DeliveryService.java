@@ -1,6 +1,6 @@
 package com.deliverif.app.services;
 
-import com.deliverif.app.algorithm.NaiveAlgorithm;
+import com.deliverif.app.algorithm.AntColonyAlgorithm;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -51,7 +51,7 @@ public class DeliveryService {
      * @param deliveryTour  the DeliveryTour object to optimize.
      */
     public void searchOptimalDeliveryTour(DeliveryTour deliveryTour) {
-        NaiveAlgorithm.getInstance().optimize(deliveryTour);
+        AntColonyAlgorithm.getInstance().optimize(deliveryTour);
     }
 
     public void loadDeliveriesFromFile(File file, CityMap cityMap) throws FileNotFoundException {

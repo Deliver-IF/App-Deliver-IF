@@ -1,11 +1,11 @@
-package com.deliverif.app.models.algorithms;
+package com.deliverif.app.algorithm;
 
-import com.deliverif.app.models.algorithms.astar.HaversineScorer;
-import com.deliverif.app.models.algorithms.astar.Scorer;
-import com.deliverif.app.models.map.DeliveryRequest;
-import com.deliverif.app.models.map.DeliveryTour;
-import com.deliverif.app.models.map.Intersection;
-import com.deliverif.app.models.map.Segment;
+import com.deliverif.app.algorithm.astar.HaversineScorer;
+import com.deliverif.app.algorithm.astar.Scorer;
+import com.deliverif.app.model.DeliveryRequest;
+import com.deliverif.app.model.DeliveryTour;
+import com.deliverif.app.model.Intersection;
+import com.deliverif.app.model.Segment;
 import lombok.Getter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -16,6 +16,15 @@ import java.util.stream.Collectors;
 
 @Getter
 public class AntColonyAlgorithm implements AbstractSearchOptimalTourAlgorithm {
+    private static AntColonyAlgorithm instance = null;
+    public static AntColonyAlgorithm getInstance() {
+        if (instance == null) {
+            instance = new AntColonyAlgorithm();
+        }
+        return instance;
+    }
+
+
     final int MAX_ITERATIONS_PER_ANTS = 10000;
     final float ANT_SPEED = 250.0f; // 250 m/min
     final float PHEROMONE_EVAPORATION = 0.01f; // 1% of pheromone intensity is evaporated each "minute"
@@ -129,7 +138,6 @@ public class AntColonyAlgorithm implements AbstractSearchOptimalTourAlgorithm {
         private Intersection currentIntersection;
         private List<Intersection> tour;
         private final Set<Segment> visitedSegments;
-        private final Set<Intersection> visitedIntersections;
         private Pair<List<Intersection>, Float> bestTour;
 
         public Ant(float speed, Intersection initialIntersection, List<DeliveryRequest> intersectionsToVisit) {
@@ -137,7 +145,6 @@ public class AntColonyAlgorithm implements AbstractSearchOptimalTourAlgorithm {
             this.nextMovementTime = 0;
             this.initialIntersection = initialIntersection;
             this.visitedSegments = new HashSet<>();
-            this.visitedIntersections = new HashSet<>();
 
             this.intersectionsToVisit = new ArrayList<>(intersectionsToVisit);
             this.intersectionsToVisit.sort(Comparator.comparing(DeliveryRequest::getStartTimeWindow));
@@ -195,7 +202,6 @@ public class AntColonyAlgorithm implements AbstractSearchOptimalTourAlgorithm {
             this.currentTourDuration += segment.getLength() / this.speed;
             this.nextMovementTime = currentTourDuration;
             this.visitedSegments.add(segment);
-            this.visitedIntersections.add(nextIntersection);
 
             return segment;
         }
@@ -232,7 +238,6 @@ public class AntColonyAlgorithm implements AbstractSearchOptimalTourAlgorithm {
             this.currentIntersection = initialIntersection;
             this.tour = new ArrayList<>(); // Don't call "clear" on the list because it will clear the best tour
             this.visitedSegments.clear();
-            this.visitedIntersections.clear();
 
             this.timeWindowCurrentChunk = this.intersectionsToVisit.get(0).getStartTimeWindow();
             this.currentChunkToVisit = this.intersectionsToVisit.stream()
@@ -258,11 +263,8 @@ public class AntColonyAlgorithm implements AbstractSearchOptimalTourAlgorithm {
         private Intersection selectBestNextIntersection(Map<Segment, Float> pheromoneMatrix, Float defaultPheromoneIntensity) {
             // Evaluate probabilities for each intersection reachable from the current intersection
             final Map<Intersection, Float> probabilities = new HashMap<>();
-            final Set<Pair<Intersection, Segment>> reachableIntersections = currentIntersection.getReachableIntersections();
-            reachableIntersections.forEach( pair -> {
-                final Intersection intersection = pair.getLeft();
-                final Segment segment = pair.getRight();
-
+            final Map<Intersection, Segment> reachableIntersections = currentIntersection.getReachableIntersections();
+            reachableIntersections.forEach( (intersection, segment) -> {
                 final Scorer<Intersection> scorer = new HaversineScorer();
 
                 final float pheromoneIntensity = this.getPheromoneIntensity(pheromoneMatrix, defaultPheromoneIntensity, segment);
@@ -273,16 +275,18 @@ public class AntColonyAlgorithm implements AbstractSearchOptimalTourAlgorithm {
                         .orElse(segment.getLength());
 
                 final float numerator = pheromoneIntensity * 1 / distance;
-                final float denominator = reachableIntersections.stream().map(pairBis -> {
-                    final Segment segmentBis = pairBis.getRight();
-                    final float pheromoneIntensityBis = this.getPheromoneIntensity(pheromoneMatrix, defaultPheromoneIntensity, segmentBis);
-                    final float distanceBis = this.currentChunkToVisit.keySet().stream()
-                            .map(intersectionToVisit -> scorer.computeCost(pair.getLeft(), intersectionToVisit))
-                            .min(Float::compare)
-                            .orElse(segmentBis.getLength());
+                final float denominator = reachableIntersections.keySet().stream()
+                        .map( intersectionBis -> {
+                            final Segment segmentBis = currentIntersection.getSegmentTo(intersectionBis);
+                            final float pheromoneIntensityBis = this.getPheromoneIntensity(pheromoneMatrix, defaultPheromoneIntensity, segmentBis);
+                            final float distanceBis = this.currentChunkToVisit.keySet().stream()
+                                    .map(intersectionToVisit -> scorer.computeCost(intersectionBis, intersectionToVisit))
+                                    .min(Float::compare)
+                                    .orElse(segmentBis.getLength());
 
-                    return pheromoneIntensityBis * 1 / distanceBis;
-                }).reduce(0f, Float::sum);
+                            return pheromoneIntensityBis * 1 / distanceBis;
+                        })
+                        .reduce(0f, Float::sum);
 
                 // TODO : Explore the possibility to reduce probabilities on segments that have been visited recently
                 // TODO : Explore the possibility to add a random factor to the probabilities

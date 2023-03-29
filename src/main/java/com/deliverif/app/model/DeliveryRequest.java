@@ -40,4 +40,8 @@ public class DeliveryRequest {
         this.id = idRequest;
         this.intersection = intersection;
     }
+
+    public float getDeliveryDuration() {
+        return DELIVERY_TIME;
+    }
 }
