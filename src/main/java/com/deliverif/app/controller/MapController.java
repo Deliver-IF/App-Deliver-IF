@@ -1,5 +1,6 @@
 package com.deliverif.app.controller;
 
+import com.deliverif.app.Main;
 import com.deliverif.app.model.*;
 import com.deliverif.app.services.DeliveryService;
 import com.deliverif.app.utils.Constants;
@@ -114,13 +115,30 @@ public class MapController {
             prevDeliveryPointInfo.setVisible(false);
             nextDeliveryPointInfo.setVisible(false);
 
-            // Move dialog pane
+            // Move the dialog pane properly on the mapPane
             DialogPane dialogPane = (DialogPane) mapPane.getScene().lookup("#intersectionInfoDialog");
+            double dialogPaneX;
+            double dialogPaneY;
+
+            if (mapPane.getWidth() < origin.getX() + (dialogPane.getWidth() / 2)) {
+                dialogPaneX = mapPane.getWidth() - dialogPane.getWidth();
+            } else if (origin.getX() - (dialogPane.getWidth() / 2) < 0.0) {
+                dialogPaneX = 0.0;
+            } else {
+                dialogPaneX = origin.getX() - (dialogPane.getWidth() / 2);
+            }
+
+            if (origin.y - dialogPane.getHeight() < 0) {
+                dialogPaneY = dialogPane.getHeight() / 2;
+            } else {
+                dialogPaneY = origin.getY() - dialogPane.getHeight() - 10;
+            }
+
             movePane(
                     mapPane,
                     dialogPane,
-                    origin.getX() - (dialogPane.getWidth() / 2),
-                    origin.getY() - dialogPane.getHeight() - 20
+                    dialogPaneX,
+                    dialogPaneY
             );
         });
 
