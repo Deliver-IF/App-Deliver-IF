@@ -1,6 +1,7 @@
 package com.deliverif.app.model;
 
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Shape;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -35,14 +36,14 @@ public class DeliveryTour {
     /**
      * The javafx objects drawn on the map pane to display the delivery tour.
      */
-    private final Collection<Line> lines;
+    private final Collection<Shape> shapes;
 
     protected DeliveryTour(CityMap cityMap) {
         this.idCourier = new Random().nextInt(1000000000);
         this.cityMap = cityMap;
         this.stops = new ArrayList<>();
         this.tour = new ArrayList<>();
-        this.lines = new ArrayList<>();
+        this.shapes = new ArrayList<>();
     }
 
     protected DeliveryTour(CityMap cityMap, Integer idCourier) {
@@ -86,7 +87,7 @@ public class DeliveryTour {
         stops.remove(deliveryRequest);
     }
 
-    public void addLine(Line line) {
-        lines.add(line);
+    public void addShape(Shape shape) {
+        shapes.add(shape);
     }
 }
