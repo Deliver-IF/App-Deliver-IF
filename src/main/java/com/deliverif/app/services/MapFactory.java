@@ -1,8 +1,8 @@
 package com.deliverif.app.services;
 
-import com.deliverif.app.models.map.CityMap;
-import com.deliverif.app.models.map.Intersection;
-import com.deliverif.app.models.map.Segment;
+import com.deliverif.app.model.CityMap;
+import com.deliverif.app.model.Intersection;
+import com.deliverif.app.model.Segment;
 import javafx.util.Pair;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -16,8 +16,7 @@ import java.util.*;
 
 public class MapFactory {
 
-    public static CityMap createMapFromPathFile(String pathFile) throws FileNotFoundException {
-        File file = new File(pathFile);
+    public static CityMap createMapFromFile(File file) throws FileNotFoundException {
         if (!file.exists()) {
             throw new FileNotFoundException();
         }
@@ -71,15 +70,14 @@ public class MapFactory {
                 throw new Exception("Invalid number of segments");
             }
             Set<Segment> segments = new HashSet<>();
-            Map<Pair<String, String>, Segment> segmentsMap = new HashMap<>();
             for (int i = 0; i < nStreets.getLength(); i++) {
                 Segment segment = Segment.create(nStreets.item(i), intersections);
                 segments.add(segment);
                 connections.get(segment.getOrigin().getId()).add(segment.getDestination().getId());
-                segmentsMap.put(new Pair<>(segment.getOrigin().getId(), segment.getDestination().getId()), segment);
+                connections.get(segment.getDestination().getId()).add(segment.getOrigin().getId());
             }
 
-            return CityMap.create(warehouse, segments, new HashSet<>(intersections.values()), segmentsMap, connections, minLatitude, maxLatitude, minLongitude, maxLongitude);
+            return CityMap.create(warehouse, segments, intersections, connections, minLatitude, maxLatitude, minLongitude, maxLongitude);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

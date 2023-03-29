@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<delivery-tour id="1">
+    <requests>
+        <request id="1" startTimeWindow="10" idIntersection="5"/>
+        <request id="2" startTimeWindow="10" idIntersection="6"/>
+        <request id="3" startTimeWindow="10" idIntersection="6"/>
+    </requests>
+    <segments>
+        <segment idOrigin="1" idDestination="2"/>
+        <segment id="2" duration="10" startIntersectionId="2" endIntersectionId="3"/>
+        <segment id="3" duration="10" startIntersectionId="3" endIntersectionId="4"/>
+        <segment id="4" duration="10" startIntersectionId="4" endIntersectionId="5"/>
+        <segment id="5" duration="10" startIntersectionId="5" endIntersectionId="6"/>
+        <segment id="6" duration="10" startIntersectionId="6" endIntersectionId="7"/>
+        <segment id="7" duration="10" startIntersectionId="7" endIntersectionId="8"/>
+        <segment id="8" duration="10" startIntersectionId="8" endIntersectionId="9"/>
+        <segment id="9" duration="10" startIntersectionId="9" endIntersectionId="10"/>
+        <segment id="10" duration="10" startIntersectionId="10" endIntersectionId="11"/>
+        <segment id="11" duration="10" startIntersectionId="11" endIntersectionId="12"/>
+        <segment id="12" duration="10" startIntersectionId="12" endIntersectionId="13"/>
+        <segment id="13" duration="10" startIntersectionId="13" endIntersectionId="14"/>
+        <segment id="14" duration="10" startIntersectionId="14" endIntersectionId="15"/>
+        <segment id="15" duration="10" startIntersectionId="15" endIntersectionId="16"/>
+        <segment id="16" duration="10" startIntersectionId="16" endIntersectionId="17"/>
+        <segment id="17" duration="10" startIntersectionId="17" endIntersectionId="18"/>
+        <segment id="18" duration="10" startIntersectionId="18" endIntersectionId="19"/>
+        <segment id="19" duration="10" startIntersectionId="19" endIntersectionId="20"/>
+        <segment id="20" duration="10" startIntersectionId="20" endIntersectionId="21"/>
+        <segment id="21" duration="10" startIntersectionId="21" endIntersectionId="22"/>
+    </segments>
+</delivery-tour>
