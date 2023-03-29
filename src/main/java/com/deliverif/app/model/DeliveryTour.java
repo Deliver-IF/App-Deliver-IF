@@ -61,6 +61,15 @@ public class DeliveryTour {
         stops.add(deliveryRequest);
     }
 
+    /**
+     * Remove the delivery request from the delivery tour.
+     *
+     * @param deliveryRequest   the new delivery request to remove to the delivery tour.
+     */
+    public void removeDeliveryRequest(DeliveryRequest deliveryRequest) {
+        stops.remove(deliveryRequest);
+    }
+
     // TODO : remove method
     public void addTour(Segment segment) {
         tour.add(segment);
