@@ -27,8 +27,8 @@ public class AntColonyAlgorithm implements AbstractSearchOptimalTourAlgorithm {
 
     final int MAX_ITERATIONS_PER_ANTS = 10000;
     final float ANT_SPEED = 250.0f; // 250 m/min
-    final float PHEROMONE_EVAPORATION = 0.01f; // 1% of pheromone intensity is evaporated each "minute"
-    final float BASE_PHEROMONE_INTENSITY = 1.0f;
+    final float PHEROMONE_EVAPORATION = 0.1f; // 10% of pheromone intensity is evaporated each "minute"
+    final float BASE_PHEROMONE_INTENSITY = 0.1f;
     final float PHEROMONE_DEPOSIT_INTENSITY = 0.3f;
     final int Q = 1;
     final float K = 0.02f; // As K increases, the amount of pheromone will decrease (and vice versa)
@@ -58,7 +58,7 @@ public class AntColonyAlgorithm implements AbstractSearchOptimalTourAlgorithm {
         final PriorityQueue<Ant> antsQueue = new PriorityQueue<>(antComparator);
         antsQueue.addAll(ants);
 
-        float lastTourDuration = 0;
+        float lastMovementTime = 0;
         final List<Segment> segmentsBorrowed = new ArrayList<>();
         for (int i = 0; i < MAX_ITERATIONS_PER_ANTS * numberOfAnts; i++) {
             final Ant ant = antsQueue.poll();
@@ -66,24 +66,22 @@ public class AntColonyAlgorithm implements AbstractSearchOptimalTourAlgorithm {
                 break;
             }
 
-            if (ant.getNextMovementTime() != lastTourDuration && Math.abs(ant.getNextMovementTime() - lastTourDuration) > 0.0001) {
+            if (ant.getNextMovementTime() != lastMovementTime && Math.abs(ant.getNextMovementTime() - lastMovementTime) > 0.0001) {
                 // Some time passed since the last time movement, so we need to update the pheromone matrix
                 //    -> Evaporate pheromone if needed
                 //    -> Add pheromone to the segments borrowed by the ants
 
                 // For all segments that have been borrowed by ants, update the pheromone value
-                float finalLastTourDuration = lastTourDuration;
-                segmentsBorrowed.forEach(segment -> {
+                lastMovementTime = ant.getNextMovementTime();
+                for (Segment segment : segmentsBorrowed) {
                     Float pheromoneIntensity = pheromoneMatrix.getOrDefault(segment, BASE_PHEROMONE_INTENSITY);
 
-                    pheromoneIntensity = this.evaporatePheromone(pheromoneIntensity, pheromoneLastUpdateMatrix.getOrDefault(segment, 0.0f), finalLastTourDuration);
+                    pheromoneIntensity = this.evaporatePheromone(pheromoneIntensity, pheromoneLastUpdateMatrix.getOrDefault(segment, 0.0f), lastMovementTime);
 
                     pheromoneMatrix.put(segment, pheromoneIntensity);
-                    pheromoneLastUpdateMatrix.put(segment, finalLastTourDuration);
-                });
+                    pheromoneLastUpdateMatrix.put(segment, lastMovementTime);
+                }
                 segmentsBorrowed.clear();
-
-                lastTourDuration = ant.getNextMovementTime();
             }
 
             segmentsBorrowed.add(ant.move(pheromoneMatrix, BASE_PHEROMONE_INTENSITY));
@@ -92,7 +90,7 @@ public class AntColonyAlgorithm implements AbstractSearchOptimalTourAlgorithm {
 
         // Find the best tour
         final Ant bestAnt = ants.stream().min(Comparator.comparingDouble(Ant::getBestTourDuration)).orElse(null);
-        if (bestAnt == null) {
+        if (bestAnt == null || bestAnt.getBestTour() == null) {
             throw new IllegalStateException("No route found");
         }
 
@@ -110,7 +108,7 @@ public class AntColonyAlgorithm implements AbstractSearchOptimalTourAlgorithm {
     }
 
     private int getOptimalNumberOfAnts(DeliveryTour deliveryTour) {
-        return Math.min(10, deliveryTour.getStops().size());
+        return Math.max(20, deliveryTour.getStops().size());
     }
 
     private List<Ant> placeAnts(DeliveryTour deliveryTour, int numberOfAnts) {
@@ -138,6 +136,7 @@ public class AntColonyAlgorithm implements AbstractSearchOptimalTourAlgorithm {
         private Intersection currentIntersection;
         private List<Intersection> tour;
         private final Set<Segment> visitedSegments;
+        @Getter
         private Pair<List<Intersection>, Float> bestTour;
 
         public Ant(float speed, Intersection initialIntersection, List<DeliveryRequest> intersectionsToVisit) {
@@ -159,6 +158,10 @@ public class AntColonyAlgorithm implements AbstractSearchOptimalTourAlgorithm {
             return this.bestTour.getValue();
         }
         public Collection<? extends Segment> getBestTourSegments() {
+            if (this.bestTour == null) {
+                return null;
+            }
+
             List<Segment> segments = new ArrayList<>();
 
             List<Intersection> intersections = this.bestTour.getKey();
@@ -262,38 +265,31 @@ public class AntColonyAlgorithm implements AbstractSearchOptimalTourAlgorithm {
 
         private Intersection selectBestNextIntersection(Map<Segment, Float> pheromoneMatrix, Float defaultPheromoneIntensity) {
             // Evaluate probabilities for each intersection reachable from the current intersection
-            final Map<Intersection, Float> probabilities = new HashMap<>();
-            final Map<Intersection, Segment> reachableIntersections = currentIntersection.getReachableIntersections();
-            reachableIntersections.forEach( (intersection, segment) -> {
-                final Scorer<Intersection> scorer = new HaversineScorer();
+            final Scorer<Intersection> scorer = new HaversineScorer();
+            final Map<Intersection, Float> probabilitiesV2 = new HashMap<>();
+            float denominator = 0f;
+            for (Map.Entry<Intersection, Segment> entry : currentIntersection.getReachableIntersections().entrySet()) {
+                final Segment segment = entry.getValue();
+                final Intersection intersection = entry.getKey();
+
+                float distance;
+                if (this.currentChunkToVisit.isEmpty()) {
+                    distance = scorer.computeCost(intersection, this.initialIntersection);
+                } else {
+                    distance = this.currentChunkToVisit.keySet().stream()
+                            .map(intersectionToVisit -> scorer.computeCost(intersection, intersectionToVisit))
+                            .min(Float::compare)
+                            .orElse(0f);
+                }
 
                 final float pheromoneIntensity = this.getPheromoneIntensity(pheromoneMatrix, defaultPheromoneIntensity, segment);
-                // Compute min distance with all intersection in the current chunk to visit
-                final float distance = this.currentChunkToVisit.keySet().stream()
-                        .map(intersectionToVisit -> scorer.computeCost(intersection, intersectionToVisit))
-                        .min(Float::compare)
-                        .orElse(segment.getLength());
 
-                final float numerator = pheromoneIntensity * 1 / distance;
-                final float denominator = reachableIntersections.keySet().stream()
-                        .map( intersectionBis -> {
-                            final Segment segmentBis = currentIntersection.getSegmentTo(intersectionBis);
-                            final float pheromoneIntensityBis = this.getPheromoneIntensity(pheromoneMatrix, defaultPheromoneIntensity, segmentBis);
-                            final float distanceBis = this.currentChunkToVisit.keySet().stream()
-                                    .map(intersectionToVisit -> scorer.computeCost(intersectionBis, intersectionToVisit))
-                                    .min(Float::compare)
-                                    .orElse(segmentBis.getLength());
+                final float probability = pheromoneIntensity * 1 / (distance + segment.getLength());
+                probabilitiesV2.put(intersection, probability);
+                denominator += probability;
+            }
 
-                            return pheromoneIntensityBis * 1 / distanceBis;
-                        })
-                        .reduce(0f, Float::sum);
-
-                // TODO : Explore the possibility to reduce probabilities on segments that have been visited recently
-                // TODO : Explore the possibility to add a random factor to the probabilities
-                probabilities.put(intersection, numerator / denominator);
-            });
-
-            if (probabilities.isEmpty()) {
+            if (probabilitiesV2.isEmpty()) {
                 // Return last intersection of tour
                 return this.tour.get(this.tour.size() - 1);
             } else {
@@ -301,8 +297,11 @@ public class AntColonyAlgorithm implements AbstractSearchOptimalTourAlgorithm {
                 final float random = new Random().nextFloat();
 
                 float sumProbabilities = 0;
-                for (Map.Entry<Intersection, Float> entry : probabilities.entrySet()) {
-                    sumProbabilities += entry.getValue();
+                for (Map.Entry<Intersection, Float> entry : probabilitiesV2.entrySet()) {
+                    // TODO : Explore the possibility to reduce probabilities on segments that have been visited recently
+                    // TODO : Explore the possibility to add a random factor to the probabilities
+                    final float probability = entry.getValue() / denominator;
+                    sumProbabilities += probability;
 
                     if (random <= sumProbabilities) {
                         return entry.getKey();
@@ -318,9 +317,9 @@ public class AntColonyAlgorithm implements AbstractSearchOptimalTourAlgorithm {
             final float currentIntensity = pheromoneMatrix.getOrDefault(segment, defaultPheromoneIntensity);
 
             if (tour.size() > 0 && this.currentIntersection.getSegmentTo(tour.get(tour.size() - 1)) == segment) {
-                return currentIntensity * 0.5f; // TODO ; Improve to not penalize the segment if the ant is on delivery request
+                return currentIntensity * 0.05f; // TODO ; Improve to not penalize the segment if the ant is on delivery request
             } else if (this.hasVisited(segment)) {
-                return currentIntensity * 0.8f;
+                return currentIntensity * 0.08f;
             } else {
                 return currentIntensity;
             }
