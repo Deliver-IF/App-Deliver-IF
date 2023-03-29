@@ -8,6 +8,7 @@ import com.deliverif.app.model.Intersection;
 import lombok.Getter;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -26,7 +27,7 @@ public class NaiveAlgorithm implements AbstractSearchOptimalTourAlgorithm {
         return instance;
     }
     public void optimize(DeliveryTour deliveryTour){
-        Set<Intersection> intersections = deliveryTour.getCityMap().getIntersections();
+        Set<Intersection> intersections = new HashSet<>(deliveryTour.getCityMap().getIntersections().values());
         graph = new Graph<>(intersections, deliveryTour.getCityMap().getConnections());
         routeFinder = new RouteFinder<>(graph, new HaversineScorer(), new HaversineScorer());
         List<Intersection> route = new ArrayList<>();

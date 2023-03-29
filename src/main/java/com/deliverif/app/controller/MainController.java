@@ -13,6 +13,8 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import lombok.Getter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.nio.file.FileAlreadyExistsException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 
@@ -123,6 +125,74 @@ public class MainController {
         }
         //TODO: controller in model...
         this.dataModel.getMapController().drawBasemap(this.mapPane, this.dataModel.getCityMap());
+    }
+
+    /**
+     * Display a dialog window to select a tour on the user's device.
+     * If the tour is successfully loaded, it is displayed on the map pane.
+     */
+    @FXML
+    public void loadTourAction() {
+        FileChooser chooser = new FileChooser();
+        File file = chooser.showOpenDialog(menuBar.getScene().getWindow());
+        if (file != null) {
+            try {
+                for (DeliveryTour deliveryTour: this.dataModel.getCityMap().getDeliveryTours().values()) {
+                    this.dataModel.getMapController().eraseShapes(this.mapPane, deliveryTour.getShapes());
+                }
+                this.dataModel.loadTourFromFile(file);
+                for (DeliveryTour deliveryTour: this.dataModel.getCityMap().getDeliveryTours().values()) {
+                    this.dataModel.getMapController().displayDeliveryTour(this.mapPane, this.dataModel.getCityMap(), deliveryTour);
+                }
+                this.nbCourierText.setText(Integer.toString(this.dataModel.getCityMap().getDeliveryTours().size()));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Information");
+                alert.setHeaderText(null);
+                alert.setContentText(e.getMessage());
+                alert.showAndWait();
+            } catch (Exception exc) {
+                System.err.println("Error while loading tour file");
+                System.err.println(exc.getMessage());
+
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Information");
+                alert.setHeaderText(null);
+                alert.setContentText(exc.getMessage());
+                alert.showAndWait();
+            }
+        }
+    }
+
+    /**
+     * Display a dialog window to select a file on the user's device.
+     * If the tour is successfully loaded, it is displayed on the map pane.
+     */
+    @FXML
+    public void saveTourAction() {
+        FileChooser chooser = new FileChooser();
+        File file = chooser.showSaveDialog(menuBar.getScene().getWindow());
+        if (file != null) {
+            try {
+                this.dataModel.saveTourToFile(file);
+            } catch (FileAlreadyExistsException e) {
+                e.printStackTrace();
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Information");
+                alert.setHeaderText(null);
+                alert.setContentText(e.getMessage());
+                alert.showAndWait();
+            } catch (Exception exc) {
+                System.err.println("Error while saving tour file");
+                System.err.println(exc.getMessage());
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Information");
+                alert.setHeaderText(null);
+                alert.setContentText(exc.getMessage());
+                alert.showAndWait();
+            }
+        }
     }
 
     @FXML

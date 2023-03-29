@@ -54,7 +54,7 @@ public class MapController {
      */
     public void drawBasemap(Pane mapPane, CityMap map) {
         if (!mapDrawn) {
-            displayCrossings(mapPane, map, map.getIntersections());
+            displayCrossings(mapPane, map, map.getIntersections().values());
             displayStreets(mapPane, map, map.getStreets(), Constants.BASE_MAP_STREETS_COLOR);
             displayWarehouse(mapPane, map, map.getWarehouse(), Constants.WAREHOUSE_COLOR);
             mapDrawn = true;
@@ -195,7 +195,6 @@ public class MapController {
             Circle deliveryPoint = displayDeliveryPoint(mapPane, map, deliveryRequest.getIntersection(), color, deliveryRequest);
             deliveryTour.addShape(deliveryPoint);
         }
-        System.out.println("Test 3");
     }
 
     /**
