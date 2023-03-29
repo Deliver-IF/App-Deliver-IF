@@ -1,7 +1,6 @@
 package com.deliverif.app.model;
 
 import lombok.Getter;
-import org.apache.commons.lang3.tuple.Pair;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -38,8 +37,13 @@ public class Segment {
         this.name = name;
         this.length = length;
         this.origin = origin;
-        this.origin.getReachableIntersections().add(Pair.of(destination, this));
+        if (!this.origin.getReachableIntersections().containsKey(destination)) {
+            this.origin.getReachableIntersections().put(destination, this);
+        }
         this.destination = destination;
+        if (!this.destination.getReachableIntersections().containsKey(origin)) {
+            this.destination.getReachableIntersections().put(origin, this);
+        }
     }
 
     /**

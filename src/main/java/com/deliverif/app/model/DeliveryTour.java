@@ -77,6 +77,15 @@ public class DeliveryTour {
         tour.add(segment);
     }
 
+    /**
+     * Remove the delivery request from the delivery tour.
+     *
+     * @param deliveryRequest   the new delivery request to remove to the delivery tour.
+     */
+    public void removeDeliveryRequest(DeliveryRequest deliveryRequest) {
+        stops.remove(deliveryRequest);
+    }
+
     public void addLine(Line line) {
         lines.add(line);
     }

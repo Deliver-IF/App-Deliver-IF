@@ -1,7 +1,6 @@
 package com.deliverif.app.model;
 
 import com.deliverif.app.exceptions.NoCourierUnavailableException;
-import javafx.util.Pair;
 import lombok.Getter;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +11,6 @@ public class CityMap {
     private final Intersection warehouse;
     private final Set<Segment> streets;
     private final Map<String, Intersection> intersections;
-    private final Map<Pair<String, String>, Segment> segmentsMap;
     private final Map<String, Set<String>> connections;
     private final Map<Integer, DeliveryTour> deliveryTours;
     private final Float minLatitude;
@@ -26,7 +24,6 @@ public class CityMap {
      * @param warehouse     the location of the warehouse, represented by an Intersection object.
      * @param segments      a set of all the segments / streets that constitute the map.
      * @param intersections a set of all the intersections that constitute the map.
-     * @param segmentsMap   a Map mapping an id of an intersection to the corresponding Intersection object.
      * @param connections   a Map mapping an id of an intersection to the ids of all the intersections accessible from
      *                      this intersection.
      * @param minLatitude   the minimum latitude accessible on the map.
@@ -34,11 +31,10 @@ public class CityMap {
      * @param minLongitude  the minimum longitude accessible on the map.
      * @param maxLongitude  the maximum longitude accessible on the map.
      */
-    private CityMap(Intersection warehouse, Set<Segment> segments, Map<String, Intersection> intersections, Map<Pair<String, String>, Segment> segmentsMap, Map<String, Set<String>> connections, Float minLatitude, Float maxLatitude, Float minLongitude, Float maxLongitude) {
+    private CityMap(Intersection warehouse, Set<Segment> segments, Map<String, Intersection> intersections, Map<String, Set<String>> connections, Float minLatitude, Float maxLatitude, Float minLongitude, Float maxLongitude) {
         this.warehouse = warehouse;
         this.streets = segments;
         this.intersections = intersections;
-        this.segmentsMap = segmentsMap;
         this.connections = connections;
         this.minLatitude = minLatitude;
         this.maxLatitude = maxLatitude;
@@ -55,7 +51,6 @@ public class CityMap {
      * @param warehouse     the location of the warehouse, represented by an Intersection object.
      * @param segments      a set of all the segments / streets that constitute the map.
      * @param intersections a set of all the intersections that constitute the map.
-     * @param segmentsMap   a Map mapping an id of an intersection to the corresponding Intersection object.
      * @param connections   a Map mapping an id of an intersection to the ids of all the intersections accessible from
      *                      this intersection.
      * @param minLatitude   the minimum latitude accessible on the map.
@@ -64,8 +59,8 @@ public class CityMap {
      * @param maxLongitude  the maximum longitude accessible on the map.
      * @return              the newly created CityMap object.
      */
-    public static CityMap create(Intersection warehouse, Set<Segment> segments, Map<String, Intersection> intersections, Map<Pair<String, String>, Segment> segmentsMap, Map<String, Set<String>> connections, Float minLatitude, Float maxLatitude, Float minLongitude, Float maxLongitude) {
-        return new CityMap(warehouse, segments, intersections, segmentsMap, connections, minLatitude, maxLatitude, minLongitude, maxLongitude);
+    public static CityMap create(Intersection warehouse, Set<Segment> segments, Map<String, Intersection> intersections, Map<String, Set<String>> connections, Float minLatitude, Float maxLatitude, Float minLongitude, Float maxLongitude) {
+        return new CityMap(warehouse, segments, intersections, connections, minLatitude, maxLatitude, minLongitude, maxLongitude);
     }
 
     /**

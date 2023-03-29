@@ -5,7 +5,6 @@ import com.deliverif.app.algorithm.astar.HaversineScorer;
 import com.deliverif.app.algorithm.astar.RouteFinder;
 import com.deliverif.app.model.DeliveryTour;
 import com.deliverif.app.model.Intersection;
-import javafx.util.Pair;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -47,7 +46,7 @@ public class NaiveAlgorithm implements AbstractSearchOptimalTourAlgorithm {
         }
         deliveryTour.getTour().clear();
         for (int i = 0; i < route.size()-1; i++) {
-            deliveryTour.getTour().add(deliveryTour.getCityMap().getSegmentsMap().get(new Pair<>(route.get(i).getId(), route.get(i+1).getId())));
+            deliveryTour.getTour().add(route.get(i).getReachableIntersections().get(route.get(i+1)));
         }
     }
 }

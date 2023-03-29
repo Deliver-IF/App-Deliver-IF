@@ -15,6 +15,7 @@ import lombok.Getter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.FileAlreadyExistsException;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 
 @Getter
@@ -87,8 +88,31 @@ public class MainController {
     public void loadMapAction() {
         FileChooser chooser = new FileChooser();
         File file = chooser.showOpenDialog(menuBar.getScene().getWindow());
+        loadFile(file);
+    }
+
+
+    @FXML
+    public void loadSmallMap() {
+        File file = new File(System.getProperty("user.dir") + "/src/main/resources/com/deliverif/app/maps/smallMap.xml");
+        loadFile(file);
+    }
+
+    @FXML
+    public void loadMediumMap() throws URISyntaxException {
+        File file = new File(System.getProperty("user.dir") + "/src/main/resources/com/deliverif/app/maps/smallMap.xml");
+        loadFile(file);
+    }
+
+    @FXML
+    public void loadLargeMap() {
+        File file = new File(System.getProperty("user.dir") + "/src/main/resources/com/deliverif/app/maps/smallMap.xml");
+        loadFile(file);
+    }
+
+    private void loadFile(File file) {
         if (file != null) {
-           try {
+            try {
                 this.dataModel.loadMapFromFile(file);
                 CityMap citymap = this.dataModel.getCityMap();
                 if(citymap != null) {
@@ -261,6 +285,7 @@ public class MainController {
      */
     @FXML
     protected void closeAddDeliveryRequestDialogPane() {
+        mapPane.getScene().lookup("#noRouteFound").setVisible(false);
         newDeliveryRequestDialogPane.setVisible(false);
     }
 
@@ -274,13 +299,19 @@ public class MainController {
         DeliveryTour deliveryTour = dataModel.getCityMap().getDeliveryTours().get(courierChoiceBox.getValue());
         DeliveryRequest deliveryRequest = new DeliveryRequest(timeWindows.get(timeWindowChoiceBox.getValue()), MapController.currentlySelectedIntersection);
         deliveryTour.addDeliveryRequest(deliveryRequest);
-        deliveryService.searchOptimalDeliveryTour(deliveryTour);
+        Text noRouteFoundText = (Text) mapPane.getScene().lookup("#noRouteFound");
+        try {
+            deliveryService.searchOptimalDeliveryTour(deliveryTour);
+            // Draw the delivery tour on the map
+            MapController MapController = new MapController();
+            MapController.displayDeliveryTour(mapPane, dataModel.getCityMap(), deliveryTour);
 
-        // Draw the delivery tour on the map
-        MapController MapController = new MapController();
-        MapController.displayDeliveryTour(mapPane, dataModel.getCityMap(), deliveryTour);
+            closeAddDeliveryRequestDialogPane();
+            intersectionInfoDialog.setVisible(false);
+        } catch (IllegalStateException e) {
+            deliveryTour.removeDeliveryRequest(deliveryRequest);
+            noRouteFoundText.setVisible(true);
+        }
 
-        closeAddDeliveryRequestDialogPane();
-        intersectionInfoDialog.setVisible(false);
     }
 }

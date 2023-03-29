@@ -96,7 +96,13 @@ public class MapController {
 
         // Click on an intersection
         point.setOnMouseClicked(mouseEvent -> {
+            if(currentlySelectedIntersection != null) {
+                currentlySelectedIntersection.getDefaultShapeOnMap().setFill(Constants.BASE_MAP_INTERSECTION_COLOR);
+            }
             currentlySelectedIntersection = intersection;
+
+            // Leave the selected intersection colored
+            intersection.getDefaultShapeOnMap().setFill(Constants.BASE_MAP_INTERSECTION_COLOR_HOVER);
 
             // Change text on dialog
             Text deliveryWindowText = (Text) mapPane.getScene().lookup("#deliveryWindow");
@@ -124,7 +130,9 @@ public class MapController {
         });
         point.setOnMouseExited(mouseEvent -> {
             mapPane.getScene().setCursor(Cursor.DEFAULT);
-            intersection.getDefaultShapeOnMap().setFill(Constants.BASE_MAP_INTERSECTION_COLOR);
+            if(currentlySelectedIntersection == null || currentlySelectedIntersection != intersection) {
+                intersection.getDefaultShapeOnMap().setFill(Constants.BASE_MAP_INTERSECTION_COLOR);
+            }
         });
 
         intersection.setDefaultShapeOnMap(point);
@@ -334,7 +342,7 @@ public class MapController {
     static private void movePane(Pane mapPane, DialogPane paneToMove, double x, double y) {
         TranslateTransition tt = new TranslateTransition(Duration.millis(1), paneToMove);
         tt.setToX(x - (mapPane.getWidth() / 2.0) + (paneToMove.getWidth() / 2.0));
-        tt.setToY(y - (mapPane.getHeight() / 2.0) + (paneToMove.getHeight() / 2.0) - 10.0);
+        tt.setToY(y - (mapPane.getHeight() / 2.0) + (paneToMove.getHeight() / 2.0) - Constants.DEFAULT_SHIFT_DELIVERY_POINT_DIALOG);
         tt.setCycleCount(1);
         tt.setAutoReverse(false);
         tt.play();
