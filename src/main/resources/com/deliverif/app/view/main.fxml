@@ -53,7 +53,7 @@
                               <Insets right="10.0" />
                            </HBox.margin>
                         </Label>
-                        <Button fx:id="decreaseCourierButton" mnemonicParsing="false" onAction="#deleteCourier" text=" - ">
+                        <Button fx:id="decreaseCourierButton" mnemonicParsing="false" onAction="#deleteCourier" text=" - " disable="true">
                            <HBox.margin>
                               <Insets right="10.0" />
                            </HBox.margin>
@@ -63,7 +63,7 @@
                               <Insets right="10.0" />
                            </HBox.margin>
                         </Text>
-                        <Button fx:id="increaseCourierButton" mnemonicParsing="false" onAction="#addCourier" text="+">
+                        <Button fx:id="increaseCourierButton" mnemonicParsing="false" onAction="#addCourier" text="+" disable="true">
                            <HBox.margin>
                               <Insets right="10.0" />
                            </HBox.margin>
