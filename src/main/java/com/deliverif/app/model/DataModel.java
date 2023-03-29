@@ -1,7 +1,6 @@
 package com.deliverif.app.model;
 
 import com.deliverif.app.controller.MapController;
-import javafx.util.Pair;
 import lombok.Getter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -12,7 +11,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 public class DataModel {
@@ -86,15 +84,13 @@ public class DataModel {
                 throw new Exception("Invalid number of segments");
             }
             Set<Segment> segments = new HashSet<>();
-            Map<Pair<String, String>, Segment> segmentsMap = new HashMap<>();
             for (int i = 0; i < nStreets.getLength(); i++) {
                 Segment segment = Segment.create(nStreets.item(i), intersections);
                 segments.add(segment);
                 connections.get(segment.getOrigin().getId()).add(segment.getDestination().getId());
-                segmentsMap.put(new Pair<>(segment.getOrigin().getId(), segment.getDestination().getId()), segment);
             }
 
-            this.cityMap = CityMap.create(warehouse, segments, new HashSet<>(intersections.values()), segmentsMap, connections, minLatitude, maxLatitude, minLongitude, maxLongitude);
+            this.cityMap = CityMap.create(warehouse, segments, new HashSet<>(intersections.values()), connections, minLatitude, maxLatitude, minLongitude, maxLongitude);
             //cityMap.addDeliveryTour();
         } catch (Exception e) {
             throw new RuntimeException(e);

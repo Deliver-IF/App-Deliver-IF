@@ -231,6 +231,4 @@ public class MainController {
         closeAddDeliveryRequestDialogPane();
         intersectionInfoDialog.setVisible(false);
     }
-
-
 }
