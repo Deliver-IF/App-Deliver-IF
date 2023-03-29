@@ -14,6 +14,7 @@ import java.io.FileNotFoundException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,14 +46,33 @@ public class NaiveAlgorithmTest {
         DeliveryTour deliveryTour = cityMap.getDeliveryTours().get(0);
         NaiveAlgorithm.getInstance().optimize(deliveryTour);
         assert deliveryTour.getTour().size() == 4;
-        assert deliveryTour.getTour().get(0).getOrigin().getId().equals("1");
-        assert deliveryTour.getTour().get(1).getOrigin().getId().equals("3");
-        assert deliveryTour.getTour().get(2).getOrigin().getId().equals("2");
-        assert deliveryTour.getTour().get(3).getOrigin().getId().equals("4");
-        assert deliveryTour.getTour().get(0).getDestination().getId().equals("3");
-        assert deliveryTour.getTour().get(1).getDestination().getId().equals("2");
-        assert deliveryTour.getTour().get(2).getDestination().getId().equals("4");
-        assert deliveryTour.getTour().get(3).getDestination().getId().equals("1");
+
+        ArrayList<String> extremities = new ArrayList<>();
+        ArrayList<String> expected = new ArrayList<>();
+
+        extremities.add(deliveryTour.getTour().get(0).getOrigin().getId());
+        extremities.add(deliveryTour.getTour().get(0).getDestination().getId());
+        expected.add("1"); expected.add("3");
+        assert extremities.containsAll(expected);
+        extremities.clear(); expected.clear();
+
+        extremities.add(deliveryTour.getTour().get(1).getOrigin().getId());
+        extremities.add(deliveryTour.getTour().get(1).getDestination().getId());
+        expected.add("3"); expected.add("2");
+        assert extremities.containsAll(expected);
+        extremities.clear(); expected.clear();
+
+        extremities.add(deliveryTour.getTour().get(2).getOrigin().getId());
+        extremities.add(deliveryTour.getTour().get(2).getDestination().getId());
+        expected.add("2"); expected.add("4");
+        assert extremities.containsAll(expected);
+        extremities.clear(); expected.clear();
+
+        extremities.add(deliveryTour.getTour().get(3).getOrigin().getId());
+        extremities.add(deliveryTour.getTour().get(3).getDestination().getId());
+        expected.add("4"); expected.add("1");
+        assert extremities.containsAll(expected);
+        extremities.clear(); expected.clear();
     }
 
     @Test

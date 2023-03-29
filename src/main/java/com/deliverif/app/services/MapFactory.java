@@ -70,15 +70,14 @@ public class MapFactory {
                 throw new Exception("Invalid number of segments");
             }
             Set<Segment> segments = new HashSet<>();
-            Map<Pair<String, String>, Segment> segmentsMap = new HashMap<>();
             for (int i = 0; i < nStreets.getLength(); i++) {
                 Segment segment = Segment.create(nStreets.item(i), intersections);
                 segments.add(segment);
                 connections.get(segment.getOrigin().getId()).add(segment.getDestination().getId());
-                segmentsMap.put(new Pair<>(segment.getOrigin().getId(), segment.getDestination().getId()), segment);
+                connections.get(segment.getDestination().getId()).add(segment.getOrigin().getId());
             }
 
-            return CityMap.create(warehouse, segments, intersections, segmentsMap, connections, minLatitude, maxLatitude, minLongitude, maxLongitude);
+            return CityMap.create(warehouse, segments, intersections, connections, minLatitude, maxLatitude, minLongitude, maxLongitude);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

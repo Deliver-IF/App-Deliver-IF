@@ -61,7 +61,7 @@ public class DeliveryServiceTest {
         intersections.put("7", new TestableIntersection("7"));
         intersections.put("8", new TestableIntersection("8"));
         intersections.put("9", new TestableIntersection("9"));
-        CityMap cityMap = CityMap.create(null, null, intersections, null, null, 0f, 0f, 0f, 0f);
+        CityMap cityMap = CityMap.create(null, null, intersections, null, 0f, 0f, 0f, 0f);
         DeliveryService.getInstance().loadDeliveriesFromFile(new File(inputFilePath), cityMap);
         assert cityMap.getDeliveryTours().size() == 2;
 

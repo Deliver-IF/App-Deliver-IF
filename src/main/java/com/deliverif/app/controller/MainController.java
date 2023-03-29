@@ -147,9 +147,20 @@ public class MainController {
                 this.nbCourierText.setText(Integer.toString(this.dataModel.getCityMap().getDeliveryTours().size()));
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Information");
+                alert.setHeaderText(null);
+                alert.setContentText(e.getMessage());
+                alert.showAndWait();
             } catch (Exception exc) {
                 System.err.println("Error while loading tour file");
                 System.err.println(exc.getMessage());
+
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Information");
+                alert.setHeaderText(null);
+                alert.setContentText(exc.getMessage());
+                alert.showAndWait();
             }
         }
     }
@@ -167,9 +178,19 @@ public class MainController {
                 this.dataModel.saveTourToFile(file);
             } catch (FileAlreadyExistsException e) {
                 e.printStackTrace();
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Information");
+                alert.setHeaderText(null);
+                alert.setContentText(e.getMessage());
+                alert.showAndWait();
             } catch (Exception exc) {
                 System.err.println("Error while saving tour file");
                 System.err.println(exc.getMessage());
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Information");
+                alert.setHeaderText(null);
+                alert.setContentText(exc.getMessage());
+                alert.showAndWait();
             }
         }
     }
