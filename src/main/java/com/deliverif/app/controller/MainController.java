@@ -118,6 +118,8 @@ public class MainController {
                 if(citymap != null) {
                     citymap.addDeliveryTour();
                     this.nbCourierText.setText(Integer.toString(citymap.getDeliveryTours().size()));
+                    this.increaseCourierButton.setDisable(false);
+                    this.decreaseCourierButton.setDisable(false);
                 }
             } catch (Exception exc) {
                 // handle exception...
@@ -234,7 +236,7 @@ public class MainController {
                 Alert alert = new Alert(Alert.AlertType.WARNING);
                 alert.setTitle("Information");
                 alert.setHeaderText(null);
-                alert.setContentText("It is not possible to delete a courier. There must always be at least 1 courier available to respond to delivery requests");
+                alert.setContentText("It is not possible to delete a courier. There must always be at least one courier to use the application.");
                 alert.showAndWait();
             }
         }
