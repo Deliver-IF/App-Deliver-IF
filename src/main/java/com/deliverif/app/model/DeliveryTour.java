@@ -51,7 +51,7 @@ public class DeliveryTour {
         this.idCourier = idCourier;
         this.stops = new ArrayList<>();
         this.tour = new ArrayList<>();
-        this.lines = new ArrayList<>();
+        this.shapes = new ArrayList<>();
     }
 
     /**

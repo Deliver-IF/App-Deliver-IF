@@ -138,7 +138,7 @@ public class MainController {
         if (file != null) {
             try {
                 for (DeliveryTour deliveryTour: this.dataModel.getCityMap().getDeliveryTours().values()) {
-                    this.dataModel.getMapController().eraseLines(this.mapPane, deliveryTour.getLines());
+                    this.dataModel.getMapController().eraseShapes(this.mapPane, deliveryTour.getShapes());
                 }
                 this.dataModel.loadTourFromFile(file);
                 for (DeliveryTour deliveryTour: this.dataModel.getCityMap().getDeliveryTours().values()) {
