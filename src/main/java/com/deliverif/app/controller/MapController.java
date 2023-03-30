@@ -98,13 +98,16 @@ public class MapController {
 
         // Click on an intersection
         point.setOnMouseClicked(mouseEvent -> {
-            if(currentlySelectedIntersection != null) {
-                currentlySelectedIntersection.getDefaultShapeOnMap().setFill(Constants.BASE_MAP_INTERSECTION_COLOR);
+            if (currentlySelectedIntersection != null) {
+                currentlySelectedIntersection
+                        .getDefaultShapesOnMap()
+                        .get(0)
+                        .setFill(Constants.BASE_MAP_INTERSECTION_COLOR);
             }
             currentlySelectedIntersection = intersection;
 
             // Leave the selected intersection colored
-            intersection.getDefaultShapeOnMap().setFill(Constants.BASE_MAP_INTERSECTION_COLOR_HOVER);
+            intersection.getDefaultShapesOnMap().get(0).setFill(Constants.BASE_MAP_INTERSECTION_COLOR_HOVER);
 
             // Change text on dialog
             Text deliveryWindowText = (Text) mapPane.getScene().lookup("#deliveryWindow");
@@ -145,12 +148,12 @@ public class MapController {
         // Event which change cursor on intersection hover
         point.setOnMouseEntered(mouseEvent -> {
             mapPane.getScene().setCursor(Cursor.HAND);
-            intersection.getDefaultShapeOnMap().setFill(Constants.BASE_MAP_INTERSECTION_COLOR_HOVER);
+            intersection.getDefaultShapesOnMap().get(0).setFill(Constants.BASE_MAP_INTERSECTION_COLOR_HOVER);
         });
         point.setOnMouseExited(mouseEvent -> {
             mapPane.getScene().setCursor(Cursor.DEFAULT);
             if(currentlySelectedIntersection == null || currentlySelectedIntersection != intersection) {
-                intersection.getDefaultShapeOnMap().setFill(Constants.BASE_MAP_INTERSECTION_COLOR);
+                intersection.getDefaultShapesOnMap().get(0).setFill(Constants.BASE_MAP_INTERSECTION_COLOR);
             }
         });
 
@@ -237,7 +240,7 @@ public class MapController {
         Coordinates origin = getCoordinates(mapPane, map, intersection.getLongitude(), intersection.getLatitude());
 
         // Determine all properties of the shape we will draw on map
-        Circle point = new Circle();
+        Circle point = deliveryRequest.getDeliveryRequestCircle();
         point.setCenterX(origin.getX());
         point.setCenterY(origin.getY());
         point.setStroke(color);
@@ -245,6 +248,9 @@ public class MapController {
         point.setRadius(Constants.DELIVERY_REQUEST_SHAPE_RADIUS);
 
         point.setOnMouseClicked(mouseEvent -> {
+            if (currentlySelectedIntersection != null) {
+                currentlySelectedIntersection.getDefaultShapesOnMap().get(0).setFill(Constants.BASE_MAP_INTERSECTION_COLOR);
+            }
             System.out.println(origin.getX() + " " + origin.getY());
 
             Text deliveryWindowText = (Text) mapPane.getScene().lookup("#deliveryWindow");
@@ -278,6 +284,8 @@ public class MapController {
         // Event which change cursor on intersection hover
         point.setOnMouseEntered(mouseEvent -> mapPane.getScene().setCursor(Cursor.HAND));
         point.setOnMouseExited(mouseEvent -> mapPane.getScene().setCursor(Cursor.DEFAULT));
+
+        intersection.setDefaultShapeOnMap(point);
         
         mapPane.getChildren().add(point);
 
@@ -324,8 +332,14 @@ public class MapController {
         line.setStrokeWidth(3);
         mapPane.getChildren().add(line);
 
-        Circle originPoint = segment.getOrigin().getDefaultShapeOnMap();
-        Circle destinationPoint = segment.getDestination().getDefaultShapeOnMap();
+        Circle originPoint = segment
+                .getOrigin()
+                .getDefaultShapesOnMap()
+                .get(segment.getOrigin().getDefaultShapesOnMap().size()-1);
+        Circle destinationPoint = segment
+                .getDestination()
+                .getDefaultShapesOnMap()
+                .get(segment.getDestination().getDefaultShapesOnMap().size()-1);
         mapPane.getChildren().remove(originPoint);
         mapPane.getChildren().add(originPoint);
         mapPane.getChildren().remove(destinationPoint);

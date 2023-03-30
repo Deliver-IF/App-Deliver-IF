@@ -1,5 +1,6 @@
 package com.deliverif.app.model;
 
+import javafx.scene.shape.Circle;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -36,11 +37,16 @@ public class DeliveryRequest {
     @Setter
     private DeliveryTour deliveryTour;
 
+    @Setter
+    private Circle deliveryRequestCircle;
+
+
     public DeliveryRequest(int startTimeWindow, Intersection intersection, DeliveryTour deliveryTour) {
         this.startTimeWindow = startTimeWindow;
         this.id = new Random().nextInt(1000000000);
         this.intersection = intersection;
         this.deliveryTour = deliveryTour;
+        this.deliveryRequestCircle =  new Circle();
     }
 
     protected DeliveryRequest(int idRequest, int startTimeWindow, Intersection intersection, DeliveryTour deliveryTour) {
@@ -48,5 +54,6 @@ public class DeliveryRequest {
         this.id = idRequest;
         this.intersection = intersection;
         this.deliveryTour = deliveryTour;
+        this.deliveryRequestCircle = new Circle();
     }
 }

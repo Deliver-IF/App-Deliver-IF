@@ -18,6 +18,7 @@ import java.io.FileNotFoundException;
 import java.nio.file.FileAlreadyExistsException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.Map;
 
 @Getter
 public class MainController {
@@ -238,7 +239,7 @@ public class MainController {
     @FXML
     protected void closeIntersectionInfoDialog() {
         intersectionInfoDialog.setVisible(false);
-        MapController.currentlySelectedIntersection.getDefaultShapeOnMap().setFill(Constants.BASE_MAP_INTERSECTION_COLOR);
+        MapController.currentlySelectedIntersection.getDefaultShapesOnMap().get(0).setFill(Constants.BASE_MAP_INTERSECTION_COLOR);
         MapController.currentlySelectedIntersection = null;
         MapController.currentlySelectedDeliveryRequest = null;
         editDeliveryRequestButton.setVisible(false);
@@ -397,6 +398,8 @@ public class MainController {
         DeliveryService.getInstance().searchOptimalDeliveryTour(deliveryTour);
         MapController mapController = new MapController();
         mapController.displayDeliveryTour(mapPane, dataModel.getCityMap(), deliveryTour);
+
+        MapController.currentlySelectedIntersection.getDefaultShapesOnMap().remove(deliveryRequest.getDeliveryRequestCircle());
 
         closeIntersectionInfoDialog();
     }

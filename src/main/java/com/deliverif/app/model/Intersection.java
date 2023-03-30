@@ -5,6 +5,8 @@ import com.deliverif.app.algorithm.astar.GraphNode;
 import lombok.Getter;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,14 +39,14 @@ public class Intersection implements GraphNode {
     /**
      * The default shape that is used to represent an intersection on a map pane.
      */
-    private Circle defaultShapeOnMap;
+    private ArrayList<Circle> defaultShapesOnMap;
 
     public Intersection(String id, Float longitude, Float latitude) {
         this.id = id;
         this.longitude = longitude;
         this.latitude = latitude;
         this.reachableIntersections = new HashMap<>();
-        this.defaultShapeOnMap = new Circle();
+        this.defaultShapesOnMap = new ArrayList<>();
     }
 
     /**
@@ -53,7 +55,7 @@ public class Intersection implements GraphNode {
      * @param point the new reference shape.
      */
     public void setDefaultShapeOnMap(Circle point) {
-        this.defaultShapeOnMap = point;
+        this.defaultShapesOnMap.add(point);
     }
 
     /**
