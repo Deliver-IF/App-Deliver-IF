@@ -1,7 +1,9 @@
 package com.deliverif.app.services;
 
 import com.deliverif.app.algorithm.GreedyAlgorithm;
+import com.deliverif.app.exceptions.NoConfiguredDeliveryException;
 import com.deliverif.app.exceptions.WrongDeliveryTimeException;
+import com.deliverif.app.exceptions.WrongSelectedMapException;
 import com.deliverif.app.model.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -51,7 +53,7 @@ public class DeliveryService {
         GreedyAlgorithm.getInstance().optimize(deliveryTour);
     }
 
-    public void loadDeliveriesFromFile(File file, CityMap cityMap) throws FileNotFoundException {
+    public void loadDeliveriesFromFile(File file, CityMap cityMap) throws FileNotFoundException, WrongSelectedMapException {
         // load the delivery tours from a xml file
         if (!file.exists()) {
             throw new FileNotFoundException(file.getPath());
@@ -72,10 +74,20 @@ public class DeliveryService {
                 throw new Exception("Invalid number of deliveries");
             }
 
+            NodeList nRelatedMap = doc.getElementsByTagName("related-map");
+            if (nRelatedMap.getLength() != 1) {
+                throw new Exception("Invalid number of related-map");
+            }
+            Element relatedMap = (Element) nRelatedMap.item(0);
+            String hash = relatedMap.getAttribute("hash");
+            if (!hash.equals(String.valueOf(cityMap.hashCode()))) {
+                throw new WrongSelectedMapException();
+            }
+
             Element deliveries = (Element) nDeliveries.item(0);
             NodeList deliveryTours = deliveries.getElementsByTagName("delivery-tour");
 
-            for(int iTour = 0; iTour < deliveryTours.getLength(); iTour++) {
+            for (int iTour = 0; iTour < deliveryTours.getLength(); iTour++) {
                 Element deliveryTourElement = (Element) deliveryTours.item(iTour);
                 int idCourierDeliveryTour = Integer.parseInt(deliveryTourElement.getAttribute("id"));
                 String nameCourierDeliveryTour = deliveryTourElement.getAttribute("name");
@@ -92,7 +104,7 @@ public class DeliveryService {
                 }
 
                 NodeList requests = ((Element) nRequestsParent.item(0)).getElementsByTagName("request");
-                for(int i = 0; i < requests.getLength(); i++) {
+                for (int i = 0; i < requests.getLength(); i++) {
                     Element request = (Element) requests.item(i);
                     int idRequest = Integer.parseInt(request.getAttribute("id"));
                     int startTimeWindow = Integer.parseInt(request.getAttribute("startTimeWindow"));
@@ -101,22 +113,28 @@ public class DeliveryService {
                 }
 
                 NodeList segments = ((Element) nSegmentsParent.item(0)).getElementsByTagName("segment");
-                for(int i = 0; i < segments.getLength(); i++) {
+                for (int i = 0; i < segments.getLength(); i++) {
                     Element segment = (Element) segments.item(i);
                     String idIntersection1 = segment.getAttribute("idOrigin");
                     String idIntersection2 = segment.getAttribute("idDestination");
                     newDeliveryTour.addSegment(cityMap.getIntersections().get(idIntersection1), cityMap.getIntersections().get(idIntersection2));
                 }
             }
+        } catch (WrongSelectedMapException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void saveDeliveriesToFile(File file, Collection<DeliveryTour> deliveryTours) throws FileAlreadyExistsException {
+    public void saveDeliveriesToFile(File file, Collection<DeliveryTour> deliveryTours) throws FileAlreadyExistsException, NoConfiguredDeliveryException {
         // store the delivery tours in a xml file
         if (file.exists()) {
             throw new FileAlreadyExistsException(file.getPath());
+        }
+
+        if (deliveryTours.isEmpty()) {
+            throw new NoConfiguredDeliveryException();
         }
 
 
@@ -125,6 +143,9 @@ public class DeliveryService {
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document document = dBuilder.newDocument();
             Element rootElement = document.createElement("deliveries");
+            Element relatedMapElement = document.createElement("related-map");
+            relatedMapElement.setAttribute("hash", String.valueOf(deliveryTours.stream().findAny().orElseThrow().getCityMap().hashCode()));
+            rootElement.appendChild(relatedMapElement);
             for(DeliveryTour deliveryTour : deliveryTours)
             {
                 Element deliveryTourElement = document.createElement("delivery-tour");

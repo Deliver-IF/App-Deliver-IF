@@ -1,5 +1,7 @@
 package com.deliverif.app.services;
 
+import com.deliverif.app.exceptions.NoConfiguredDeliveryException;
+import com.deliverif.app.exceptions.WrongSelectedMapException;
 import com.deliverif.app.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -49,20 +51,13 @@ public class DeliveryServiceTest {
         }
     }
     @Test
-    public void testLoadDeliveriesFromFile() throws FileNotFoundException {
+    public void testLoadDeliveriesFromFile() throws FileNotFoundException, WrongSelectedMapException {
         String inputFilePath = DeliveryServiceTest.class.getResource("").getPath().concat("DeliveryService/input/loadDeliveriesFromFile.xml");
-        Map<String, Intersection> intersections = new HashMap<>();
-        intersections.put("1", new TestableIntersection("1"));
-        intersections.put("2", new TestableIntersection("2"));
-        intersections.put("3", new TestableIntersection("3"));
-        intersections.put("4", new TestableIntersection("4"));
-        intersections.put("5", new TestableIntersection("5"));
-        intersections.put("6", new TestableIntersection("6"));
-        intersections.put("7", new TestableIntersection("7"));
-        intersections.put("8", new TestableIntersection("8"));
-        intersections.put("9", new TestableIntersection("9"));
-        CityMap cityMap = CityMap.create(null, null, intersections, null, 0f, 0f, 0f, 0f);
+        String mapFilePath = DeliveryServiceTest.class.getResource("").getPath().concat("DeliveryService/input/testMap.xml");
+        CityMap cityMap = MapFactory.createMapFromFile(new File(mapFilePath));
         DeliveryService.getInstance().loadDeliveriesFromFile(new File(inputFilePath), cityMap);
+
+        assert String.valueOf(cityMap.hashCode()).equals("161406");
         assert cityMap.getDeliveryTours().size() == 2;
 
         DeliveryTour deliveryTour = cityMap.getDeliveryTours().get(0);
@@ -108,13 +103,28 @@ public class DeliveryServiceTest {
         assert deliveryTour.getTour().get(0).getDestination().getId().equals("2");
         assert deliveryTour.getTour().get(1).getOrigin().getId().equals("2");
         assert deliveryTour.getTour().get(1).getDestination().getId().equals("1");
-
     }
+
     @Test
-    public void testSaveDeliveriesToFile() throws FileAlreadyExistsException {
+    public void testLoadDeliveriesFromFileWrongMap() throws FileNotFoundException {
+        String inputFilePath = DeliveryServiceTest.class.getResource("").getPath().concat("DeliveryService/input/loadDeliveriesFromFile.xml");
+        String mapFilePath = DeliveryServiceTest.class.getResource("").getPath().concat("DeliveryService/input/testWrongMap.xml");
+        CityMap cityMap = MapFactory.createMapFromFile(new File(mapFilePath));
+        try{
+            DeliveryService.getInstance().loadDeliveriesFromFile(new File(inputFilePath), cityMap);
+            assert false;
+        } catch (WrongSelectedMapException e) {
+            assert true;
+        }
+    }
+
+    @Test
+    public void testSaveDeliveriesToFile() throws FileAlreadyExistsException, NoConfiguredDeliveryException, FileNotFoundException {
         String expectedFilePath = DeliveryServiceTest.class.getResource("").getPath().concat("DeliveryService/expected/saveDeliveriesToFile.xml");
+        String mapFilePath = DeliveryServiceTest.class.getResource("").getPath().concat("DeliveryService/input/testMap.xml");
         List<DeliveryTour> deliveryTours = new ArrayList<>();
-        TestableDeliveryTour deliveryTour = new TestableDeliveryTour(null, 0, "toto");
+
+        TestableDeliveryTour deliveryTour = new TestableDeliveryTour(MapFactory.createMapFromFile(new File(mapFilePath)), 0, "toto");
         deliveryTour.getStops().add(new TestableDeliveryRequest(0, 10, "5", deliveryTour));
         deliveryTour.getStops().add(new TestableDeliveryRequest(1, 9, "6", deliveryTour));
         deliveryTour.getStops().add(new TestableDeliveryRequest(2, 11, "6", deliveryTour));

@@ -1,6 +1,6 @@
 package com.deliverif.app.model;
 
-import com.deliverif.app.exceptions.NoCourierUnavailableException;
+import com.deliverif.app.exceptions.NoCourierAvailableException;
 import lombok.Getter;
 import java.util.HashMap;
 import java.util.Map;
@@ -86,9 +86,9 @@ public class CityMap {
     /**
      * Delete a DeliveryTour object from the current list of DeliveryTour objects.
      *
-     * @throws NoCourierUnavailableException
+     * @throws NoCourierAvailableException
      */
-    public void deleteDeliveryTour() throws NoCourierUnavailableException {
+    public void deleteDeliveryTour() throws NoCourierAvailableException {
         boolean emptyDeliveryTour = false;
         for(Map.Entry<Integer, DeliveryTour> deliveryTourEntry : deliveryTours.entrySet()) {
             DeliveryTour currentDeliveryTour = deliveryTourEntry.getValue();
@@ -99,7 +99,7 @@ public class CityMap {
             }
         }
         if(!emptyDeliveryTour) {
-            throw new NoCourierUnavailableException();
+            throw new NoCourierAvailableException();
         }
 
     }
@@ -115,5 +115,11 @@ public class CityMap {
         DeliveryTour deliveryTour = deliveryTours.get(idCourier);
         DeliveryRequest deliveryRequest = new DeliveryRequest(10, destination, deliveryTour);
         deliveryTour.addDeliveryRequest(deliveryRequest);
+    }
+
+    @Override
+    public int hashCode() {
+        return (warehouse != null ? warehouse.hashCode() : 1) * (streets != null ? streets.hashCode() : 1) ^
+                (intersections != null ? intersections.hashCode() : 1) * (connections != null ? connections.hashCode() : 1);
     }
 }
