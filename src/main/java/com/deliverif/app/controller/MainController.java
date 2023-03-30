@@ -1,13 +1,11 @@
 package com.deliverif.app.controller;
 
 import com.deliverif.app.exceptions.NoCourierUnavailableException;
-import com.deliverif.app.model.CityMap;
-import com.deliverif.app.model.DataModel;
-import com.deliverif.app.model.DeliveryRequest;
-import com.deliverif.app.model.DeliveryTour;
+import com.deliverif.app.model.*;
 import com.deliverif.app.services.DeliveryService;
 import com.deliverif.app.utils.Constants;
 import javafx.fxml.FXML;
+import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
@@ -68,6 +66,8 @@ public class MainController {
     private ChoiceBox timeWindowChoiceBox;
     @FXML
     private Button closeAddDeliveryRequestDialogPane;
+    @FXML
+    private Group itinaryDetail;
     private HashMap<String, Integer> timeWindows = new HashMap<String, Integer>();
 
     public MainController() {
@@ -336,5 +336,44 @@ public class MainController {
             deliveryTour.removeDeliveryRequest(deliveryRequest);
             noRouteFoundText.setVisible(true);
         }
+    }
+
+    @FXML
+    protected void seeDetailsDeliveryRequest() {
+        System.out.println("Here");
+        DeliveryRequest deliveryRequestDestination = MapController.currentDeliveryRequests.get(MapController.currentIndex);
+        DeliveryTour deliveryTour = DeliveryService.getInstance().getDeliveryTourFromDeliveryRequest(dataModel.getCityMap(), deliveryRequestDestination);
+        int indexDestinationDeliveryRequest = deliveryTour.getStops().indexOf(deliveryRequestDestination);
+        Intersection intersectionOrigin;
+        if(indexDestinationDeliveryRequest > 0) {
+            intersectionOrigin = deliveryTour.getStops().get(indexDestinationDeliveryRequest - 1).getIntersection();
+        } else {
+            intersectionOrigin = dataModel.getCityMap().getWarehouse();
+        }
+        System.out.println(intersectionOrigin.getId());
+//        System.out.println(inde);
+        boolean start = false;
+        String indication = "";
+        String distance = "";
+        for (Segment segment : deliveryTour.getTour()) {
+            System.out.println(segment);
+            System.out.println(segment.getName());
+            if(segment.getOrigin().equals(intersectionOrigin) || start) {
+//                start = true;
+                indication = "Turn " + segment.getName();
+                distance = segment.getLength() + " m";
+                Text indicationText = new Text();
+                indicationText.setText(indication);
+                indicationText.setVisible(true);
+                Text distanceText = new Text();
+                distanceText.setText(distance);
+                distanceText.setVisible(true);
+                distanceText.setLayoutY(20.);
+                itinaryDetail.getChildren().add(indicationText);
+                itinaryDetail.getChildren().add(distanceText);
+            }
+        }
+
+
     }
 }

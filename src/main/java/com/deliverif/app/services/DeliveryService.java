@@ -199,4 +199,13 @@ public class DeliveryService {
         }
         return currentDeliveryRequests;
     }
+
+    public DeliveryTour getDeliveryTourFromDeliveryRequest(CityMap map, DeliveryRequest deliveryRequest) {
+        for (DeliveryTour deliveryTour : map.getDeliveryTours().values()) {
+            if(deliveryTour.getStops().contains(deliveryRequest)) {
+                return deliveryTour;
+            }
+        }
+        return null;
+    }
 }
