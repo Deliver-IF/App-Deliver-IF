@@ -60,7 +60,7 @@ public class AntColonyAlgorithm extends AbstractSearchOptimalTourAlgorithm {
         antsQueue.addAll(ants);
 
         float lastMovementTime = 0;
-        final List<Segment> segmentsBorrowed = new ArrayList<>();
+        final List<Segment> segmentsBorrowed = new LinkedList<>();
         for (int i = 0; i < MAX_ITERATIONS_PER_ANTS * numberOfAnts; i++) {
             final Ant ant = antsQueue.poll();
             if (ant == null) {
@@ -151,8 +151,8 @@ public class AntColonyAlgorithm extends AbstractSearchOptimalTourAlgorithm {
         private Intersection currentIntersection;
         private List<Intersection> tour;
 
-        private final Map<Intersection, Integer> indexVisitedIntersection;
-        private final Map<Intersection, Integer> countVisitedIntersectionsSinceLastVisit;
+        private Map<Intersection, Integer> indexVisitedIntersection;
+        private Map<Intersection, Integer> countVisitedIntersectionsSinceLastVisit;
         @Getter
         private Pair<List<Intersection>, Float> bestTour;
 
@@ -260,8 +260,8 @@ public class AntColonyAlgorithm extends AbstractSearchOptimalTourAlgorithm {
                     this.populateNextChunk(request.getStartTimeWindow());
                 }
 
-                this.countVisitedIntersectionsSinceLastVisit.clear();
-                this.indexVisitedIntersection.clear();
+                this.countVisitedIntersectionsSinceLastVisit = new HashMap<>(128);
+                this.indexVisitedIntersection = new HashMap<>(128);
             }
 
             this.tour.add(nextIntersection);
@@ -306,8 +306,8 @@ public class AntColonyAlgorithm extends AbstractSearchOptimalTourAlgorithm {
             this.currentTourDuration = 0;
             this.currentIntersection = initialIntersection;
             this.tour = new ArrayList<>(); // Don't call "clear" on the list because it will clear the best tour
-            this.indexVisitedIntersection.clear();
-            this.countVisitedIntersectionsSinceLastVisit.clear();
+            this.countVisitedIntersectionsSinceLastVisit = new HashMap<>(128);
+            this.indexVisitedIntersection = new HashMap<>(128);
 
             this.timeWindowCurrentChunk = this.intersectionsToVisit.get(0).getStartTimeWindow();
             this.currentChunkToVisit = this.intersectionsToVisit.stream()
