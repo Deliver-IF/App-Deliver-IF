@@ -235,9 +235,7 @@ public class MapController {
             currentlySelectedIntersection = intersection;
             currentIndex = currentDeliveryRequests.size() - 1;
 
-            deliveryWindowText.setText("Delivery Window : " + deliveryRequest.getStartTimeWindow() + "h-"
-                    + (deliveryRequest.getStartTimeWindow() + 1) + "h\n"
-            );
+            deliveryWindowText.setText(MainController.getDeliveryInfoDialogContent());
 
             Button prevDeliveryPointInfo = (Button) mapPane.getScene().lookup("#prevDeliveryPointInfo");
             Button nextDeliveryPointInfo = (Button) mapPane.getScene().lookup("#nextDeliveryPointInfo");
