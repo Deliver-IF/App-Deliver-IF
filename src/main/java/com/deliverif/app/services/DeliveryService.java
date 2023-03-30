@@ -1,6 +1,8 @@
 package com.deliverif.app.services;
 
-import com.deliverif.app.algorithm.NaiveAlgorithm;
+import com.deliverif.app.algorithm.GreedyAlgorithm;
+import com.deliverif.app.exceptions.WrongDeliveryTimeException;
+import com.deliverif.app.model.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -20,11 +22,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.util.*;
-import com.deliverif.app.model.CityMap;
-import com.deliverif.app.model.DeliveryRequest;
-import com.deliverif.app.model.DeliveryTour;
-import com.deliverif.app.model.Intersection;
-import com.deliverif.app.model.Segment;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -50,8 +47,8 @@ public class DeliveryService {
      *
      * @param deliveryTour  the DeliveryTour object to optimize.
      */
-    public void searchOptimalDeliveryTour(DeliveryTour deliveryTour) {
-        NaiveAlgorithm.getInstance().optimize(deliveryTour);
+    public void searchOptimalDeliveryTour(DeliveryTour deliveryTour) throws WrongDeliveryTimeException {
+        GreedyAlgorithm.getInstance().optimize(deliveryTour);
     }
 
     public void loadDeliveriesFromFile(File file, CityMap cityMap) throws FileNotFoundException {
@@ -80,8 +77,9 @@ public class DeliveryService {
 
             for(int iTour = 0; iTour < deliveryTours.getLength(); iTour++) {
                 Element deliveryTourElement = (Element) deliveryTours.item(iTour);
-                int idDeliveryTour = Integer.parseInt(deliveryTourElement.getAttribute("id"));
-                DeliveryTour newDeliveryTour = cityMap.addDeliveryTour(idDeliveryTour);
+                int idCourierDeliveryTour = Integer.parseInt(deliveryTourElement.getAttribute("id"));
+                String nameCourierDeliveryTour = deliveryTourElement.getAttribute("name");
+                DeliveryTour newDeliveryTour = cityMap.addDeliveryTour(idCourierDeliveryTour, nameCourierDeliveryTour);
 
                 NodeList nRequestsParent = deliveryTourElement.getElementsByTagName("requests");
                 if (nRequestsParent.getLength() != 1) {
@@ -130,8 +128,8 @@ public class DeliveryService {
             for(DeliveryTour deliveryTour : deliveryTours)
             {
                 Element deliveryTourElement = document.createElement("delivery-tour");
-                deliveryTourElement.setAttribute("id", String.valueOf(deliveryTour.getIdCourier()));
-
+                deliveryTourElement.setAttribute("id", String.valueOf(deliveryTour.getCourier().getIdCourier()));
+                deliveryTourElement.setAttribute("name", deliveryTour.getCourier().getCourierName());
                 Element deliveryRequestsElement = document.createElement("requests");
                 for(DeliveryRequest deliveryRequest : deliveryTour.getStops())
                 {
@@ -166,10 +164,10 @@ public class DeliveryService {
                 // send DOM to file
                 tr.transform(new DOMSource(document),
                         new StreamResult(new FileOutputStream(file)));
-                System.out.println("File saved!");
+
 
             } catch (TransformerException | IOException te) {
-                System.out.println(te.getMessage());
+                te.printStackTrace();
             }
 
         } catch (ParserConfigurationException e) {
@@ -192,7 +190,7 @@ public class DeliveryService {
             // For each stops
             for (DeliveryRequest deliveryRequest : deliveryTour.getStops()) {
                 // If delivery request intersection is the current intersection
-                if(deliveryRequest.getIntersection().getId() == intersection.getId()) {
+                if(deliveryRequest.getIntersection().getId().equals(intersection.getId())) {
                     currentDeliveryRequests.add(deliveryRequest);
                 }
             }

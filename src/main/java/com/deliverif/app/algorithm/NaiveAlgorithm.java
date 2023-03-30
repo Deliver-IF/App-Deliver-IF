@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 @Getter
-public class NaiveAlgorithm implements AbstractSearchOptimalTourAlgorithm {
+public class NaiveAlgorithm extends AbstractSearchOptimalTourAlgorithm {
     public static NaiveAlgorithm instance;
     private Graph<Intersection> graph;
     private RouteFinder<Intersection> routeFinder;

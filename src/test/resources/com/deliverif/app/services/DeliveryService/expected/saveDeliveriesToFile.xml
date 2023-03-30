@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <deliveries>
-    <delivery-tour id="0">
+    <delivery-tour id="0" name="toto">
         <requests>
             <request id="0" startTimeWindow="10" idIntersection="5"/>
             <request id="1" startTimeWindow="9" idIntersection="6"/>
@@ -16,7 +16,7 @@
             <segment idOrigin="4" idDestination="1"/>
         </segments>
     </delivery-tour>
-    <delivery-tour id="23">
+    <delivery-tour id="23" name="titi">
         <requests>
             <request id="12" startTimeWindow="9" idIntersection="2"/>
         </requests>

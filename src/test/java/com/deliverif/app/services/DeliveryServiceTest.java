@@ -16,8 +16,8 @@ import java.util.Map;
 
 
 class TestableDeliveryTour extends DeliveryTour {
-    protected TestableDeliveryTour(CityMap cityMap, int idCourier) {
-        super(cityMap, idCourier);
+    protected TestableDeliveryTour(CityMap cityMap, int idCourier, String nameCourier) {
+        super(cityMap, idCourier, nameCourier);
     }
 }
 class TestableIntersection extends Intersection {
@@ -26,8 +26,8 @@ class TestableIntersection extends Intersection {
     }
 }
 class TestableDeliveryRequest extends DeliveryRequest {
-    protected TestableDeliveryRequest(int idRequest, int startTimeWindow, String idIntersection) {
-        super(idRequest, startTimeWindow, new TestableIntersection(idIntersection));
+    protected TestableDeliveryRequest(int idRequest, int startTimeWindow, String idIntersection, DeliveryTour deliveryTour) {
+        super(idRequest, startTimeWindow, new TestableIntersection(idIntersection), deliveryTour);
     }
 }
 class TestableSegment extends Segment {
@@ -66,7 +66,8 @@ public class DeliveryServiceTest {
         assert cityMap.getDeliveryTours().size() == 2;
 
         DeliveryTour deliveryTour = cityMap.getDeliveryTours().get(0);
-        assert deliveryTour.getIdCourier() == 0;
+        assert deliveryTour.getCourier().getIdCourier() == 0;
+        assert deliveryTour.getCourier().getCourierName().equals("toto");
         assert deliveryTour.getStops().size() == 3;
         assert deliveryTour.getStops().get(0).getId() == 0;
         assert deliveryTour.getStops().get(0).getStartTimeWindow() == 10;
@@ -95,7 +96,8 @@ public class DeliveryServiceTest {
         assert deliveryTour.getTour().get(6).getDestination().getId().equals("1");
 
         deliveryTour = cityMap.getDeliveryTours().get(23);
-        assert deliveryTour.getIdCourier() == 23;
+        assert deliveryTour.getCourier().getIdCourier() == 23;
+        assert deliveryTour.getCourier().getCourierName().equals("titi");
         assert deliveryTour.getStops().size() == 1;
         assert deliveryTour.getStops().get(0).getId() == 12;
         assert deliveryTour.getStops().get(0).getStartTimeWindow() == 9;
@@ -112,10 +114,10 @@ public class DeliveryServiceTest {
     public void testSaveDeliveriesToFile() throws FileAlreadyExistsException {
         String expectedFilePath = DeliveryServiceTest.class.getResource("").getPath().concat("DeliveryService/expected/saveDeliveriesToFile.xml");
         List<DeliveryTour> deliveryTours = new ArrayList<>();
-        TestableDeliveryTour deliveryTour = new TestableDeliveryTour(null, 0);
-        deliveryTour.getStops().add(new TestableDeliveryRequest(0, 10, "5"));
-        deliveryTour.getStops().add(new TestableDeliveryRequest(1, 9, "6"));
-        deliveryTour.getStops().add(new TestableDeliveryRequest(2, 11, "6"));
+        TestableDeliveryTour deliveryTour = new TestableDeliveryTour(null, 0, "toto");
+        deliveryTour.getStops().add(new TestableDeliveryRequest(0, 10, "5", deliveryTour));
+        deliveryTour.getStops().add(new TestableDeliveryRequest(1, 9, "6", deliveryTour));
+        deliveryTour.getStops().add(new TestableDeliveryRequest(2, 11, "6", deliveryTour));
         deliveryTour.getTour().add(new TestableSegment("1", "3"));
         deliveryTour.getTour().add(new TestableSegment("3", "9"));
         deliveryTour.getTour().add(new TestableSegment("9", "6"));
@@ -125,8 +127,8 @@ public class DeliveryServiceTest {
         deliveryTour.getTour().add(new TestableSegment("4", "1"));
         deliveryTours.add(deliveryTour);
 
-        TestableDeliveryTour deliveryTour2 = new TestableDeliveryTour(null, 23);
-        deliveryTour2.getStops().add(new TestableDeliveryRequest(12, 9, "2"));
+        TestableDeliveryTour deliveryTour2 = new TestableDeliveryTour(null, 23, "titi");
+        deliveryTour2.getStops().add(new TestableDeliveryRequest(12, 9, "2", deliveryTour2));
         deliveryTour2.getTour().add(new TestableSegment("1", "2"));
         deliveryTour2.getTour().add(new TestableSegment("2", "1"));
         deliveryTours.add(deliveryTour2);

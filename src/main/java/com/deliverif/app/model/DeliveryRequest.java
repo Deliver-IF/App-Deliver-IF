@@ -1,6 +1,7 @@
 package com.deliverif.app.model;
 
 import javafx.scene.shape.Circle;
+import com.deliverif.app.exceptions.WrongDeliveryTimeException;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,7 +15,7 @@ public class DeliveryRequest {
     /**
      * Time needed by a courier to realize a delivery once they arrived at the specified intersection.
      */
-    private final int DELIVERY_TIME = 5;
+    public static final int DELIVERY_TIME = 5;
 
     /**
      * The id of the delivery request.
@@ -25,6 +26,11 @@ public class DeliveryRequest {
      * The minimum time from which the delivery can be realized.
      */
     private final int startTimeWindow;
+
+    /**
+     * The time at which the delivery will be realized in minutes.
+     */
+    private int arrivalTime;
 
     /**
      * The intersection where the delivery has to be made.
@@ -55,5 +61,20 @@ public class DeliveryRequest {
         this.intersection = intersection;
         this.deliveryTour = deliveryTour;
         this.deliveryRequestCircle = new Circle();
+    }
+
+    /**
+     * Set the arrival time of the delivery request.
+     *
+     * @param arrivalTime  the arrival time of the delivery courier.
+     * @throws WrongDeliveryTimeException
+     */
+    public void setArrivalTime(int arrivalTime) throws WrongDeliveryTimeException {
+        if (arrivalTime < this.startTimeWindow*60) {
+            arrivalTime = this.startTimeWindow*60;
+        } else if (arrivalTime >= (this.startTimeWindow + 1)*60) {
+            throw new WrongDeliveryTimeException();
+        }
+        this.arrivalTime = arrivalTime;
     }
 }
