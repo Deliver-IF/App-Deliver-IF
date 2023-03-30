@@ -5,11 +5,15 @@ import com.deliverif.app.model.*;
 import com.deliverif.app.services.DeliveryService;
 import com.deliverif.app.utils.Constants;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import lombok.Getter;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.FileAlreadyExistsException;
@@ -34,7 +38,7 @@ public class MainController {
     @FXML
     private MenuItem saveTourMenuItem;
     @FXML
-    private Menu aboutMenu;
+    private Menu helpMenu;
     @FXML
     private Text nbCourierText;
     @FXML
@@ -202,6 +206,9 @@ public class MainController {
         }
     }
 
+    /**
+     * Make visible the dialog box to enter the name of the new courier
+     */
     @FXML
     public void createCourier(){
         this.courierNameTextField.clear();
@@ -359,6 +366,9 @@ public class MainController {
         newDeliveryRequestDialogPane.setVisible(false);
     }
 
+    /**
+     * Close the currently open "New courier" pop-up.
+     */
     @FXML
     protected void closeNewCourierDialogPane() {
         newCourierDialogPane.setVisible(false);
@@ -396,5 +406,32 @@ public class MainController {
             noRouteFoundText.setVisible(true);
         }
 
+    }
+
+    @FXML
+    protected void showAboutDialog() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setHeaderText(null);
+        alert.setTitle("About");
+        ImageView imageInsa = new ImageView("https://logos.bde-insa-lyon.fr/insa/insa.png");
+        imageInsa.setFitHeight(138);
+        imageInsa.setPreserveRatio(true);
+        alert.setGraphic(imageInsa);
+
+        Label label = new Label("DELIVR'IF");
+        label.setPadding(new Insets(15));
+
+        Label copyright = new Label("Copyright © 2023");
+        copyright.setPadding(new Insets(15));
+
+        Text description = new Text("This application allows to manage a delivery system on a defined geographical area. " +
+                "Delivery requests can be entered as well as the addition or removal of couriers. " +
+                "The routes taken by the different couriers are visible on the map of the application.");
+        description.setWrappingWidth(500);
+
+        VBox content = new VBox(label,description,copyright);
+        content.setAlignment(Pos.CENTER);
+        alert.getDialogPane().setContent(content);
+        alert.showAndWait();
     }
 }
