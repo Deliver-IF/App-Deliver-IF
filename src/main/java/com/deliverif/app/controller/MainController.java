@@ -116,7 +116,6 @@ public class MainController {
         // If a map has already been loaded, all the data entered on it is deleted and the old map is erased.
         if(this.dataModel.getMapController().mapDrawn) {
             this.dataModel.getMapController().eraseBasemap(this.mapPane);
-            this.dataModel = new DataModel();
         }
         if (file != null) {
             try {
