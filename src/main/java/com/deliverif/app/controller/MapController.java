@@ -22,7 +22,7 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.Collection;
 
-
+@Getter
 public class MapController {
     boolean mapDrawn = false;
     public static ArrayList<DeliveryRequest> currentDeliveryRequests = new ArrayList<>();
@@ -59,6 +59,18 @@ public class MapController {
             displayStreets(mapPane, map, map.getStreets(), Constants.BASE_MAP_STREETS_COLOR);
             displayWarehouse(mapPane, map, map.getWarehouse(), Constants.WAREHOUSE_COLOR);
             mapDrawn = true;
+        }
+    }
+
+    /**
+     * Erase the whole map (streets, warehouse, etc.)
+     *
+     * @param mapPane the javafx graphic element where the map and all streets and intersections are drawn
+     */
+    public void eraseBasemap(Pane mapPane) {
+        if (mapDrawn) {
+            mapPane.getChildren().clear();
+            mapDrawn = false;
         }
     }
 
