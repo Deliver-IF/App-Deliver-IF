@@ -28,7 +28,7 @@ public class NaiveAlgorithmTest {
         URL res = NaiveAlgorithmTest.class.getResource("NaiveAlgorithmOptimizeMap.xml");
         assert res != null;
         cityMap = MapFactory.createMapFromFile(new File(URLDecoder.decode(res.getPath(), StandardCharsets.UTF_8)));
-        cityMap.addDeliveryTour(0);
+        cityMap.addDeliveryTour(0,"Toto");
         cityMap.addDeliveryTour();
         mappedIntersections = new HashMap<>();
         for (Intersection intersection : cityMap.getIntersections().values()) {
@@ -41,9 +41,10 @@ public class NaiveAlgorithmTest {
     }
     @Test
     public void testOptimize() {
-        cityMap.getDeliveryTours().get(0).addDeliveryRequest(9, mappedIntersections.get("3"));
-        cityMap.getDeliveryTours().get(0).addDeliveryRequest(10, mappedIntersections.get("4"));
-        DeliveryTour deliveryTour = cityMap.getDeliveryTours().get(0);
+        // cityMap.getDeliveryTours().values().stream().toList().get(0)  => id = 0
+        cityMap.getDeliveryTours().values().stream().toList().get(0).addDeliveryRequest(9, mappedIntersections.get("3"));
+        cityMap.getDeliveryTours().values().stream().toList().get(0).addDeliveryRequest(10, mappedIntersections.get("4"));
+        DeliveryTour deliveryTour = cityMap.getDeliveryTours().values().stream().toList().get(0);
         NaiveAlgorithm.getInstance().optimize(deliveryTour);
         assert deliveryTour.getTour().size() == 4;
 
