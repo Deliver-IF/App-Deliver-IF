@@ -2,21 +2,28 @@ package com.deliverif.app.controller;
 
 import com.deliverif.app.exceptions.NoCourierUnavailableException;
 import com.deliverif.app.model.*;
+import com.deliverif.app.exceptions.WrongDeliveryTimeException;
 import com.deliverif.app.services.DeliveryService;
 import com.deliverif.app.utils.Constants;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import lombok.Getter;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.nio.file.FileAlreadyExistsException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.Timer;
 
 @Getter
 public class MainController {
@@ -41,6 +48,8 @@ public class MainController {
     private Menu aboutMenu;
     @FXML
     private Button addDeliveryButton;
+    @FXML
+    private Menu helpMenu;
     @FXML
     private Text nbCourierText;
     @FXML
@@ -76,6 +85,12 @@ public class MainController {
     @FXML
     private ScrollPane itineraryDetailScrollPane;
 
+    @FXML
+    private DialogPane newCourierDialogPane;
+    @FXML
+    private TextField courierNameTextField;
+    @FXML
+    private Button addCourierButton;
     private HashMap<String, Integer> timeWindows = new HashMap<String, Integer>();
 
     public MainController() {
@@ -86,7 +101,6 @@ public class MainController {
      * Method called by the FXML loader after ressource file reading
      */
     public void initialize() {
-
     }
 
     /**
@@ -120,13 +134,20 @@ public class MainController {
     }
 
     private void loadFile(File file) {
+        // If a map has already been loaded, all the data entered on it is deleted and the old map is erased.
+        if(this.dataModel.getMapController().mapDrawn) {
+            this.dataModel.getMapController().eraseBasemap(this.mapPane);
+        }
         if (file != null) {
             try {
                 this.dataModel.loadMapFromFile(file);
                 CityMap citymap = this.dataModel.getCityMap();
                 if(citymap != null) {
-                    citymap.addDeliveryTour();
+                    // Maybe to delete
+                    // citymap.addDeliveryTour();
                     this.nbCourierText.setText(Integer.toString(citymap.getDeliveryTours().size()));
+                    this.increaseCourierButton.setDisable(false);
+                    this.decreaseCourierButton.setDisable(true);
                 }
             } catch (Exception exc) {
                 // handle exception...
@@ -204,26 +225,56 @@ public class MainController {
         }
     }
 
+    /**
+     * Make visible the dialog box to enter the name of the new courier
+     */
+    @FXML
+    public void createCourier(){
+        this.courierNameTextField.clear();
+        this.newCourierDialogPane.setVisible(true);
+    }
+
+    /**
+     * Adds 1 to the number of couriers displayed
+     * If there are 1 courier, we reactivate the decrement button
+     */
     @FXML
     public void addCourier() {
+        this.newCourierDialogPane.setVisible(false);
         CityMap citymap = this.dataModel.getCityMap();
         if(citymap != null) {
-           citymap.addDeliveryTour();
-            int nbCourier = citymap.getDeliveryTours().size();
-            this.nbCourierText.setText(Integer.toString(nbCourier));
+            String courierName = this.courierNameTextField.getText();
+            DeliveryTour newDeliveryTour =  citymap.addDeliveryTour();
+            if(newDeliveryTour != null) {
+                newDeliveryTour.getCourier().setCourierName(courierName);
+                int nbCourier = citymap.getDeliveryTours().size();
+                this.nbCourierText.setText(Integer.toString(nbCourier));
+
+                if(nbCourier == 1) {
+                    this.decreaseCourierButton.setDisable(false);
+                }
+            }
         }
     }
 
+    /**
+     * Deduct 1 from the number of couriers displayed
+     * If all couriers have at least one delivery assigned, an alert window opens to indicate that no courier can be deleted.
+     * If there are 0 courier, the decrement button is disabled
+     */
     @FXML
     public void deleteCourier() {
         CityMap citymap = this.dataModel.getCityMap();
         if(citymap != null) {
             int nbCourier = citymap.getDeliveryTours().size();
-            if(nbCourier > 1){
+            if(nbCourier >= 1){
                 try {
                     citymap.deleteDeliveryTour();
                     nbCourier = citymap.getDeliveryTours().size();
                     this.nbCourierText.setText(Integer.toString(nbCourier));
+                    if(nbCourier == 0) {
+                        this.decreaseCourierButton.setDisable(true);
+                    }
                 } catch (NoCourierUnavailableException e) {
                     Alert alert = new Alert(Alert.AlertType.WARNING);
                     alert.setTitle("Information");
@@ -250,6 +301,19 @@ public class MainController {
     }
 
     /**
+     * Return the content of the "Intersection info" pop-up.
+     *
+     * @return String
+     */
+    public static String getDeliveryInfoDialogContent() {
+        int minutes = MapController.currentDeliveryRequests.get(MapController.currentIndex).getArrivalTime()%60;
+        int hours = MapController.currentDeliveryRequests.get(MapController.currentIndex).getArrivalTime()/60;
+        int startTimeWindow = MapController.currentDeliveryRequests.get(MapController.currentIndex).getStartTimeWindow();
+        return "Delivery Window : " + startTimeWindow + "h-" + (startTimeWindow + 1) + "h\n" +
+                "Arrival time : " + (hours < 10 ? "0" : "") + hours + ":" + (minutes < 10 ? "0" : "") + minutes + "\n";
+    }
+
+    /**
      * If the user clicks on the "next delivery request button" (<), the pop-up loads the information
      * of the next delivery request on the schedule and displays it.
      */
@@ -259,12 +323,12 @@ public class MainController {
             prevDeliveryPointInfo.setVisible(true);
         }
         MapController.currentIndex++;
-        deliveryWindow.setText("Delivery Window : " + MapController.currentDeliveryRequests.get(MapController.currentIndex).getStartTimeWindow() + "h-"
-                + (MapController.currentDeliveryRequests.get(MapController.currentIndex).getStartTimeWindow() + 1) + "h\n"
-        );
+        deliveryWindow.setText(getDeliveryInfoDialogContent());
+
         if(MapController.currentIndex == MapController.currentDeliveryRequests.size() - 1) {
             nextDeliveryPointInfo.setVisible(false);
         }
+
     }
 
     /**
@@ -277,12 +341,12 @@ public class MainController {
             nextDeliveryPointInfo.setVisible(true);
         }
         MapController.currentIndex--;
-        deliveryWindow.setText("Delivery Window : " + MapController.currentDeliveryRequests.get(MapController.currentIndex).getStartTimeWindow() + "h-"
-                + (MapController.currentDeliveryRequests.get(MapController.currentIndex).getStartTimeWindow() + 1) + "h\n"
-        );
+        deliveryWindow.setText(getDeliveryInfoDialogContent());
+
         if(MapController.currentIndex == 0) {
             prevDeliveryPointInfo.setVisible(false);
         }
+
     }
 
     /**
@@ -292,25 +356,34 @@ public class MainController {
      */
     @FXML
     protected void addDeliveryPointDialog() {
-        newDeliveryRequestDialogPane.setVisible(true);
-        int start_hour = 8;
-        int limit_hour = 12;
-        timeWindows.clear();
+        if(this.dataModel.getCityMap().getDeliveryTours().size() != 0) {
+            newDeliveryRequestDialogPane.setVisible(true);
+            int start_hour = 8;
+            int limit_hour = 12;
+            timeWindows.clear();
 
-        courierChoiceBox.getItems().clear();
-        timeWindowChoiceBox.getItems().clear();
+            courierChoiceBox.getItems().clear();
+            timeWindowChoiceBox.getItems().clear();
 
-        for (DeliveryTour deliveryTour : dataModel.getCityMap().getDeliveryTours().values()) {
-            courierChoiceBox.getItems().add(deliveryTour.getIdCourier());
+            for (DeliveryTour deliveryTour : dataModel.getCityMap().getDeliveryTours().values()) {
+                courierChoiceBox.getItems().add(deliveryTour.getCourier());
+            }
+
+            for (int hour = start_hour; hour + 1 <= limit_hour; hour++) {
+                String start_am_or_pm = hour <= 11 ? "am" : "pm";
+                String end_am_or_pm = (hour + 1) <= 11 ? "am" : "pm";
+                String timeWindowText = hour + ".00 " + start_am_or_pm + " - " + (hour + 1) + ".00 " + end_am_or_pm;
+                timeWindowChoiceBox.getItems().add(timeWindowText);
+                timeWindows.put(timeWindowText, hour);
+            }
+        } else {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Warning");
+            alert.setHeaderText("No courier");
+            alert.setContentText("You cannot enter a new delivery request because there are no couriers ");
+            alert.showAndWait();
         }
 
-        for (int hour = start_hour; hour + 1 <= limit_hour; hour++) {
-            String start_am_or_pm = hour <= 11 ? "am" : "pm";
-            String end_am_or_pm = (hour + 1) <= 11 ? "am" : "pm";
-            String timeWindowText = hour + ".00 " + start_am_or_pm + " - " + (hour + 1) + ".00 " + end_am_or_pm;
-            timeWindowChoiceBox.getItems().add(timeWindowText);
-            timeWindows.put(timeWindowText, hour);
-        }
     }
 
     /**
@@ -323,14 +396,30 @@ public class MainController {
     }
 
     /**
+     * Close the currently open "New courier" pop-up.
+     */
+    @FXML
+    protected void closeNewCourierDialogPane() {
+        newCourierDialogPane.setVisible(false);
+    }
+
+    /**
      * Get the data from the currently open "Add new delivery request pop-up" and add the delivery request
      * to the selected courier.
      */
     @FXML
     protected void addDeliveryRequest() {
         DeliveryService deliveryService = DeliveryService.getInstance();
-        DeliveryTour deliveryTour = dataModel.getCityMap().getDeliveryTours().get(courierChoiceBox.getValue());
-        DeliveryRequest deliveryRequest = new DeliveryRequest(timeWindows.get(timeWindowChoiceBox.getValue()), MapController.currentlySelectedIntersection);
+        DeliveryTour deliveryTour = dataModel.getCityMap().getDeliveryTours().get(((Courier) courierChoiceBox.getValue()).getIdCourier());
+        if (deliveryTour == null) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Information");
+            alert.setHeaderText(null);
+            alert.setContentText("The courier with id "+courierChoiceBox.getValue()+" doesn't exist anymore");
+            alert.showAndWait();
+            return;
+        }
+        DeliveryRequest deliveryRequest = new DeliveryRequest(timeWindows.get((String) timeWindowChoiceBox.getValue()), MapController.currentlySelectedIntersection);
         deliveryTour.addDeliveryRequest(deliveryRequest);
         Text noRouteFoundText = (Text) mapPane.getScene().lookup("#noRouteFound");
         try {
@@ -341,10 +430,48 @@ public class MainController {
             closeIntersectionInfoDialog();
             MapController MapController = new MapController();
             MapController.displayDeliveryTour(mapPane, dataModel.getCityMap(), deliveryTour);
-        } catch (IllegalStateException e) {
+        } catch (IllegalStateException | WrongDeliveryTimeException e) {
             deliveryTour.removeDeliveryRequest(deliveryRequest);
             noRouteFoundText.setVisible(true);
         }
+
+    }
+
+    public void onWindowSizeChangeEventHandler() {
+        if (mapPane.getChildren().size() != 0) {
+            mapPane.getChildren().clear();
+            this.dataModel.getMapController().drawBasemap(this.mapPane, this.dataModel.getCityMap());
+            for (DeliveryTour deliveryTour: this.dataModel.getCityMap().getDeliveryTours().values()) {
+                this.dataModel.getMapController().displayDeliveryTour(this.mapPane, this.dataModel.getCityMap(), deliveryTour);
+            }
+        }
+    }
+
+    @FXML
+    protected void showAboutDialog() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setHeaderText(null);
+        alert.setTitle("About");
+        ImageView imageInsa = new ImageView("https://logos.bde-insa-lyon.fr/insa/insa.png");
+        imageInsa.setFitHeight(138);
+        imageInsa.setPreserveRatio(true);
+        alert.setGraphic(imageInsa);
+
+        Label label = new Label("DELIVR'IF");
+        label.setPadding(new Insets(15));
+
+        Label copyright = new Label("Copyright © 2023");
+        copyright.setPadding(new Insets(15));
+
+        Text description = new Text("This application allows to manage a delivery system on a defined geographical area. " +
+                "Delivery requests can be entered as well as the addition or removal of couriers. " +
+                "The routes taken by the different couriers are visible on the map of the application.");
+        description.setWrappingWidth(500);
+
+        VBox content = new VBox(label,description,copyright);
+        content.setAlignment(Pos.CENTER);
+        alert.getDialogPane().setContent(content);
+        alert.showAndWait();
     }
 
     @FXML

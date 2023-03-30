@@ -15,7 +15,7 @@ public class DeliveryTour {
     /**
      * The id of the courier realizing the delivery tour.
      */
-    private final int idCourier;
+    private Courier courier;
 
     /**
      * The CityMap object associated whith the deliviery tour.
@@ -39,16 +39,16 @@ public class DeliveryTour {
     private final Collection<Shape> shapes;
 
     protected DeliveryTour(CityMap cityMap) {
-        this.idCourier = new Random().nextInt(1000000000);
+        this.courier = new Courier();
         this.cityMap = cityMap;
         this.stops = new ArrayList<>();
         this.tour = new ArrayList<>();
         this.shapes = new ArrayList<>();
     }
 
-    protected DeliveryTour(CityMap cityMap, Integer idCourier) {
+    protected DeliveryTour(CityMap cityMap, Integer idCourier, String nameCourier) {
         this.cityMap = cityMap;
-        this.idCourier = idCourier;
+        this.courier = new Courier(idCourier,nameCourier);
         this.stops = new ArrayList<>();
         this.tour = new ArrayList<>();
         this.shapes = new ArrayList<>();

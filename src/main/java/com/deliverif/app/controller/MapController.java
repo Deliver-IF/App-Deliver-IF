@@ -22,11 +22,12 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.Collection;
 
-
+@Getter
 public class MapController {
-    boolean mapDrawn = false;
     public static ArrayList<DeliveryRequest> currentDeliveryRequests = new ArrayList<>();
     public static Intersection currentlySelectedIntersection;
+
+    public boolean mapDrawn;
 
     public static int currentIndex = 0;
     public MapController() {}
@@ -54,11 +55,21 @@ public class MapController {
      * @param map the object with all map elements
      */
     public void drawBasemap(Pane mapPane, CityMap map) {
-        if (!mapDrawn) {
             displayCrossings(mapPane, map, map.getIntersections().values());
             displayStreets(mapPane, map, map.getStreets(), Constants.BASE_MAP_STREETS_COLOR);
             displayWarehouse(mapPane, map, map.getWarehouse(), Constants.WAREHOUSE_COLOR);
             mapDrawn = true;
+    }
+
+    /**
+     * Erase the whole map (streets, warehouse, etc.)
+     *
+     * @param mapPane the javafx graphic element where the map and all streets and intersections are drawn
+     */
+    public void eraseBasemap(Pane mapPane) {
+        if (mapDrawn) {
+            mapPane.getChildren().clear();
+            mapDrawn = false;
         }
     }
 
@@ -98,7 +109,6 @@ public class MapController {
 
         // Click on an intersection
         point.setOnMouseClicked(mouseEvent -> {
-            System.out.println(currentDeliveryRequests.size());
             if(currentlySelectedIntersection != null && currentDeliveryRequests.size() == 0) {
                 currentlySelectedIntersection.getDefaultShapeOnMap().setFill(Constants.BASE_MAP_INTERSECTION_COLOR);
             }
@@ -198,9 +208,9 @@ public class MapController {
      */
     public void displayDeliveryTour(Pane mapPane, CityMap map, DeliveryTour deliveryTour) {
         Color color = Color.rgb(
-            joaat(deliveryTour.getIdCourier()) & 255,
-            joaat(deliveryTour.getIdCourier()) >> 16 & 255,
-            joaat(deliveryTour.getIdCourier()) >> 31 & 255
+            joaat(deliveryTour.getCourier().getIdCourier()) & 255,
+            joaat(deliveryTour.getCourier().getIdCourier()) >> 16 & 255,
+            joaat(deliveryTour.getCourier().getIdCourier()) >> 31 & 255
         );
 
         // First, we erase the current route as adding a new delivery request often changes the original route.
@@ -256,9 +266,7 @@ public class MapController {
             currentlySelectedIntersection = intersection;
             currentIndex = currentDeliveryRequests.size() - 1;
 
-            deliveryWindowText.setText("Delivery Window : " + deliveryRequest.getStartTimeWindow() + "h-"
-                    + (deliveryRequest.getStartTimeWindow() + 1) + "h\n"
-            );
+            deliveryWindowText.setText(MainController.getDeliveryInfoDialogContent());
 
             Text seeDetails = (Text) mapPane.getScene().lookup("#seeDetailsDeliveryRequestText");
             seeDetails.setVisible(true);

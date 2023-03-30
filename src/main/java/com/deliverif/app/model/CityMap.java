@@ -68,7 +68,7 @@ public class CityMap {
      */
     public DeliveryTour addDeliveryTour() {
         DeliveryTour deliveryTour = new DeliveryTour(this);
-        deliveryTours.put(deliveryTour.getIdCourier(), deliveryTour);
+        deliveryTours.put(deliveryTour.getCourier().getIdCourier(), deliveryTour);
         return deliveryTour;
     }
 
@@ -77,9 +77,9 @@ public class CityMap {
      *
      * @param idCourier     the id of the courier that has to manage the new delivery tour.
      */
-    public DeliveryTour addDeliveryTour(Integer idCourier) {
-        DeliveryTour deliveryTour = new DeliveryTour(this, idCourier);
-        deliveryTours.put(deliveryTour.getIdCourier(), deliveryTour);
+    public DeliveryTour addDeliveryTour(Integer idCourier, String nameCourier) {
+        DeliveryTour deliveryTour = new DeliveryTour(this, idCourier, nameCourier);
+        deliveryTours.put(deliveryTour.getCourier().getIdCourier(), deliveryTour);
         return deliveryTour;
     }
 
