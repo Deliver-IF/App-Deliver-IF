@@ -23,7 +23,6 @@ import java.util.Collection;
 
 
 public class MapController {
-    boolean mapDrawn = false;
     public static ArrayList<DeliveryRequest> currentDeliveryRequests = new ArrayList<>();
     public static Intersection currentlySelectedIntersection;
 
@@ -53,12 +52,9 @@ public class MapController {
      * @param map the object with all map elements
      */
     public void drawBasemap(Pane mapPane, CityMap map) {
-        if (!mapDrawn) {
             displayCrossings(mapPane, map, map.getIntersections().values());
             displayStreets(mapPane, map, map.getStreets(), Constants.BASE_MAP_STREETS_COLOR);
             displayWarehouse(mapPane, map, map.getWarehouse(), Constants.WAREHOUSE_COLOR);
-            mapDrawn = true;
-        }
     }
 
     /**

@@ -6,17 +6,20 @@ import com.deliverif.app.model.DataModel;
 import com.deliverif.app.model.DeliveryRequest;
 import com.deliverif.app.model.DeliveryTour;
 import com.deliverif.app.services.DeliveryService;
+import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import lombok.Getter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.FileAlreadyExistsException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.Timer;
 
 @Getter
 public class MainController {
@@ -77,7 +80,6 @@ public class MainController {
      * Method called by the FXML loader after ressource file reading
      */
     public void initialize() {
-
     }
 
     /**
@@ -128,7 +130,7 @@ public class MainController {
     }
 
     /**
-     * Display a dialog window to select a tour on the user's device.
+     * Display a dialog window to select a tour on the user)'s device.
      * If the tour is successfully loaded, it is displayed on the map pane.
      */
     @FXML
@@ -338,5 +340,13 @@ public class MainController {
             noRouteFoundText.setVisible(true);
         }
 
+
+    }
+
+    public void onWindowSizeChangeEventHandler() {
+        if (mapPane.getChildren().size() != 0) {
+            mapPane.getChildren().clear();
+            this.dataModel.getMapController().drawBasemap(this.mapPane, this.dataModel.getCityMap());
+        }
     }
 }
