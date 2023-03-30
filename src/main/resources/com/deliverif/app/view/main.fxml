@@ -41,7 +41,8 @@
                         <MenuItem fx:id="saveTourMenuItem" mnemonicParsing="false" onAction="#saveTourAction" text="Save a tour" />
                      </items>
                   </Menu>
-                  <Menu fx:id="aboutMenu" mnemonicParsing="false" text="About">
+                  <Menu fx:id="helpMenu" mnemonicParsing="false" text="Help" >
+                     <MenuItem mnemonicParsing="false" onAction="#showAboutDialog" text="About" />
                   </Menu>
                </menus>
             </MenuBar>
