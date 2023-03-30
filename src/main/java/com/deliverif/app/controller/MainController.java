@@ -214,7 +214,6 @@ public class MainController {
         CityMap citymap = this.dataModel.getCityMap();
         if(citymap != null) {
             String courierName = this.courierNameTextField.getText();
-            System.out.println(courierName);
             DeliveryTour newDeliveryTour =  citymap.addDeliveryTour();
             if(newDeliveryTour != null) {
                 newDeliveryTour.getCourier().setCourierName(courierName);
