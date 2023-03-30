@@ -12,7 +12,7 @@ public class CityMap {
     private final Set<Segment> streets;
     private final Map<String, Intersection> intersections;
     private final Map<String, Set<String>> connections;
-    private final Map<Integer, DeliveryTour> deliveryTours;
+    private final Map<Courier, DeliveryTour> deliveryTours;
     private final Float minLatitude;
     private final Float maxLatitude;
     private final Float minLongitude;
@@ -68,7 +68,7 @@ public class CityMap {
      */
     public DeliveryTour addDeliveryTour() {
         DeliveryTour deliveryTour = new DeliveryTour(this);
-        deliveryTours.put(deliveryTour.getIdCourier(), deliveryTour);
+        deliveryTours.put(deliveryTour.getCourier(), deliveryTour);
         return deliveryTour;
     }
 
@@ -77,9 +77,9 @@ public class CityMap {
      *
      * @param idCourier     the id of the courier that has to manage the new delivery tour.
      */
-    public DeliveryTour addDeliveryTour(Integer idCourier) {
-        DeliveryTour deliveryTour = new DeliveryTour(this, idCourier);
-        deliveryTours.put(deliveryTour.getIdCourier(), deliveryTour);
+    public DeliveryTour addDeliveryTour(Integer idCourier, String nameCourier) {
+        DeliveryTour deliveryTour = new DeliveryTour(this, idCourier, nameCourier);
+        deliveryTours.put(deliveryTour.getCourier(), deliveryTour);
         return deliveryTour;
     }
 
@@ -90,7 +90,7 @@ public class CityMap {
      */
     public void deleteDeliveryTour() throws NoCourierUnavailableException {
         boolean emptyDeliveryTour = false;
-        for(Map.Entry<Integer, DeliveryTour> deliveryTourEntry : deliveryTours.entrySet()) {
+        for(Map.Entry<Courier, DeliveryTour> deliveryTourEntry : deliveryTours.entrySet()) {
             DeliveryTour currentDeliveryTour = deliveryTourEntry.getValue();
             if(currentDeliveryTour.getStops().size() == 0) {
                 deliveryTours.remove(deliveryTourEntry.getKey(), deliveryTourEntry.getValue());

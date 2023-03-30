@@ -1,6 +1,7 @@
 package com.deliverif.app.services;
 
 import com.deliverif.app.algorithm.NaiveAlgorithm;
+import com.deliverif.app.model.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -20,11 +21,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.util.*;
-import com.deliverif.app.model.CityMap;
-import com.deliverif.app.model.DeliveryRequest;
-import com.deliverif.app.model.DeliveryTour;
-import com.deliverif.app.model.Intersection;
-import com.deliverif.app.model.Segment;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -80,8 +76,9 @@ public class DeliveryService {
 
             for(int iTour = 0; iTour < deliveryTours.getLength(); iTour++) {
                 Element deliveryTourElement = (Element) deliveryTours.item(iTour);
-                int idDeliveryTour = Integer.parseInt(deliveryTourElement.getAttribute("id"));
-                DeliveryTour newDeliveryTour = cityMap.addDeliveryTour(idDeliveryTour);
+                int idCourierDeliveryTour = Integer.parseInt(deliveryTourElement.getAttribute("id"));
+                String nameCourierDeliveryTour = deliveryTourElement.getAttribute("name");
+                DeliveryTour newDeliveryTour = cityMap.addDeliveryTour(idCourierDeliveryTour, nameCourierDeliveryTour);
 
                 NodeList nRequestsParent = deliveryTourElement.getElementsByTagName("requests");
                 if (nRequestsParent.getLength() != 1) {
@@ -130,8 +127,8 @@ public class DeliveryService {
             for(DeliveryTour deliveryTour : deliveryTours)
             {
                 Element deliveryTourElement = document.createElement("delivery-tour");
-                deliveryTourElement.setAttribute("id", String.valueOf(deliveryTour.getIdCourier()));
-
+                deliveryTourElement.setAttribute("id", String.valueOf(deliveryTour.getCourier().getIdCourier()));
+                deliveryTourElement.setAttribute("name", deliveryTour.getCourier().getCourierName());
                 Element deliveryRequestsElement = document.createElement("requests");
                 for(DeliveryRequest deliveryRequest : deliveryTour.getStops())
                 {
@@ -186,7 +183,7 @@ public class DeliveryService {
      */
     public ArrayList<DeliveryRequest> getAllDeliveryRequestFromIntersection(CityMap map, Intersection intersection) {
         ArrayList<DeliveryRequest> currentDeliveryRequests = new ArrayList<>();
-        Map<Integer, DeliveryTour> deliveriesTourMap = map.getDeliveryTours();
+        Map<Courier, DeliveryTour> deliveriesTourMap = map.getDeliveryTours();
         // For each tours
         for (DeliveryTour deliveryTour : deliveriesTourMap.values()) {
             // For each stops

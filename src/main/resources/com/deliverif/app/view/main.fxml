@@ -10,6 +10,7 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -36,8 +37,8 @@
                               <MenuItem mnemonicParsing="false" onAction="#loadLargeMap" text="Large Map" />
                           </items>
                         </Menu>
-                        <MenuItem fx:id="loadTourMenuItem" mnemonicParsing="false" text="Load a tour" onAction="#loadTourAction"/>
-                        <MenuItem fx:id="saveTourMenuItem" mnemonicParsing="false" text="Save a tour" onAction="#saveTourAction"/>
+                        <MenuItem fx:id="loadTourMenuItem" mnemonicParsing="false" onAction="#loadTourAction" text="Load a tour" />
+                        <MenuItem fx:id="saveTourMenuItem" mnemonicParsing="false" onAction="#saveTourAction" text="Save a tour" />
                      </items>
                   </Menu>
                   <Menu fx:id="aboutMenu" mnemonicParsing="false" text="About">
@@ -53,7 +54,7 @@
                               <Insets right="10.0" />
                            </HBox.margin>
                         </Label>
-                        <Button fx:id="decreaseCourierButton" mnemonicParsing="false" onAction="#deleteCourier" text=" - " disable="true">
+                        <Button fx:id="decreaseCourierButton" disable="true" mnemonicParsing="false" onAction="#deleteCourier" text=" - ">
                            <HBox.margin>
                               <Insets right="10.0" />
                            </HBox.margin>
@@ -63,7 +64,7 @@
                               <Insets right="10.0" />
                            </HBox.margin>
                         </Text>
-                        <Button fx:id="increaseCourierButton" mnemonicParsing="false" onAction="#addCourier" text="+" disable="true">
+                        <Button fx:id="increaseCourierButton" disable="true" mnemonicParsing="false" onAction="#createCourier" text="+">
                            <HBox.margin>
                               <Insets right="10.0" />
                            </HBox.margin>
@@ -143,6 +144,43 @@
                                     <HBox alignment="BOTTOM_CENTER" prefHeight="33.0" prefWidth="339.0">
                                        <children>
                                           <Button mnemonicParsing="false" onMouseClicked="#addDeliveryRequest" prefHeight="25.0" prefWidth="48.0" text="Add" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </AnchorPane>
+                     </content>
+                  </DialogPane>
+                  <DialogPane fx:id="newCourierDialogPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="158.0" prefWidth="344.0" style="-fx-background-color: ffffff;" visible="false">
+                     <header>
+                        <HBox alignment="TOP_RIGHT" prefHeight="30.0" prefWidth="339.0">
+                           <children>
+                              <Button fx:id="closeNewCourierDialogPane" mnemonicParsing="false" onAction="#closeNewCourierDialogPane" prefHeight="28.0" prefWidth="29.0" text="x" />
+                           </children>
+                           <padding>
+                              <Insets right="2.0" top="2.0" />
+                           </padding>
+                        </HBox>
+                     </header>
+                     <content>
+                        <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="0.0" prefWidth="339.0">
+                           <children>
+                              <VBox alignment="CENTER" prefHeight="122.0" prefWidth="339.0">
+                                 <children>
+                                    <HBox alignment="CENTER" prefHeight="41.0" prefWidth="339.0">
+                                       <children>
+                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Courier name :" textAlignment="CENTER" wrappingWidth="158.28125" />
+                                          <TextField fx:id="courierNameTextField" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="BOTTOM_CENTER" prefHeight="33.0" prefWidth="339.0">
+                                       <children>
+                                          <Button fx:id="addCourierButton" mnemonicParsing="false" onMouseClicked="#addCourier" prefHeight="25.0" text="Add">
+                                             <HBox.margin>
+                                                <Insets />
+                                             </HBox.margin>
+                                          </Button>
                                        </children>
                                     </HBox>
                                  </children>
