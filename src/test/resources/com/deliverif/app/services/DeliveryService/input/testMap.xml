@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<baseMap>
+    <warehouse address="1"/>
+    <intersection id="1" latitude="45.75406" longitude="4.857418"/>
+    <intersection id="2" latitude="45.750404" longitude="4.8744674"/>
+    <intersection id="3" latitude="45.75871" longitude="4.8704023"/>
+    <intersection id="4" latitude="45.75171" longitude="4.8718166"/>
+    <intersection id="5" latitude="45.750896" longitude="4.859119"/>
+    <intersection id="6" latitude="45.75406" longitude="4.857418"/>
+    <intersection id="7" latitude="45.750404" longitude="4.8744674"/>
+    <intersection id="8" latitude="45.75871" longitude="4.8704023"/>
+    <intersection id="9" latitude="45.75171" longitude="4.8718166"/>
+    <intersection id="10" latitude="45.750896" longitude="4.859119"/>
+    <segment destination="2" length="1384" name="Rue Danton" origin="1"/>
+    <segment destination="3" length="1132" name="Rue de l'Abondance" origin="1"/>
+    <segment destination="4" length="1911" name="" origin="1"/>
+    <segment destination="5" length="376" name="Avenue Lacassagne" origin="1"/>
+    <segment destination="6" length="77720" name="Tres longue route" origin="1"/>
+    <segment destination="3" length="976" name="Rue Sainte-Anne de Baraban" origin="2"/>
+    <segment destination="4" length="588.4" name="" origin="2"/>
+    <segment destination="5" length="1192" name="Avenue Lacassagne" origin="2"/>
+    <segment destination="7" length="1384" name="Rue Danton" origin="6"/>
+    <segment destination="8" length="1132" name="Rue de l'Abondance" origin="6"/>
+    <segment destination="9" length="1911" name="" origin="6"/>
+    <segment destination="10" length="376" name="Avenue Lacassagne" origin="4"/>
+    <segment destination="7" length="976" name="Rue Sainte-Anne de Baraban" origin="4"/>
+</baseMap>

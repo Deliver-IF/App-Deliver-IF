@@ -1,6 +1,8 @@
 package com.deliverif.app.controller;
 
-import com.deliverif.app.exceptions.NoCourierUnavailableException;
+import com.deliverif.app.exceptions.NoConfiguredDeliveryException;
+import com.deliverif.app.exceptions.NoCourierAvailableException;
+import com.deliverif.app.exceptions.WrongSelectedMapException;
 import com.deliverif.app.model.*;
 import com.deliverif.app.exceptions.WrongDeliveryTimeException;
 import com.deliverif.app.services.DeliveryService;
@@ -13,7 +15,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import lombok.Getter;
 
 import java.io.File;
@@ -21,7 +22,6 @@ import java.io.FileNotFoundException;
 import java.nio.file.FileAlreadyExistsException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
-import java.util.Timer;
 
 @Getter
 public class MainController {
@@ -86,6 +86,14 @@ public class MainController {
      * Method called by the FXML loader after ressource file reading
      */
     public void initialize() {
+    }
+
+    public void warningDialog(String title, String header, String content) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 
     /**
@@ -158,22 +166,12 @@ public class MainController {
                     this.dataModel.getMapController().displayDeliveryTour(this.mapPane, this.dataModel.getCityMap(), deliveryTour);
                 }
                 this.nbCourierText.setText(Integer.toString(this.dataModel.getCityMap().getDeliveryTours().size()));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setTitle("Information");
-                alert.setHeaderText(null);
-                alert.setContentText(e.getMessage());
-                alert.showAndWait();
+            } catch (FileNotFoundException | WrongSelectedMapException e) {
+                warningDialog("Information", null, e.getMessage());
             } catch (Exception exc) {
                 System.err.println("Error while loading tour file");
                 System.err.println(exc.getMessage());
-
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setTitle("Information");
-                alert.setHeaderText(null);
-                alert.setContentText(exc.getMessage());
-                alert.showAndWait();
+                warningDialog("Information", null, exc.getMessage());
             }
         }
     }
@@ -184,26 +182,25 @@ public class MainController {
      */
     @FXML
     public void saveTourAction() {
+        if (this.dataModel.getCityMap() == null) {
+            warningDialog("Information", null, "No map loaded");
+            return;
+        }
+        if (this.dataModel.getCityMap().getDeliveryTours().size() == 0) {
+            warningDialog("Information", null, "No tour loaded");
+            return;
+        }
         FileChooser chooser = new FileChooser();
         File file = chooser.showSaveDialog(menuBar.getScene().getWindow());
         if (file != null) {
             try {
                 this.dataModel.saveTourToFile(file);
-            } catch (FileAlreadyExistsException e) {
-                e.printStackTrace();
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setTitle("Information");
-                alert.setHeaderText(null);
-                alert.setContentText(e.getMessage());
-                alert.showAndWait();
+            } catch (FileAlreadyExistsException | NoConfiguredDeliveryException e) {
+                warningDialog("Information", null, e.getMessage());
             } catch (Exception exc) {
                 System.err.println("Error while saving tour file");
                 System.err.println(exc.getMessage());
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setTitle("Information");
-                alert.setHeaderText(null);
-                alert.setContentText(exc.getMessage());
-                alert.showAndWait();
+                warningDialog("Information", null, exc.getMessage());
             }
         }
     }
@@ -258,12 +255,8 @@ public class MainController {
                     if(nbCourier == 0) {
                         this.decreaseCourierButton.setDisable(true);
                     }
-                } catch (NoCourierUnavailableException e) {
-                    Alert alert = new Alert(Alert.AlertType.WARNING);
-                    alert.setTitle("Information");
-                    alert.setHeaderText(null);
-                    alert.setContentText(e.getMessage());
-                    alert.showAndWait();
+                } catch (NoCourierAvailableException e) {
+                    warningDialog("Information", null, e.getMessage());
                 }
             }
         }
@@ -357,11 +350,7 @@ public class MainController {
                 timeWindows.put(timeWindowText, hour);
             }
         } else {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Warning");
-            alert.setHeaderText("No courier");
-            alert.setContentText("You cannot enter a new delivery request because there are no couriers ");
-            alert.showAndWait();
+            warningDialog("Warning", "No courier", "You cannot enter a new delivery request because there are no couriers ");
         }
 
     }
@@ -392,11 +381,7 @@ public class MainController {
         DeliveryService deliveryService = DeliveryService.getInstance();
         DeliveryTour deliveryTour = dataModel.getCityMap().getDeliveryTours().get(((Courier) courierChoiceBox.getValue()).getIdCourier());
         if (deliveryTour == null) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Information");
-            alert.setHeaderText(null);
-            alert.setContentText("The courier with id "+courierChoiceBox.getValue()+" doesn't exist anymore");
-            alert.showAndWait();
+            warningDialog("Information", null, "The courier with id "+courierChoiceBox.getValue()+" doesn't exist anymore");
             return;
         }
         DeliveryRequest deliveryRequest = new DeliveryRequest(timeWindows.get((String) timeWindowChoiceBox.getValue()), MapController.currentlySelectedIntersection);

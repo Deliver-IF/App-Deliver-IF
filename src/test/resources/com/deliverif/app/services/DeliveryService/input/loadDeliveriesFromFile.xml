@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <deliveries>
+    <related-map hash="161406"/>
     <delivery-tour id="0" name="toto">
         <requests>
             <request id="0" startTimeWindow="10" idIntersection="5"/>
