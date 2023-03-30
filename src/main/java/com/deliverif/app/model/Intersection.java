@@ -37,7 +37,7 @@ public class Intersection implements GraphNode {
     private final Map<Intersection, Segment> reachableIntersections;
 
     /**
-     * The default shape that is used to represent an intersection on a map pane.
+     * The default shapes that is used to represent an intersection on a map pane.
      */
     private ArrayList<Circle> defaultShapesOnMap;
 

@@ -285,9 +285,12 @@ public class MapController {
         point.setOnMouseEntered(mouseEvent -> mapPane.getScene().setCursor(Cursor.HAND));
         point.setOnMouseExited(mouseEvent -> mapPane.getScene().setCursor(Cursor.DEFAULT));
 
-        intersection.setDefaultShapeOnMap(point);
-        
-        mapPane.getChildren().add(point);
+        if (!intersection.getDefaultShapesOnMap().contains(point)) {
+            intersection.setDefaultShapeOnMap(point);
+        }
+        if (!mapPane.getChildren().contains(point)) {
+            mapPane.getChildren().add(point);
+        }
 
         return point;
     }
@@ -340,24 +343,37 @@ public class MapController {
                 .getDestination()
                 .getDefaultShapesOnMap()
                 .get(segment.getDestination().getDefaultShapesOnMap().size()-1);
-        mapPane.getChildren().remove(originPoint);
-        mapPane.getChildren().add(originPoint);
-        mapPane.getChildren().remove(destinationPoint);
-        mapPane.getChildren().add(destinationPoint);
+        if (mapPane.getChildren().remove(originPoint)) {
+            mapPane.getChildren().add(originPoint);
+        }
+
+        if (mapPane.getChildren().remove(destinationPoint)) {
+            mapPane.getChildren().add(destinationPoint);
+        }
 
         return line;
     }
 
     /**
-     * Erase a specific set of shapes on the map
+     * Erase a specific set of shapes on the map.
      *
      * @param mapPane   the map pane where the segments are drawn on.
      * @param shapes     a collection of shapes to remove.
      */
     public void eraseShapes(Pane mapPane, Collection<Shape> shapes) {
         for (Shape shape : shapes) {
-            mapPane.getChildren().remove(shape);
+            eraseShape(mapPane, shape);
         }
+    }
+
+    /**
+     * Erase a specific shape on the map.
+     *
+     * @param mapPane   the map pane where the segments are drawn on.
+     * @param shape     a collection of shapes to remove.
+     */
+    public void eraseShape(Pane mapPane, Shape shape) {
+        mapPane.getChildren().remove(shape);
     }
 
     // ------------------------------------------- //

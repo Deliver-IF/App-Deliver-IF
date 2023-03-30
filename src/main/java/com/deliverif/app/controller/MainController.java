@@ -394,13 +394,12 @@ public class MainController {
         DeliveryRequest deliveryRequest = MapController.currentlySelectedDeliveryRequest;
         DeliveryTour deliveryTour = deliveryRequest.getDeliveryTour();
 
-        deliveryRequest.getDeliveryTour().removeDeliveryRequest(deliveryRequest);
+        deliveryTour.removeDeliveryRequest(deliveryRequest);
         DeliveryService.getInstance().searchOptimalDeliveryTour(deliveryTour);
-        MapController mapController = new MapController();
-        mapController.displayDeliveryTour(mapPane, dataModel.getCityMap(), deliveryTour);
-
         MapController.currentlySelectedIntersection.getDefaultShapesOnMap().remove(deliveryRequest.getDeliveryRequestCircle());
 
+        MapController mapController = new MapController();
+        mapController.displayDeliveryTour(mapPane, dataModel.getCityMap(), deliveryTour);
         closeIntersectionInfoDialog();
     }
 }
