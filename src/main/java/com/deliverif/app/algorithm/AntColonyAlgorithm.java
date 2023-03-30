@@ -84,7 +84,10 @@ public class AntColonyAlgorithm implements AbstractSearchOptimalTourAlgorithm {
                 segmentsBorrowed.clear();
             }
 
-            segmentsBorrowed.add(ant.move(pheromoneMatrix, BASE_PHEROMONE_INTENSITY));
+            Segment segment = ant.move(pheromoneMatrix, BASE_PHEROMONE_INTENSITY);
+            if (segment != null) {
+                segmentsBorrowed.add(segment);
+            }
             antsQueue.add(ant);
         }
 
@@ -93,6 +96,14 @@ public class AntColonyAlgorithm implements AbstractSearchOptimalTourAlgorithm {
         if (bestAnt == null || bestAnt.getBestTour() == null) {
             throw new IllegalStateException("No route found");
         }
+
+        ants.forEach(ant -> {
+            System.out.println("Ant tour duration : " + ant.getBestTourDuration());
+            System.out.println("Ant tour count : " + ant.getCountTour());
+            System.out.println("Ant new best tour : " + ant.getCountBeatBestTour());
+            System.out.println("Ant same best tour : " + ant.getCountSameBestTour());
+            System.out.println("====================");
+        });
 
         // Update the delivery tour
         deliveryTour.getTour().clear();
@@ -135,15 +146,26 @@ public class AntColonyAlgorithm implements AbstractSearchOptimalTourAlgorithm {
         private boolean currentTourIsValid;
         private Intersection currentIntersection;
         private List<Intersection> tour;
-        private final Set<Segment> visitedSegments;
+
+        private final Map<Intersection, Integer> countVisitedIntersectionsSinceLastVisit;
         @Getter
         private Pair<List<Intersection>, Float> bestTour;
+
+
+        // Only fo logs
+        @Getter
+        private int countTour = -1;
+        @Getter
+        private int countSameBestTour = 0;
+        @Getter
+        private int countBeatBestTour = -1;
+
 
         public Ant(float speed, Intersection initialIntersection, List<DeliveryRequest> intersectionsToVisit) {
             this.speed = speed;
             this.nextMovementTime = 0;
             this.initialIntersection = initialIntersection;
-            this.visitedSegments = new HashSet<>();
+            this.countVisitedIntersectionsSinceLastVisit = new HashMap<>();
 
             this.intersectionsToVisit = new ArrayList<>(intersectionsToVisit);
             this.intersectionsToVisit.sort(Comparator.comparing(DeliveryRequest::getStartTimeWindow));
@@ -179,7 +201,20 @@ public class AntColonyAlgorithm implements AbstractSearchOptimalTourAlgorithm {
                 startNewTour();
             }
 
-            final Intersection nextIntersection = selectBestNextIntersection(pheromoneMatrix, defaultPheromoneIntensity);
+            Intersection nextIntersection = selectBestNextIntersection(pheromoneMatrix, defaultPheromoneIntensity);
+            final int countVisit = this.countVisitedIntersectionsSinceLastVisit.getOrDefault(nextIntersection, 0);
+            if (countVisit > 5) {
+                // Reduce attractiveness of the segment to avoid ants to get stuck in a loop a new time
+                pheromoneMatrix.put(
+                        currentIntersection.getSegmentTo(nextIntersection),
+                        pheromoneMatrix.getOrDefault(currentIntersection.getSegmentTo(nextIntersection), defaultPheromoneIntensity) / 2
+                );
+
+                // The ant may be stuck in a loop, so we need to start a new tour and select a new next intersection
+                this.startNewTour();
+                return null;
+            }
+            this.countVisitedIntersectionsSinceLastVisit.put(nextIntersection, countVisit + 1);
 
             final Segment segment = currentIntersection.getSegmentTo(nextIntersection);
             if (segment == null) {
@@ -198,13 +233,14 @@ public class AntColonyAlgorithm implements AbstractSearchOptimalTourAlgorithm {
                 if (this.currentChunkToVisit.size() == 0) {
                     this.populateNextChunk(request.getStartTimeWindow());
                 }
+
+                this.countVisitedIntersectionsSinceLastVisit.clear();
             }
 
             this.tour.add(nextIntersection);
             this.currentIntersection = nextIntersection;
             this.currentTourDuration += segment.getLength() / this.speed;
             this.nextMovementTime = currentTourDuration;
-            this.visitedSegments.add(segment);
 
             return segment;
         }
@@ -233,14 +269,16 @@ public class AntColonyAlgorithm implements AbstractSearchOptimalTourAlgorithm {
 
         public void startNewTour() {
             if (this.currentTourIsValid() && this.currentTourIsBetter()) {
+                this.countBeatBestTour++;
                 this.bestTour = new ImmutablePair<>(this.tour, this.currentTourDuration);
             }
 
+            this.countTour++;
             this.currentTourIsValid = true;
             this.currentTourDuration = 0;
             this.currentIntersection = initialIntersection;
             this.tour = new ArrayList<>(); // Don't call "clear" on the list because it will clear the best tour
-            this.visitedSegments.clear();
+            this.countVisitedIntersectionsSinceLastVisit.clear();
 
             this.timeWindowCurrentChunk = this.intersectionsToVisit.get(0).getStartTimeWindow();
             this.currentChunkToVisit = this.intersectionsToVisit.stream()
@@ -249,14 +287,17 @@ public class AntColonyAlgorithm implements AbstractSearchOptimalTourAlgorithm {
         }
 
         private boolean currentTourIsValid() {
-            return this.currentTourIsValid && !tour.isEmpty();
+            return this.currentTourIsValid
+                    && !tour.isEmpty()
+                    && this.currentChunkToVisit.isEmpty()
+                    && this.initialIntersection == this.currentIntersection;
         }
         private boolean currentTourIsBetter() {
-            return bestTour == null || this.currentTourDuration < bestTour.getRight();
-        }
+            if (bestTour != null && this.currentTourDuration == this.bestTour.getValue()) {
+                this.countSameBestTour++;
+            }
 
-        public boolean hasVisited(Segment segment) {
-            return visitedSegments.contains(segment);
+            return bestTour == null || this.currentTourDuration < bestTour.getRight();
         }
 
         public float getNextMovementTime() {
@@ -334,15 +375,13 @@ public class AntColonyAlgorithm implements AbstractSearchOptimalTourAlgorithm {
         }
 
         private float getPheromoneIntensity(Map<Segment, Float> pheromoneMatrix, float defaultPheromoneIntensity, Segment segment) {
-            final float currentIntensity = pheromoneMatrix.getOrDefault(segment, defaultPheromoneIntensity);
-
+            float intensity = pheromoneMatrix.getOrDefault(segment, defaultPheromoneIntensity);
             if (tour.size() > 0 && this.currentIntersection.getSegmentTo(tour.get(tour.size() - 1)) == segment) {
-                return currentIntensity * 0.005f; // TODO ; Improve to not penalize the segment if the ant is on delivery request
-            } else if (this.hasVisited(segment)) {
-                return currentIntensity * 0.008f;
-            } else {
-                return currentIntensity;
+                // TODO ; Improve to not penalize the segment if the ant is on delivery request
+                intensity = intensity * 0.001f;
             }
+
+            return intensity / this.countVisitedIntersectionsSinceLastVisit.getOrDefault(segment.getEndIntersection(this.currentIntersection), 1);
         }
     }
 }

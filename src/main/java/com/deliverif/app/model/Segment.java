@@ -76,4 +76,14 @@ public class Segment {
                 destination
         );
     }
+
+    public Intersection getEndIntersection(Intersection startIntersection) {
+        if (startIntersection == origin) {
+            return destination;
+        } else if (startIntersection == destination) {
+            return origin;
+        } else {
+            return null;
+        }
+    }
 }
