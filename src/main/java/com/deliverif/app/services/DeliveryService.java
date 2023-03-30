@@ -164,10 +164,10 @@ public class DeliveryService {
                 // send DOM to file
                 tr.transform(new DOMSource(document),
                         new StreamResult(new FileOutputStream(file)));
-                System.out.println("File saved!");
+
 
             } catch (TransformerException | IOException te) {
-                System.out.println(te.getMessage());
+                te.printStackTrace();
             }
 
         } catch (ParserConfigurationException e) {
