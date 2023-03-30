@@ -217,7 +217,7 @@ public class MapController {
 
         // Streets
         for (Segment segment : deliveryTour.getTour()) {
-            Line lineDrawn = displaySegment(mapPane, map, segment, color);
+            Line lineDrawn = displaySegment(mapPane, map, segment, color, deliveryTour.isVisible());
             deliveryTour.addShape(lineDrawn);
         }
         // Delivery Points
@@ -227,11 +227,14 @@ public class MapController {
         }
     }
 
+
     /**
-     * Remove the path followed by a courier.
+     * Hide the path followed by a courier.
      */
-    static public void hideCourierPath() {
-        // TODO
+    static public void changeCourierPathVisibility(Pane mapPane, CityMap map, DeliveryTour deliveryTour, boolean visible) {
+        for (Shape shape : deliveryTour.getShapes()) {
+            shape.setVisible(visible);
+        }
     }
 
     /**
@@ -255,6 +258,7 @@ public class MapController {
         point.setStroke(color);
         point.setFill(color);
         point.setRadius(Constants.DELIVERY_REQUEST_SHAPE_RADIUS);
+        point.setVisible(deliveryRequest.getDeliveryTour().isVisible());
 
         point.setOnMouseClicked(mouseEvent -> {
 
@@ -310,7 +314,7 @@ public class MapController {
      */
     private void displayStreets(Pane mapPane, CityMap map, Collection<Segment> segments, Color color) {
         for (Segment segment : segments) {
-            displaySegment(mapPane, map, segment, color);
+            displaySegment(mapPane, map, segment, color, true);
         }
     }
 
@@ -323,7 +327,7 @@ public class MapController {
      * @param color     the color that has to be used to draw the street.
      * @return          the Line object that has been drawn on the map pane.
      */
-    static private Line displaySegment(Pane mapPane, CityMap map, Segment segment, Paint color) {
+    static private Line displaySegment(Pane mapPane, CityMap map, Segment segment, Paint color, boolean visible) {
         Coordinates origin = getCoordinates(mapPane, map, segment.getOrigin().getLongitude(), segment.getOrigin().getLatitude());
         Coordinates destination = getCoordinates(mapPane, map, segment.getDestination().getLongitude(), segment.getDestination().getLatitude());
         Line line = new Line(
@@ -334,6 +338,7 @@ public class MapController {
         );
         line.setStroke(color);
         line.setStrokeWidth(3);
+        line.setVisible(visible);
         mapPane.getChildren().add(line);
 
         Circle originPoint = segment.getOrigin().getDefaultShapeOnMap();

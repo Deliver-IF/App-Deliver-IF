@@ -41,7 +41,7 @@
                         <MenuItem fx:id="saveTourMenuItem" mnemonicParsing="false" onAction="#saveTourAction" text="Save a tour" />
                      </items>
                   </Menu>
-                  <Menu fx:id="helpMenu" mnemonicParsing="false" text="Help" >
+                  <Menu fx:id="helpMenu" mnemonicParsing="false" text="Help">
                      <MenuItem mnemonicParsing="false" onAction="#showAboutDialog" text="About" />
                   </Menu>
                </menus>
@@ -70,7 +70,7 @@
                               <Insets right="10.0" />
                            </HBox.margin>
                         </Button>
-                        <ComboBox fx:id="selectCourierButton" disable="true" prefWidth="150.0">
+                        <ComboBox fx:id="selectCourierComboBox" onAction="#updateCourierViewFilter" prefWidth="150.0">
                            <HBox.margin>
                               <Insets right="10.0" />
                            </HBox.margin>
