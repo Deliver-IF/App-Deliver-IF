@@ -404,6 +404,9 @@ public class MainController {
         if (mapPane.getChildren().size() != 0) {
             mapPane.getChildren().clear();
             this.dataModel.getMapController().drawBasemap(this.mapPane, this.dataModel.getCityMap());
+            for (DeliveryTour deliveryTour: this.dataModel.getCityMap().getDeliveryTours().values()) {
+                this.dataModel.getMapController().displayDeliveryTour(this.mapPane, this.dataModel.getCityMap(), deliveryTour);
+            }
         }
     }
 }
