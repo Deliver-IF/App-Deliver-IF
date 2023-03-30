@@ -2,6 +2,7 @@ package com.deliverif.app.controller;
 
 import com.deliverif.app.exceptions.NoCourierUnavailableException;
 import com.deliverif.app.model.*;
+import com.deliverif.app.exceptions.WrongDeliveryTimeException;
 import com.deliverif.app.services.DeliveryService;
 import com.deliverif.app.utils.Constants;
 import javafx.fxml.FXML;
@@ -140,7 +141,7 @@ public class MainController {
     }
 
     /**
-     * Display a dialog window to select a tour on the user)'s device.
+     * Display a dialog window to select a tour on the user's device.
      * If the tour is successfully loaded, it is displayed on the map pane.
      */
     @FXML
@@ -280,6 +281,19 @@ public class MainController {
     }
 
     /**
+     * Return the content of the "Intersection info" pop-up.
+     *
+     * @return String
+     */
+    public static String getDeliveryInfoDialogContent() {
+        int minutes = MapController.currentDeliveryRequests.get(MapController.currentIndex).getArrivalTime()%60;
+        int hours = MapController.currentDeliveryRequests.get(MapController.currentIndex).getArrivalTime()/60;
+        int startTimeWindow = MapController.currentDeliveryRequests.get(MapController.currentIndex).getStartTimeWindow();
+        return "Delivery Window : " + startTimeWindow + "h-" + (startTimeWindow + 1) + "h\n" +
+                "Arrival time : " + (hours < 10 ? "0" : "") + hours + ":" + (minutes < 10 ? "0" : "") + minutes + "\n";
+    }
+
+    /**
      * If the user clicks on the "next delivery request button" (<), the pop-up loads the information
      * of the next delivery request on the schedule and displays it.
      */
@@ -289,9 +303,8 @@ public class MainController {
             prevDeliveryPointInfo.setVisible(true);
         }
         MapController.currentIndex++;
-        deliveryWindow.setText("Delivery Window : " + MapController.currentDeliveryRequests.get(MapController.currentIndex).getStartTimeWindow() + "h-"
-                + (MapController.currentDeliveryRequests.get(MapController.currentIndex).getStartTimeWindow() + 1) + "h\n"
-        );
+        deliveryWindow.setText(getDeliveryInfoDialogContent());
+
         if(MapController.currentIndex == MapController.currentDeliveryRequests.size() - 1) {
             nextDeliveryPointInfo.setVisible(false);
         }
@@ -308,9 +321,8 @@ public class MainController {
             nextDeliveryPointInfo.setVisible(true);
         }
         MapController.currentIndex--;
-        deliveryWindow.setText("Delivery Window : " + MapController.currentDeliveryRequests.get(MapController.currentIndex).getStartTimeWindow() + "h-"
-                + (MapController.currentDeliveryRequests.get(MapController.currentIndex).getStartTimeWindow() + 1) + "h\n"
-        );
+        deliveryWindow.setText(getDeliveryInfoDialogContent());
+
         if(MapController.currentIndex == 0) {
             prevDeliveryPointInfo.setVisible(false);
         }
@@ -398,7 +410,7 @@ public class MainController {
             closeIntersectionInfoDialog();
             MapController MapController = new MapController();
             MapController.displayDeliveryTour(mapPane, dataModel.getCityMap(), deliveryTour);
-        } catch (IllegalStateException e) {
+        } catch (IllegalStateException | WrongDeliveryTimeException e) {
             deliveryTour.removeDeliveryRequest(deliveryRequest);
             noRouteFoundText.setVisible(true);
         }

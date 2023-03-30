@@ -40,7 +40,7 @@ public class Main extends Application {
         // Event handler for the window size change event
         final ChangeListener<Number> listener = new ChangeListener<Number>()
         {
-            final Timer timer = new Timer();
+            final Timer timer = new Timer(true);
             TimerTask task = null;
             final long delayTime = 200;
 

@@ -1,6 +1,7 @@
 package com.deliverif.app.services;
 
-import com.deliverif.app.algorithm.NaiveAlgorithm;
+import com.deliverif.app.algorithm.GreedyAlgorithm;
+import com.deliverif.app.exceptions.WrongDeliveryTimeException;
 import com.deliverif.app.model.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -46,8 +47,8 @@ public class DeliveryService {
      *
      * @param deliveryTour  the DeliveryTour object to optimize.
      */
-    public void searchOptimalDeliveryTour(DeliveryTour deliveryTour) {
-        NaiveAlgorithm.getInstance().optimize(deliveryTour);
+    public void searchOptimalDeliveryTour(DeliveryTour deliveryTour) throws WrongDeliveryTimeException {
+        GreedyAlgorithm.getInstance().optimize(deliveryTour);
     }
 
     public void loadDeliveriesFromFile(File file, CityMap cityMap) throws FileNotFoundException {
