@@ -2,7 +2,6 @@ package com.deliverif.app.controller;
 
 import com.deliverif.app.exceptions.NoCourierUnavailableException;
 import com.deliverif.app.model.*;
-import com.deliverif.app.exceptions.WrongDeliveryTimeException;
 import com.deliverif.app.services.DeliveryService;
 import com.deliverif.app.utils.Constants;
 import javafx.fxml.FXML;
@@ -13,7 +12,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import lombok.Getter;
 
 import java.io.File;
@@ -21,8 +19,6 @@ import java.io.FileNotFoundException;
 import java.nio.file.FileAlreadyExistsException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Timer;
 
 @Getter
 public class MainController {
@@ -78,7 +74,7 @@ public class MainController {
     private TextField courierNameTextField;
     @FXML
     private Button addCourierButton;
-    private HashMap<String, Integer> timeWindows = new HashMap<String, Integer>();
+    private HashMap<String, Integer> timeWindowsHashMap = new HashMap<String, Integer>();
     @FXML
     private Button submitDeliveryRequestButton;
     @FXML
@@ -351,7 +347,7 @@ public class MainController {
             newDeliveryRequestDialogPane.setVisible(true);
             int start_hour = 8;
             int limit_hour = 12;
-            timeWindows.clear();
+            timeWindowsHashMap.clear();
 
             courierChoiceBox.getItems().clear();
             timeWindowChoiceBox.getItems().clear();
@@ -363,7 +359,7 @@ public class MainController {
             for (int hour = start_hour; hour + 1 <= limit_hour; hour++) {
                 String timeWindowText = intToTimeWindowText(hour);
                 timeWindowChoiceBox.getItems().add(timeWindowText);
-                timeWindows.put(timeWindowText, hour);
+                timeWindowsHashMap.put(timeWindowText, hour);
             }
         } else {
             Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -374,6 +370,9 @@ public class MainController {
         }
     }
 
+    /**
+     * Open the delivery request dialog pane with the ability to edit and delete it.
+     */
     @FXML
     protected void editDeliveryRequestDialog() {
         addDeliveryRequestDialog();
@@ -381,13 +380,11 @@ public class MainController {
         if (MapController.currentlySelectedDeliveryRequest != null) {
             // If we are editing a delivery request
 
-            courierChoiceBox.setValue(MapController.currentlySelectedDeliveryRequest.getDeliveryTour().getCourier().getIdCourier());
+            courierChoiceBox.setValue(MapController.currentlySelectedDeliveryRequest.getDeliveryTour().getCourier());
             timeWindowChoiceBox.setValue(intToTimeWindowText(MapController.currentlySelectedDeliveryRequest.getStartTimeWindow()));
             submitDeliveryRequestButton.setText("Save");
         }
     }
-
-
 
     /**
      * Given an int, creates a string representing the time window in the format "XX.00 am/pm - XX.00 am/pm"
@@ -441,7 +438,7 @@ public class MainController {
 
         if (submitDeliveryRequestButton.getText().equals("Add")) {
             // We are creating a new delivery request;
-            deliveryRequest = new DeliveryRequest(timeWindows.get(timeWindowChoiceBox.getValue()), MapController.currentlySelectedIntersection, deliveryTour);
+            deliveryRequest = new DeliveryRequest(timeWindowsHashMap.get(timeWindowChoiceBox.getValue()), MapController.currentlySelectedIntersection, deliveryTour);
 
         } else if (submitDeliveryRequestButton.getText().equals("Save")) {
             // We are editing a delivery request
@@ -470,6 +467,12 @@ public class MainController {
         }
     }
 
+    /**
+     * Delete a delivery request.
+     * It is removed from a delivery tour and erased on the map pane.
+     *
+     * @throws Exception
+     */
     @FXML
     protected void deleteDeliveryRequest() throws Exception {
         DeliveryRequest deliveryRequest = MapController.currentlySelectedDeliveryRequest;
