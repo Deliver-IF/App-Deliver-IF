@@ -22,7 +22,7 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.Collection;
 
-
+@Getter
 public class MapController {
     boolean mapDrawn = false;
     public static ArrayList<DeliveryRequest> currentDeliveryRequests = new ArrayList<>();
@@ -63,6 +63,18 @@ public class MapController {
     }
 
     /**
+     * Erase the whole map (streets, warehouse, etc.)
+     *
+     * @param mapPane the javafx graphic element where the map and all streets and intersections are drawn
+     */
+    public void eraseBasemap(Pane mapPane) {
+        if (mapDrawn) {
+            mapPane.getChildren().clear();
+            mapDrawn = false;
+        }
+    }
+
+    /**
      * Draw a collecion of intersections. Those intersections are the default one. They are invisible but allow
      * the user to interact with them.
      *
@@ -98,6 +110,7 @@ public class MapController {
 
         // Click on an intersection
         point.setOnMouseClicked(mouseEvent -> {
+
             if(currentlySelectedIntersection != null) {
                 currentlySelectedIntersection.getDefaultShapeOnMap().setFill(Constants.BASE_MAP_INTERSECTION_COLOR);
             }
@@ -194,9 +207,9 @@ public class MapController {
      */
     public void displayDeliveryTour(Pane mapPane, CityMap map, DeliveryTour deliveryTour) {
         Color color = Color.rgb(
-            joaat(deliveryTour.getIdCourier()) & 255,
-            joaat(deliveryTour.getIdCourier()) >> 16 & 255,
-            joaat(deliveryTour.getIdCourier()) >> 31 & 255
+            joaat(deliveryTour.getCourier().getIdCourier()) & 255,
+            joaat(deliveryTour.getCourier().getIdCourier()) >> 16 & 255,
+            joaat(deliveryTour.getCourier().getIdCourier()) >> 31 & 255
         );
 
         // First, we erase the current route as adding a new delivery request often changes the original route.

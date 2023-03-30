@@ -1,10 +1,7 @@
 package com.deliverif.app.controller;
 
 import com.deliverif.app.exceptions.NoCourierUnavailableException;
-import com.deliverif.app.model.CityMap;
-import com.deliverif.app.model.DataModel;
-import com.deliverif.app.model.DeliveryRequest;
-import com.deliverif.app.model.DeliveryTour;
+import com.deliverif.app.model.*;
 import com.deliverif.app.services.DeliveryService;
 import com.deliverif.app.utils.Constants;
 import javafx.fxml.FXML;
@@ -39,8 +36,6 @@ public class MainController {
     @FXML
     private Menu aboutMenu;
     @FXML
-    private Button addDeliveryButton;
-    @FXML
     private Text nbCourierText;
     @FXML
     private Button increaseCourierButton;
@@ -68,6 +63,12 @@ public class MainController {
     private ChoiceBox timeWindowChoiceBox;
     @FXML
     private Button closeAddDeliveryRequestDialogPane;
+    @FXML
+    private DialogPane newCourierDialogPane;
+    @FXML
+    private TextField courierNameTextField;
+    @FXML
+    private Button addCourierButton;
     private HashMap<String, Integer> timeWindows = new HashMap<String, Integer>();
 
     public MainController() {
@@ -112,13 +113,18 @@ public class MainController {
     }
 
     private void loadFile(File file) {
+        // If a map has already been loaded, all the data entered on it is deleted and the old map is erased.
+        if(this.dataModel.getMapController().mapDrawn) {
+            this.dataModel.getMapController().eraseBasemap(this.mapPane);
+        }
         if (file != null) {
             try {
                 this.dataModel.loadMapFromFile(file);
                 CityMap citymap = this.dataModel.getCityMap();
                 if(citymap != null) {
-                    citymap.addDeliveryTour();
                     this.nbCourierText.setText(Integer.toString(citymap.getDeliveryTours().size()));
+                    this.increaseCourierButton.setDisable(false);
+                    this.decreaseCourierButton.setDisable(true);
                 }
             } catch (Exception exc) {
                 // handle exception...
@@ -197,25 +203,52 @@ public class MainController {
     }
 
     @FXML
+    public void createCourier(){
+        this.courierNameTextField.clear();
+        this.newCourierDialogPane.setVisible(true);
+    }
+
+    /**
+     * Adds 1 to the number of couriers displayed
+     * If there are 1 courier, we reactivate the decrement button
+     */
+    @FXML
     public void addCourier() {
+        this.newCourierDialogPane.setVisible(false);
         CityMap citymap = this.dataModel.getCityMap();
         if(citymap != null) {
-           citymap.addDeliveryTour();
-            int nbCourier = citymap.getDeliveryTours().size();
-            this.nbCourierText.setText(Integer.toString(nbCourier));
+            String courierName = this.courierNameTextField.getText();
+            DeliveryTour newDeliveryTour =  citymap.addDeliveryTour();
+            if(newDeliveryTour != null) {
+                newDeliveryTour.getCourier().setCourierName(courierName);
+                int nbCourier = citymap.getDeliveryTours().size();
+                this.nbCourierText.setText(Integer.toString(nbCourier));
+
+                if(nbCourier == 1) {
+                    this.decreaseCourierButton.setDisable(false);
+                }
+            }
         }
     }
 
+    /**
+     * Deduct 1 from the number of couriers displayed
+     * If all couriers have at least one delivery assigned, an alert window opens to indicate that no courier can be deleted.
+     * If there are 0 courier, the decrement button is disabled
+     */
     @FXML
     public void deleteCourier() {
         CityMap citymap = this.dataModel.getCityMap();
         if(citymap != null) {
             int nbCourier = citymap.getDeliveryTours().size();
-            if(nbCourier > 1){
+            if(nbCourier >= 1){
                 try {
                     citymap.deleteDeliveryTour();
                     nbCourier = citymap.getDeliveryTours().size();
                     this.nbCourierText.setText(Integer.toString(nbCourier));
+                    if(nbCourier == 0) {
+                        this.decreaseCourierButton.setDisable(true);
+                    }
                 } catch (NoCourierUnavailableException e) {
                     Alert alert = new Alert(Alert.AlertType.WARNING);
                     alert.setTitle("Information");
@@ -283,25 +316,38 @@ public class MainController {
      */
     @FXML
     protected void addDeliveryPointDialog() {
-        newDeliveryRequestDialogPane.setVisible(true);
-        int start_hour = 8;
-        int limit_hour = 12;
-        timeWindows.clear();
+        if(this.dataModel.getCityMap().getDeliveryTours().size() != 0) {
+            newDeliveryRequestDialogPane.setVisible(true);
+            int start_hour = 8;
+            int limit_hour = 12;
+            timeWindows.clear();
 
-        courierChoiceBox.getItems().clear();
-        timeWindowChoiceBox.getItems().clear();
+            courierChoiceBox.getItems().clear();
+            timeWindowChoiceBox.getItems().clear();
 
-        for (DeliveryTour deliveryTour : dataModel.getCityMap().getDeliveryTours().values()) {
-            courierChoiceBox.getItems().add(deliveryTour.getIdCourier());
+            System.out.println(dataModel);
+            System.out.println(dataModel.getCityMap());
+            System.out.println(dataModel.getCityMap().getDeliveryTours());
+
+            for (DeliveryTour deliveryTour : dataModel.getCityMap().getDeliveryTours().values()) {
+                courierChoiceBox.getItems().add(deliveryTour.getCourier());
+            }
+
+            for (int hour = start_hour; hour + 1 <= limit_hour; hour++) {
+                String start_am_or_pm = hour <= 11 ? "am" : "pm";
+                String end_am_or_pm = (hour + 1) <= 11 ? "am" : "pm";
+                String timeWindowText = hour + ".00 " + start_am_or_pm + " - " + (hour + 1) + ".00 " + end_am_or_pm;
+                timeWindowChoiceBox.getItems().add(timeWindowText);
+                timeWindows.put(timeWindowText, hour);
+            }
+        } else {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Warning");
+            alert.setHeaderText("No courier");
+            alert.setContentText("You cannot enter a new delivery request because there are no couriers ");
+            alert.showAndWait();
         }
 
-        for (int hour = start_hour; hour + 1 <= limit_hour; hour++) {
-            String start_am_or_pm = hour <= 11 ? "am" : "pm";
-            String end_am_or_pm = (hour + 1) <= 11 ? "am" : "pm";
-            String timeWindowText = hour + ".00 " + start_am_or_pm + " - " + (hour + 1) + ".00 " + end_am_or_pm;
-            timeWindowChoiceBox.getItems().add(timeWindowText);
-            timeWindows.put(timeWindowText, hour);
-        }
     }
 
     /**
@@ -313,6 +359,11 @@ public class MainController {
         newDeliveryRequestDialogPane.setVisible(false);
     }
 
+    @FXML
+    protected void closeNewCourierDialogPane() {
+        newCourierDialogPane.setVisible(false);
+    }
+
     /**
      * Get the data from the currently open "Add new delivery request pop-up" and add the delivery request
      * to the selected courier.
@@ -320,8 +371,16 @@ public class MainController {
     @FXML
     protected void addDeliveryRequest() {
         DeliveryService deliveryService = DeliveryService.getInstance();
-        DeliveryTour deliveryTour = dataModel.getCityMap().getDeliveryTours().get(courierChoiceBox.getValue());
-        DeliveryRequest deliveryRequest = new DeliveryRequest(timeWindows.get(timeWindowChoiceBox.getValue()), MapController.currentlySelectedIntersection);
+        DeliveryTour deliveryTour = dataModel.getCityMap().getDeliveryTours().get(((Courier) courierChoiceBox.getValue()).getIdCourier());
+        if (deliveryTour == null) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Information");
+            alert.setHeaderText(null);
+            alert.setContentText("The courier with id "+courierChoiceBox.getValue()+" doesn't exist anymore");
+            alert.showAndWait();
+            return;
+        }
+        DeliveryRequest deliveryRequest = new DeliveryRequest(timeWindows.get((String) timeWindowChoiceBox.getValue()), MapController.currentlySelectedIntersection);
         deliveryTour.addDeliveryRequest(deliveryRequest);
         Text noRouteFoundText = (Text) mapPane.getScene().lookup("#noRouteFound");
         try {
@@ -336,5 +395,6 @@ public class MainController {
             deliveryTour.removeDeliveryRequest(deliveryRequest);
             noRouteFoundText.setVisible(true);
         }
+
     }
 }
