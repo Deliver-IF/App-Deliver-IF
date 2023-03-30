@@ -1,5 +1,6 @@
 package com.deliverif.app.algorithm;
 
+import com.deliverif.app.exceptions.WrongDeliveryTimeException;
 import com.deliverif.app.model.CityMap;
 import com.deliverif.app.model.DeliveryTour;
 import com.deliverif.app.model.Intersection;
@@ -27,7 +28,7 @@ public class AntColonyAlgorithmTest {
         URL res = AntColonyAlgorithmTest.class.getResource("NaiveAlgorithmOptimizeMap.xml");
         assert res != null;
         cityMap = MapFactory.createMapFromFile(new File(URLDecoder.decode(res.getPath(), StandardCharsets.UTF_8)));
-        cityMap.addDeliveryTour(0);
+        cityMap.addDeliveryTour(0, "Test");
         cityMap.addDeliveryTour();
         mappedIntersections = new HashMap<>();
         for (Intersection intersection : cityMap.getIntersections().values()) {
@@ -39,7 +40,7 @@ public class AntColonyAlgorithmTest {
         cityMap = null;
     }
     @Test
-    public void testOptimize() {
+    public void testOptimize() throws WrongDeliveryTimeException {
         cityMap.getDeliveryTours().get(0).addDeliveryRequest(9, mappedIntersections.get("3"));
         cityMap.getDeliveryTours().get(0).addDeliveryRequest(10, mappedIntersections.get("4"));
         DeliveryTour deliveryTour = cityMap.getDeliveryTours().get(0);
