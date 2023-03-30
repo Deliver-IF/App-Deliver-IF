@@ -10,20 +10,26 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import lombok.Getter;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.nio.file.FileAlreadyExistsException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
-import java.util.Timer;
 
 @Getter
 public class MainController {
@@ -84,13 +90,19 @@ public class MainController {
     private VBox itineraryDetailSideBar;
     @FXML
     private ScrollPane itineraryDetailScrollPane;
-
     @FXML
     private DialogPane newCourierDialogPane;
     @FXML
     private TextField courierNameTextField;
     @FXML
     private Button addCourierButton;
+    @FXML
+    private Text itineraryDetailArriveAt;
+    @FXML
+    private Text itineraryDetailDeliveryTime;
+    @FXML
+    private AnchorPane itineraryDetailAnchorPane;
+
     private HashMap<String, Integer> timeWindows = new HashMap<String, Integer>();
 
     public MainController() {
@@ -101,6 +113,12 @@ public class MainController {
      * Method called by the FXML loader after ressource file reading
      */
     public void initialize() {
+//        itineraryDetailAnchorPane.setMinHeight(
+//                Toolkit.getDefaultToolkit().getScreenSize().getHeight()
+//        );
+        itineraryDetailAnchorPane.setPrefHeight(
+                Toolkit.getDefaultToolkit().getScreenSize().getHeight()
+        );
     }
 
     /**
@@ -488,44 +506,68 @@ public class MainController {
 
         boolean hasStart = false;
         boolean isDestinationreached = false;
+        int durationDelivery;
 
         // If indexDestinationDeliveryRequest == 0, then it means the origin is the warehouse
         if(indexSelectedDeliveryRequest > 0) {
-            System.out.println("Other");
-            intersectionOrigin = selectedDeliveryTour.getStops().get(indexSelectedDeliveryRequest - 1).getIntersection();
+            DeliveryRequest deliveryRequestOrigin = selectedDeliveryTour.getStops().get(indexSelectedDeliveryRequest - 1);
+            intersectionOrigin = deliveryRequestOrigin.getIntersection();
+            durationDelivery = selectedDeliveryRequest.getArrivalTime() - deliveryRequestOrigin.getArrivalTime();
         } else {
-            System.out.println("Warehouse");
             intersectionOrigin = dataModel.getCityMap().getWarehouse();
+            durationDelivery = selectedDeliveryRequest.getArrivalTime() - 8 * 60;
         }
 
-        String indication = "";
-        String distance = "";
-        System.out.println(MapController.currentlySelectedIntersection);
-        System.out.println(intersectionOrigin.getId());
+        String indicationText = "";
+        String distanceText = "";
+
+        itineraryDetailArriveAt.setText(
+                "Arrive at "
+                + String.format("%02d", selectedDeliveryRequest.getArrivalTime() / 60) + "h"
+                + String.format("%02d", selectedDeliveryRequest.getArrivalTime() % 60)
+        );
+        itineraryDetailDeliveryTime.setText(
+                durationDelivery + " min ..........."
+        );
+
+        String currentStreetName = "";
+        float distanceStreet = 0;
+
         for (Segment streetToTake : selectedDeliveryTour.getTour()) {
 
-            System.out.println("origin = " + streetToTake.getOrigin().getId() + " / destination = " + streetToTake.getDestination().getId());
-
-            if(streetToTake.getOrigin().equals(intersectionOrigin) && !isDestinationreached) {
-
-                System.out.println(streetToTake);
-                System.out.println(streetToTake.getName());
-
+            if(streetToTake.getOrigin().equals(intersectionOrigin) || (hasStart && !isDestinationreached)) {
                 hasStart = true;
 
-                indication = "Turn " + streetToTake.getName();
-                distance = new BigDecimal(streetToTake.getLength()).setScale(2, BigDecimal.ROUND_UP) + " m";
+                if(streetToTake.getName().equals(currentStreetName)) {
+                    distanceStreet += streetToTake.getLength();
+                } else if (!currentStreetName.equals("")) {
+                    indicationText = "Turn " + currentStreetName;
+                    distanceText = new BigDecimal(distanceStreet).setScale(2, BigDecimal.ROUND_UP) + " m";
 
-                addTextBlock(indication, distance);
+                    addTextBlock(indicationText, distanceText);
+
+                    currentStreetName = streetToTake.getName();
+                    distanceStreet = streetToTake.getLength();
+                } else {
+                    currentStreetName = streetToTake.getName();
+                    distanceStreet = streetToTake.getLength();
+                }
+
             }
 
             if (streetToTake.getDestination().equals(intersectionDestination)) {
                 isDestinationreached = true;
+
+                indicationText = "Turn " + currentStreetName;
+                distanceText = new BigDecimal(distanceStreet).setScale(2, BigDecimal.ROUND_UP) + " m";
+
+                addTextBlock(indicationText, distanceText);
                 Text destinationreachedText = createText("Your destination is there");
                 itineraryDetail.getChildren().add(destinationreachedText);
             }
         }
 
+        itineraryDetailAnchorPane.setPrefHeight(itineraryDetailAnchorPane.getPrefHeight() + shiftY);
 
     }
 

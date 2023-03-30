@@ -1,6 +1,5 @@
 package com.deliverif.app.controller;
 
-import com.deliverif.app.Main;
 import com.deliverif.app.model.*;
 import com.deliverif.app.services.DeliveryService;
 import com.deliverif.app.utils.Constants;
@@ -128,6 +127,9 @@ public class MapController {
             Button nextDeliveryPointInfo = (Button) mapPane.getScene().lookup("#nextDeliveryPointInfo");
             prevDeliveryPointInfo.setVisible(false);
             nextDeliveryPointInfo.setVisible(false);
+
+            Text seeDetails = (Text) mapPane.getScene().lookup("#seeDetailsDeliveryRequestText");
+            seeDetails.setVisible(false);
 
             // Move the dialog pane properly on the mapPane
             DialogPane dialogPane = (DialogPane) mapPane.getScene().lookup("#intersectionInfoDialog");
@@ -261,6 +263,9 @@ public class MapController {
         point.setOnMouseClicked(mouseEvent -> {
 
             Text deliveryWindowText = (Text) mapPane.getScene().lookup("#deliveryWindow");
+            if (currentlySelectedIntersection != null && currentDeliveryRequests.size() == 0) {
+                currentlySelectedIntersection.getDefaultShapeOnMap().setFill(Constants.BASE_MAP_INTERSECTION_COLOR);
+            }
 
             currentDeliveryRequests = DeliveryService.getInstance().getAllDeliveryRequestFromIntersection(map, intersection);
             currentlySelectedIntersection = intersection;
