@@ -3,7 +3,6 @@ package com.deliverif.app.services;
 import com.deliverif.app.model.CityMap;
 import com.deliverif.app.model.Intersection;
 import com.deliverif.app.model.Segment;
-import javafx.util.Pair;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -73,6 +72,7 @@ public class MapFactory {
             for (int i = 0; i < nStreets.getLength(); i++) {
                 Segment segment = Segment.create(nStreets.item(i), intersections);
                 segments.add(segment);
+                segments.add(segment.reverse());
                 connections.get(segment.getOrigin().getId()).add(segment.getDestination().getId());
                 connections.get(segment.getDestination().getId()).add(segment.getOrigin().getId());
             }

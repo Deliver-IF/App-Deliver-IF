@@ -24,9 +24,10 @@ import java.util.Collection;
 
 @Getter
 public class MapController {
-    boolean mapDrawn = false;
     public static ArrayList<DeliveryRequest> currentDeliveryRequests = new ArrayList<>();
     public static Intersection currentlySelectedIntersection;
+
+    public boolean mapDrawn;
 
     public static int currentIndex = 0;
     public MapController() {}
@@ -54,12 +55,10 @@ public class MapController {
      * @param map the object with all map elements
      */
     public void drawBasemap(Pane mapPane, CityMap map) {
-        if (!mapDrawn) {
             displayCrossings(mapPane, map, map.getIntersections().values());
             displayStreets(mapPane, map, map.getStreets(), Constants.BASE_MAP_STREETS_COLOR);
             displayWarehouse(mapPane, map, map.getWarehouse(), Constants.WAREHOUSE_COLOR);
             mapDrawn = true;
-        }
     }
 
     /**
@@ -258,7 +257,6 @@ public class MapController {
         point.setRadius(Constants.DELIVERY_REQUEST_SHAPE_RADIUS);
 
         point.setOnMouseClicked(mouseEvent -> {
-            System.out.println(origin.getX() + " " + origin.getY());
 
             Text deliveryWindowText = (Text) mapPane.getScene().lookup("#deliveryWindow");
 
@@ -266,9 +264,7 @@ public class MapController {
             currentlySelectedIntersection = intersection;
             currentIndex = currentDeliveryRequests.size() - 1;
 
-            deliveryWindowText.setText("Delivery Window : " + deliveryRequest.getStartTimeWindow() + "h-"
-                    + (deliveryRequest.getStartTimeWindow() + 1) + "h\n"
-            );
+            deliveryWindowText.setText(MainController.getDeliveryInfoDialogContent());
 
             Button prevDeliveryPointInfo = (Button) mapPane.getScene().lookup("#prevDeliveryPointInfo");
             Button nextDeliveryPointInfo = (Button) mapPane.getScene().lookup("#nextDeliveryPointInfo");

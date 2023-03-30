@@ -41,9 +41,6 @@ public class Segment {
             this.origin.getReachableIntersections().put(destination, this);
         }
         this.destination = destination;
-        if (!this.destination.getReachableIntersections().containsKey(origin)) {
-            this.destination.getReachableIntersections().put(origin, this);
-        }
     }
 
     /**
@@ -75,6 +72,29 @@ public class Segment {
                 origin,
                 destination
         );
+    }
+
+    public Segment reverse() {
+        return new Segment(this.name, this.length, this.destination, this.origin);
+    }
+
+    @Override
+    public int hashCode() {
+        return this.origin.hashCode() * this.destination.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof Segment other)) {
+            return false;
+        }
+        return this.origin.equals(other.origin) && this.destination.equals(other.destination);
     }
 
     public Intersection getEndIntersection(Intersection startIntersection) {

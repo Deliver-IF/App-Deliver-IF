@@ -1,6 +1,7 @@
 package com.deliverif.app.services;
 
 import com.deliverif.app.algorithm.AntColonyAlgorithm;
+import com.deliverif.app.exceptions.WrongDeliveryTimeException;
 import com.deliverif.app.model.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -46,7 +47,7 @@ public class DeliveryService {
      *
      * @param deliveryTour  the DeliveryTour object to optimize.
      */
-    public void searchOptimalDeliveryTour(DeliveryTour deliveryTour) {
+    public void searchOptimalDeliveryTour(DeliveryTour deliveryTour) throws WrongDeliveryTimeException {
         AntColonyAlgorithm.getInstance().optimize(deliveryTour);
     }
 
@@ -163,10 +164,10 @@ public class DeliveryService {
                 // send DOM to file
                 tr.transform(new DOMSource(document),
                         new StreamResult(new FileOutputStream(file)));
-                System.out.println("File saved!");
+
 
             } catch (TransformerException | IOException te) {
-                System.out.println(te.getMessage());
+                te.printStackTrace();
             }
 
         } catch (ParserConfigurationException e) {
