@@ -25,7 +25,7 @@ public class AntColonyAlgorithm implements AbstractSearchOptimalTourAlgorithm {
     }
 
 
-    final int MAX_ITERATIONS_PER_ANTS = 10000;
+    final int MAX_ITERATIONS_PER_ANTS = 100000;
     final float ANT_SPEED = 250.0f; // 250 m/min
     final float PHEROMONE_EVAPORATION = 0.1f; // 10% of pheromone intensity is evaporated each "minute"
     final float BASE_PHEROMONE_INTENSITY = 0.1f;
@@ -266,8 +266,10 @@ public class AntColonyAlgorithm implements AbstractSearchOptimalTourAlgorithm {
         private Intersection selectBestNextIntersection(Map<Segment, Float> pheromoneMatrix, Float defaultPheromoneIntensity) {
             // Evaluate probabilities for each intersection reachable from the current intersection
             final Scorer<Intersection> scorer = new HaversineScorer();
-            final Map<Intersection, Float> probabilitiesV2 = new HashMap<>();
-            float denominator = 0f;
+            final Map<Intersection, Float> probabilities = new HashMap<>();
+            final Map<Pair<Intersection, Segment>, Float> distances = new HashMap<>();
+            float minDistance = Float.MAX_VALUE;
+            float maxDistance = 0f;
             for (Map.Entry<Intersection, Segment> entry : currentIntersection.getReachableIntersections().entrySet()) {
                 final Segment segment = entry.getValue();
                 final Intersection intersection = entry.getKey();
@@ -282,14 +284,32 @@ public class AntColonyAlgorithm implements AbstractSearchOptimalTourAlgorithm {
                             .orElse(0f);
                 }
 
-                final float pheromoneIntensity = this.getPheromoneIntensity(pheromoneMatrix, defaultPheromoneIntensity, segment);
-
-                final float probability = pheromoneIntensity * 1 / (distance + segment.getLength());
-                probabilitiesV2.put(intersection, probability);
-                denominator += probability;
+                distances.put(Pair.of(intersection, segment), distance);
+                minDistance = Math.min(minDistance, distance);
+                maxDistance = Math.max(maxDistance, distance);
             }
 
-            if (probabilitiesV2.isEmpty()) {
+            float range = maxDistance - minDistance;
+            float denominator = 0f;
+            for (Map.Entry<Pair<Intersection, Segment>, Float> entry : distances.entrySet()) {
+                final Pair<Intersection, Segment> data = entry.getKey();
+                final float pheromoneIntensity = this.getPheromoneIntensity(pheromoneMatrix, defaultPheromoneIntensity, data.getRight());
+
+                final float distanceOverMin = entry.getValue() - minDistance;
+
+                if (range == 0) {
+                    // If we fall here, it means that there is only 1 intersection reachable from the current intersection
+                    // So we don't really need to compute probabilities.
+                    probabilities.put(data.getLeft(), pheromoneIntensity);
+                    denominator += pheromoneIntensity;
+                } else {
+                    final float probability = pheromoneIntensity * (range - distanceOverMin) / (range / 2);
+                    probabilities.put(data.getLeft(), probability);
+                    denominator += probability;
+                }
+            }
+
+            if (probabilities.isEmpty()) {
                 // Return last intersection of tour
                 return this.tour.get(this.tour.size() - 1);
             } else {
@@ -297,7 +317,7 @@ public class AntColonyAlgorithm implements AbstractSearchOptimalTourAlgorithm {
                 final float random = new Random().nextFloat();
 
                 float sumProbabilities = 0;
-                for (Map.Entry<Intersection, Float> entry : probabilitiesV2.entrySet()) {
+                for (Map.Entry<Intersection, Float> entry : probabilities.entrySet()) {
                     // TODO : Explore the possibility to reduce probabilities on segments that have been visited recently
                     // TODO : Explore the possibility to add a random factor to the probabilities
                     final float probability = entry.getValue() / denominator;
@@ -317,9 +337,9 @@ public class AntColonyAlgorithm implements AbstractSearchOptimalTourAlgorithm {
             final float currentIntensity = pheromoneMatrix.getOrDefault(segment, defaultPheromoneIntensity);
 
             if (tour.size() > 0 && this.currentIntersection.getSegmentTo(tour.get(tour.size() - 1)) == segment) {
-                return currentIntensity * 0.05f; // TODO ; Improve to not penalize the segment if the ant is on delivery request
+                return currentIntensity * 0.005f; // TODO ; Improve to not penalize the segment if the ant is on delivery request
             } else if (this.hasVisited(segment)) {
-                return currentIntensity * 0.08f;
+                return currentIntensity * 0.008f;
             } else {
                 return currentIntensity;
             }
