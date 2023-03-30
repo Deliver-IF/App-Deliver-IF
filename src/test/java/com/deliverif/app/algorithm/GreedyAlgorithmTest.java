@@ -26,7 +26,7 @@ public class GreedyAlgorithmTest {
         URL res = NaiveAlgorithmTest.class.getResource("GreedyAlgorithmOptimizeMap.xml");
         assert res != null;
         cityMap = MapFactory.createMapFromFile(new File(URLDecoder.decode(res.getPath(), StandardCharsets.UTF_8)));
-        cityMap.addDeliveryTour(0);
+        cityMap.addDeliveryTour(0, "Toto");
         cityMap.addDeliveryTour();
         mappedIntersections = new HashMap<>();
         for (Intersection intersection : cityMap.getIntersections().values()) {
