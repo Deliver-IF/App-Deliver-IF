@@ -368,7 +368,7 @@ public class MainController {
     @FXML
     protected void addDeliveryRequest() {
         DeliveryService deliveryService = DeliveryService.getInstance();
-        DeliveryTour deliveryTour = dataModel.getCityMap().getDeliveryTours().get(courierChoiceBox.getValue());
+        DeliveryTour deliveryTour = dataModel.getCityMap().getDeliveryTours().get(((Courier) courierChoiceBox.getValue()).getIdCourier());
         if (deliveryTour == null) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Information");
@@ -377,7 +377,7 @@ public class MainController {
             alert.showAndWait();
             return;
         }
-        DeliveryRequest deliveryRequest = new DeliveryRequest(timeWindows.get(timeWindowChoiceBox.getValue()), MapController.currentlySelectedIntersection);
+        DeliveryRequest deliveryRequest = new DeliveryRequest(timeWindows.get((String) timeWindowChoiceBox.getValue()), MapController.currentlySelectedIntersection);
         deliveryTour.addDeliveryRequest(deliveryRequest);
         Text noRouteFoundText = (Text) mapPane.getScene().lookup("#noRouteFound");
         try {

@@ -183,13 +183,13 @@ public class DeliveryService {
      */
     public ArrayList<DeliveryRequest> getAllDeliveryRequestFromIntersection(CityMap map, Intersection intersection) {
         ArrayList<DeliveryRequest> currentDeliveryRequests = new ArrayList<>();
-        Map<Courier, DeliveryTour> deliveriesTourMap = map.getDeliveryTours();
+        Map<Integer, DeliveryTour> deliveriesTourMap = map.getDeliveryTours();
         // For each tours
         for (DeliveryTour deliveryTour : deliveriesTourMap.values()) {
             // For each stops
             for (DeliveryRequest deliveryRequest : deliveryTour.getStops()) {
                 // If delivery request intersection is the current intersection
-                if(deliveryRequest.getIntersection().getId() == intersection.getId()) {
+                if(deliveryRequest.getIntersection().getId().equals(intersection.getId())) {
                     currentDeliveryRequests.add(deliveryRequest);
                 }
             }

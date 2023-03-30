@@ -65,7 +65,7 @@ public class DeliveryServiceTest {
         DeliveryService.getInstance().loadDeliveriesFromFile(new File(inputFilePath), cityMap);
         assert cityMap.getDeliveryTours().size() == 2;
 
-        DeliveryTour deliveryTour = cityMap.getDeliveryTours().values().stream().toList().get(0);
+        DeliveryTour deliveryTour = cityMap.getDeliveryTours().get(0);
         assert deliveryTour.getCourier().getIdCourier() == 0;
         assert deliveryTour.getCourier().getCourierName().equals("toto");
         assert deliveryTour.getStops().size() == 3;
@@ -95,7 +95,7 @@ public class DeliveryServiceTest {
         assert deliveryTour.getTour().get(6).getOrigin().getId().equals("4");
         assert deliveryTour.getTour().get(6).getDestination().getId().equals("1");
 
-        deliveryTour = cityMap.getDeliveryTours().values().stream().toList().get(1);;
+        deliveryTour = cityMap.getDeliveryTours().get(23);
         assert deliveryTour.getCourier().getIdCourier() == 23;
         assert deliveryTour.getCourier().getCourierName().equals("titi");
         assert deliveryTour.getStops().size() == 1;
