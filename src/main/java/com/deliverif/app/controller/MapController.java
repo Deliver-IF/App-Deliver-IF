@@ -1,5 +1,6 @@
 package com.deliverif.app.controller;
 
+import com.deliverif.app.Main;
 import com.deliverif.app.model.*;
 import com.deliverif.app.services.DeliveryService;
 import com.deliverif.app.utils.Constants;
@@ -67,7 +68,7 @@ public class MapController {
      *
      * @param mapPane the javafx graphic element where the map and all streets and intersections are drawn
      * @param map the object with all map elements
-     * @param intersections collection of streets we want to draw
+     * @param intersections collectionintersection.setDefaultShapeOnMap(point); of streets we want to draw
      */
     private void displayCrossings(Pane mapPane, CityMap map, Collection<Intersection> intersections) {
         for(Intersection intersection : intersections) {
@@ -115,13 +116,30 @@ public class MapController {
             prevDeliveryPointInfo.setVisible(false);
             nextDeliveryPointInfo.setVisible(false);
 
-            // Move dialog pane
+            // Move the dialog pane properly on the mapPane
             DialogPane dialogPane = (DialogPane) mapPane.getScene().lookup("#intersectionInfoDialog");
+            double dialogPaneX;
+            double dialogPaneY;
+
+            if (mapPane.getWidth() < origin.getX() + (dialogPane.getWidth() / 2)) {
+                dialogPaneX = mapPane.getWidth() - dialogPane.getWidth();
+            } else if (origin.getX() - (dialogPane.getWidth() / 2) < 0.0) {
+                dialogPaneX = 0.0;
+            } else {
+                dialogPaneX = origin.getX() - (dialogPane.getWidth() / 2);
+            }
+
+            if (origin.y - dialogPane.getHeight() < 0) {
+                dialogPaneY = dialogPane.getHeight() / 2;
+            } else {
+                dialogPaneY = origin.getY() - dialogPane.getHeight() - 10;
+            }
+
             movePane(
                     mapPane,
                     dialogPane,
-                    origin.getX() - (dialogPane.getWidth() / 2),
-                    origin.getY() - dialogPane.getHeight() - 20
+                    dialogPaneX,
+                    dialogPaneY
             );
         });
 
@@ -310,12 +328,12 @@ public class MapController {
         line.setStrokeWidth(3);
         mapPane.getChildren().add(line);
 
-        Circle originSegment = segment.getOrigin().getDefaultShapeOnMap();
-        Circle destinationSegment = segment.getDestination().getDefaultShapeOnMap();
-        mapPane.getChildren().remove(originSegment);
-        mapPane.getChildren().add(originSegment);
-        mapPane.getChildren().remove(destinationSegment);
-        mapPane.getChildren().add(destinationSegment);
+        Circle originPoint = segment.getOrigin().getDefaultShapeOnMap();
+        Circle destinationPoint = segment.getDestination().getDefaultShapeOnMap();
+        mapPane.getChildren().remove(originPoint);
+        mapPane.getChildren().add(originPoint);
+        mapPane.getChildren().remove(destinationPoint);
+        mapPane.getChildren().add(destinationPoint);
 
         return line;
     }

@@ -94,7 +94,7 @@
                      <header>
                         <HBox alignment="TOP_RIGHT" prefHeight="19.0" prefWidth="421.0">
                            <children>
-                              <Button mnemonicParsing="false" onMouseClicked="#hideIntersectionInfoDialog" prefHeight="28.0" prefWidth="29.0" text="x" />
+                              <Button mnemonicParsing="false" onMouseClicked="#closeIntersectionInfoDialog" prefHeight="28.0" prefWidth="29.0" text="x" />
                            </children>
                            <padding>
                               <Insets right="2.0" top="2.0" />

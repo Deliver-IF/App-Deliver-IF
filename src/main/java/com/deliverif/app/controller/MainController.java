@@ -3,6 +3,7 @@ package com.deliverif.app.controller;
 import com.deliverif.app.exceptions.NoCourierUnavailableException;
 import com.deliverif.app.model.*;
 import com.deliverif.app.services.DeliveryService;
+import com.deliverif.app.utils.Constants;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -261,8 +262,10 @@ public class MainController {
      * Close the currently open "Intersection info" pop-up.
      */
     @FXML
-    protected void hideIntersectionInfoDialog() {
+    protected void closeIntersectionInfoDialog() {
         intersectionInfoDialog.setVisible(false);
+        MapController.currentlySelectedIntersection.getDefaultShapeOnMap().setFill(Constants.BASE_MAP_INTERSECTION_COLOR);
+        MapController.currentlySelectedIntersection = null;
     }
 
     /**
@@ -379,12 +382,12 @@ public class MainController {
         Text noRouteFoundText = (Text) mapPane.getScene().lookup("#noRouteFound");
         try {
             deliveryService.searchOptimalDeliveryTour(deliveryTour);
+
             // Draw the delivery tour on the map
+            closeAddDeliveryRequestDialogPane();
+            closeIntersectionInfoDialog();
             MapController MapController = new MapController();
             MapController.displayDeliveryTour(mapPane, dataModel.getCityMap(), deliveryTour);
-
-            closeAddDeliveryRequestDialogPane();
-            intersectionInfoDialog.setVisible(false);
         } catch (IllegalStateException e) {
             deliveryTour.removeDeliveryRequest(deliveryRequest);
             noRouteFoundText.setVisible(true);
