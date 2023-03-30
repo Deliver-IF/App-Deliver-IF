@@ -72,8 +72,6 @@ public class MainController {
     @FXML
     private Button deleteDeliveryRequestButton;
     @FXML
-    private Button updateDeliveryRequestButton;
-    @FXML
     private Button editDeliveryRequestButton;
 
     public MainController() {
@@ -244,6 +242,7 @@ public class MainController {
         MapController.currentlySelectedIntersection = null;
         MapController.currentlySelectedDeliveryRequest = null;
         editDeliveryRequestButton.setVisible(false);
+        deleteDeliveryRequestButton.setVisible(false);
     }
 
     /**
@@ -252,16 +251,17 @@ public class MainController {
      */
     @FXML
     protected void nextDeliveryPointInfoDialog() {
-        if(MapController.currentIndex == 0) {
+        if (MapController.currentIndex == 0) {
             prevDeliveryPointInfo.setVisible(true);
         }
         MapController.currentIndex++;
         deliveryWindow.setText("Delivery Window : " + MapController.currentDeliveryRequests.get(MapController.currentIndex).getStartTimeWindow() + "h-"
                 + (MapController.currentDeliveryRequests.get(MapController.currentIndex).getStartTimeWindow() + 1) + "h\n"
         );
-        if(MapController.currentIndex == MapController.currentDeliveryRequests.size() - 1) {
+        if (MapController.currentIndex == MapController.currentDeliveryRequests.size() - 1) {
             nextDeliveryPointInfo.setVisible(false);
         }
+        MapController.currentlySelectedDeliveryRequest = MapController.currentDeliveryRequests.get(MapController.currentIndex);
         System.out.println("Next");
     }
 
@@ -271,16 +271,17 @@ public class MainController {
      */
     @FXML
     protected void prevDeliveryPointInfoDialog() {
-        if(MapController.currentIndex == MapController.currentDeliveryRequests.size() - 1) {
+        if (MapController.currentIndex == MapController.currentDeliveryRequests.size() - 1) {
             nextDeliveryPointInfo.setVisible(true);
         }
         MapController.currentIndex--;
         deliveryWindow.setText("Delivery Window : " + MapController.currentDeliveryRequests.get(MapController.currentIndex).getStartTimeWindow() + "h-"
                 + (MapController.currentDeliveryRequests.get(MapController.currentIndex).getStartTimeWindow() + 1) + "h\n"
         );
-        if(MapController.currentIndex == 0) {
+        if (MapController.currentIndex == 0) {
             prevDeliveryPointInfo.setVisible(false);
         }
+        MapController.currentlySelectedDeliveryRequest = MapController.currentDeliveryRequests.get(MapController.currentIndex);
         System.out.println("Prev");
     }
 
@@ -355,7 +356,6 @@ public class MainController {
      */
     @FXML
     protected void submitDeliveryRequest() throws Exception {
-        DeliveryService deliveryService = DeliveryService.getInstance();
         DeliveryTour deliveryTour = dataModel.getCityMap().getDeliveryTours().get(courierChoiceBox.getValue());
         DeliveryRequest deliveryRequest;
 
@@ -367,6 +367,7 @@ public class MainController {
             // We are editing a delivery request
             deliveryRequest = MapController.currentlySelectedDeliveryRequest;
             deliveryRequest.getDeliveryTour().removeDeliveryRequest(deliveryRequest);
+            deliveryRequest.setDeliveryTour(deliveryTour);
         } else {
             throw new Exception("The content of the submit button does not match any possible value.");
         }
@@ -374,16 +375,29 @@ public class MainController {
 
         Text noRouteFoundText = (Text) mapPane.getScene().lookup("#noRouteFound");
         try {
-            deliveryService.searchOptimalDeliveryTour(deliveryTour);
+            DeliveryService.getInstance().searchOptimalDeliveryTour(deliveryTour);
 
             // Draw the delivery tour on the map
             closeAddDeliveryRequestDialogPane();
             closeIntersectionInfoDialog();
-            MapController MapController = new MapController();
-            MapController.displayDeliveryTour(mapPane, dataModel.getCityMap(), deliveryTour);
+            MapController mapController = new MapController();
+            mapController.displayDeliveryTour(mapPane, dataModel.getCityMap(), deliveryTour);
         } catch (IllegalStateException e) {
             deliveryTour.removeDeliveryRequest(deliveryRequest);
             noRouteFoundText.setVisible(true);
         }
+    }
+
+    @FXML
+    protected void deleteDeliveryRequest() throws Exception {
+        DeliveryRequest deliveryRequest = MapController.currentlySelectedDeliveryRequest;
+        DeliveryTour deliveryTour = deliveryRequest.getDeliveryTour();
+
+        deliveryRequest.getDeliveryTour().removeDeliveryRequest(deliveryRequest);
+        DeliveryService.getInstance().searchOptimalDeliveryTour(deliveryTour);
+        MapController mapController = new MapController();
+        mapController.displayDeliveryTour(mapPane, dataModel.getCityMap(), deliveryTour);
+
+        closeIntersectionInfoDialog();
     }
 }

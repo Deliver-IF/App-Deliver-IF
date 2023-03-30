@@ -1,6 +1,7 @@
 package com.deliverif.app.model;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Random;
 
@@ -32,6 +33,7 @@ public class DeliveryRequest {
     /**
      * The delivery tour the delivery request is part of.
      */
+    @Setter
     private DeliveryTour deliveryTour;
 
     public DeliveryRequest(int startTimeWindow, Intersection intersection, DeliveryTour deliveryTour) {

@@ -108,8 +108,10 @@
                               <Button fx:id="nextDeliveryPointInfo" layoutX="308.0" layoutY="22.0" mnemonicParsing="false" onMouseClicked="#nextDeliveryPointInfoDialog" prefHeight="24.0" prefWidth="29.0" text="&gt;" />
                               <HBox layoutY="66.0" prefHeight="27.0" prefWidth="339.0">
                                  <children>
-                                    <AnchorPane prefHeight="27.0" prefWidth="128.0" />
-                                    <Button fx:id="editDeliveryRequestButton" mnemonicParsing="false" onMouseClicked="#editDeliveryRequestDialog" prefHeight="20.0" prefWidth="80.0" text="Edit" visible="false" />
+                                    <AnchorPane prefHeight="27.0" prefWidth="124.0" />
+                                    <Button fx:id="editDeliveryRequestButton" mnemonicParsing="false" onMouseClicked="#editDeliveryRequestDialog" prefHeight="25.0" prefWidth="95.0" text="Edit" visible="false" />
+                                    <AnchorPane prefHeight="27.0" prefWidth="38.0" />
+                                    <Button fx:id="deleteDeliveryRequestButton" mnemonicParsing="false" onMouseClicked="#deleteDeliveryRequest" prefHeight="25.0" prefWidth="100.0" text="Delete" visible="false" />
                                     <AnchorPane prefHeight="27.0" prefWidth="115.0" />
                                     <Button mnemonicParsing="false" onMouseClicked="#addDeliveryRequestDialog" prefHeight="24.0" prefWidth="29.0" text="+" />
                                  </children>

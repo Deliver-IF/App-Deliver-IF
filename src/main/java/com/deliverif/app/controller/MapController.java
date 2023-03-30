@@ -1,6 +1,5 @@
 package com.deliverif.app.controller;
 
-import com.deliverif.app.Main;
 import com.deliverif.app.model.*;
 import com.deliverif.app.services.DeliveryService;
 import com.deliverif.app.utils.Constants;
@@ -72,7 +71,7 @@ public class MapController {
      * @param intersections collectionintersection.setDefaultShapeOnMap(point); of streets we want to draw
      */
     private void displayCrossings(Pane mapPane, CityMap map, Collection<Intersection> intersections) {
-        for(Intersection intersection : intersections) {
+        for (Intersection intersection : intersections) {
             displayIntersection(mapPane, map, intersection);
         }
     }
@@ -200,7 +199,7 @@ public class MapController {
             joaat(deliveryTour.getIdCourier()) >> 31 & 255
         );
 
-        // First, we erase the current route as adding a new delivery request often changes the original route.
+        // First, we erase the current route as editing a delivery tour often changes the original route.
         eraseShapes(mapPane, deliveryTour.getShapes());
         deliveryTour.getShapes().clear();
 
@@ -261,15 +260,11 @@ public class MapController {
 
             Button prevDeliveryPointInfo = (Button) mapPane.getScene().lookup("#prevDeliveryPointInfo");
             Button nextDeliveryPointInfo = (Button) mapPane.getScene().lookup("#nextDeliveryPointInfo");
-            if (currentIndex == 0) {
-                prevDeliveryPointInfo.setVisible(false);
-            } else {
-                prevDeliveryPointInfo.setVisible(true);
-            }
+            prevDeliveryPointInfo.setVisible(currentIndex != 0);
             nextDeliveryPointInfo.setVisible(false);
 
-            Button editButton = (Button) mapPane.getScene().lookup("#editDeliveryRequestButton");
-            editButton.setVisible(true);
+            mapPane.getScene().lookup("#editDeliveryRequestButton").setVisible(true);
+            mapPane.getScene().lookup("#deleteDeliveryRequestButton").setVisible(true);
 
             DialogPane dialogPane = (DialogPane) mapPane.getScene().lookup("#intersectionInfoDialog");
             movePane(
@@ -283,9 +278,7 @@ public class MapController {
         // Event which change cursor on intersection hover
         point.setOnMouseEntered(mouseEvent -> mapPane.getScene().setCursor(Cursor.HAND));
         point.setOnMouseExited(mouseEvent -> mapPane.getScene().setCursor(Cursor.DEFAULT));
-
-        intersection.setDefaultShapeOnMap(point);
-
+        
         mapPane.getChildren().add(point);
 
         return point;
