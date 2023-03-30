@@ -98,10 +98,14 @@ public class MapController {
 
         // Click on an intersection
         point.setOnMouseClicked(mouseEvent -> {
-            if(currentlySelectedIntersection != null) {
+            System.out.println(currentDeliveryRequests.size());
+            if(currentlySelectedIntersection != null && currentDeliveryRequests.size() == 0) {
                 currentlySelectedIntersection.getDefaultShapeOnMap().setFill(Constants.BASE_MAP_INTERSECTION_COLOR);
             }
             currentlySelectedIntersection = intersection;
+            // Reset the DeliveryRequests for the current intersection. Indeed, if this part of the code is reach, it means
+            // the intersection has no DeliveryRequest
+            currentDeliveryRequests.clear();
 
             // Leave the selected intersection colored
             intersection.getDefaultShapeOnMap().setFill(Constants.BASE_MAP_INTERSECTION_COLOR_HOVER);
@@ -245,7 +249,6 @@ public class MapController {
         point.setRadius(Constants.DELIVERY_REQUEST_SHAPE_RADIUS);
 
         point.setOnMouseClicked(mouseEvent -> {
-            System.out.println(origin.getX() + " " + origin.getY());
 
             Text deliveryWindowText = (Text) mapPane.getScene().lookup("#deliveryWindow");
 
@@ -256,6 +259,9 @@ public class MapController {
             deliveryWindowText.setText("Delivery Window : " + deliveryRequest.getStartTimeWindow() + "h-"
                     + (deliveryRequest.getStartTimeWindow() + 1) + "h\n"
             );
+
+            Text seeDetails = (Text) mapPane.getScene().lookup("#seeDetailsDeliveryRequestText");
+            seeDetails.setVisible(true);
 
             Button prevDeliveryPointInfo = (Button) mapPane.getScene().lookup("#prevDeliveryPointInfo");
             Button nextDeliveryPointInfo = (Button) mapPane.getScene().lookup("#nextDeliveryPointInfo");

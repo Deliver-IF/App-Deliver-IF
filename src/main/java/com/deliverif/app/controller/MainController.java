@@ -13,6 +13,7 @@ import javafx.stage.FileChooser;
 import lombok.Getter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.math.BigDecimal;
 import java.nio.file.FileAlreadyExistsException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -20,6 +21,8 @@ import java.util.HashMap;
 @Getter
 public class MainController {
     DataModel dataModel;
+
+    private static double shiftY = 0;
 
     // Map pane
     @FXML
@@ -67,7 +70,12 @@ public class MainController {
     @FXML
     private Button closeAddDeliveryRequestDialogPane;
     @FXML
-    private Group itinaryDetail;
+    private Group itineraryDetail;
+    @FXML
+    private VBox itineraryDetailSideBar;
+    @FXML
+    private ScrollPane itineraryDetailScrollPane;
+
     private HashMap<String, Integer> timeWindows = new HashMap<String, Integer>();
 
     public MainController() {
@@ -234,7 +242,10 @@ public class MainController {
     @FXML
     protected void closeIntersectionInfoDialog() {
         intersectionInfoDialog.setVisible(false);
-        MapController.currentlySelectedIntersection.getDefaultShapeOnMap().setFill(Constants.BASE_MAP_INTERSECTION_COLOR);
+        // The circle is transparent again only if the selected Intersection doesn't have any DeliveryRequest
+        if(MapController.currentDeliveryRequests.size() == 0) {
+            MapController.currentlySelectedIntersection.getDefaultShapeOnMap().setFill(Constants.BASE_MAP_INTERSECTION_COLOR);
+        }
         MapController.currentlySelectedIntersection = null;
     }
 
@@ -254,7 +265,6 @@ public class MainController {
         if(MapController.currentIndex == MapController.currentDeliveryRequests.size() - 1) {
             nextDeliveryPointInfo.setVisible(false);
         }
-        System.out.println("Next");
     }
 
     /**
@@ -273,7 +283,6 @@ public class MainController {
         if(MapController.currentIndex == 0) {
             prevDeliveryPointInfo.setVisible(false);
         }
-        System.out.println("Prev");
     }
 
     /**
@@ -340,40 +349,82 @@ public class MainController {
 
     @FXML
     protected void seeDetailsDeliveryRequest() {
-        System.out.println("Here");
-        DeliveryRequest deliveryRequestDestination = MapController.currentDeliveryRequests.get(MapController.currentIndex);
-        DeliveryTour deliveryTour = DeliveryService.getInstance().getDeliveryTourFromDeliveryRequest(dataModel.getCityMap(), deliveryRequestDestination);
-        int indexDestinationDeliveryRequest = deliveryTour.getStops().indexOf(deliveryRequestDestination);
+        itineraryDetailScrollPane.setVisible(true);
+        itineraryDetail.getChildren().clear();
+        shiftY = 0;
+
+        DeliveryRequest selectedDeliveryRequest = MapController.currentDeliveryRequests.get(MapController.currentIndex);
+        DeliveryTour selectedDeliveryTour = DeliveryService.getInstance().getDeliveryTourFromDeliveryRequest(dataModel.getCityMap(), selectedDeliveryRequest);
+        int indexSelectedDeliveryRequest = selectedDeliveryTour.getStops().indexOf(selectedDeliveryRequest);
         Intersection intersectionOrigin;
-        if(indexDestinationDeliveryRequest > 0) {
-            intersectionOrigin = deliveryTour.getStops().get(indexDestinationDeliveryRequest - 1).getIntersection();
+        Intersection intersectionDestination = selectedDeliveryRequest.getIntersection();
+
+        boolean hasStart = false;
+        boolean isDestinationreached = false;
+
+        // If indexDestinationDeliveryRequest == 0, then it means the origin is the warehouse
+        if(indexSelectedDeliveryRequest > 0) {
+            System.out.println("Other");
+            intersectionOrigin = selectedDeliveryTour.getStops().get(indexSelectedDeliveryRequest - 1).getIntersection();
         } else {
+            System.out.println("Warehouse");
             intersectionOrigin = dataModel.getCityMap().getWarehouse();
         }
-        System.out.println(intersectionOrigin.getId());
-//        System.out.println(inde);
-        boolean start = false;
+
         String indication = "";
         String distance = "";
-        for (Segment segment : deliveryTour.getTour()) {
-            System.out.println(segment);
-            System.out.println(segment.getName());
-            if(segment.getOrigin().equals(intersectionOrigin) || start) {
-//                start = true;
-                indication = "Turn " + segment.getName();
-                distance = segment.getLength() + " m";
-                Text indicationText = new Text();
-                indicationText.setText(indication);
-                indicationText.setVisible(true);
-                Text distanceText = new Text();
-                distanceText.setText(distance);
-                distanceText.setVisible(true);
-                distanceText.setLayoutY(20.);
-                itinaryDetail.getChildren().add(indicationText);
-                itinaryDetail.getChildren().add(distanceText);
+        System.out.println(MapController.currentlySelectedIntersection);
+        System.out.println(intersectionOrigin.getId());
+        for (Segment streetToTake : selectedDeliveryTour.getTour()) {
+
+            System.out.println("origin = " + streetToTake.getOrigin().getId() + " / destination = " + streetToTake.getDestination().getId());
+
+            if(streetToTake.getOrigin().equals(intersectionOrigin) && !isDestinationreached) {
+
+                System.out.println(streetToTake);
+                System.out.println(streetToTake.getName());
+
+                hasStart = true;
+
+                indication = "Turn " + streetToTake.getName();
+                distance = new BigDecimal(streetToTake.getLength()).setScale(2, BigDecimal.ROUND_UP) + " m";
+
+                addTextBlock(indication, distance);
+            }
+
+            if (streetToTake.getDestination().equals(intersectionDestination)) {
+                isDestinationreached = true;
+                Text destinationreachedText = createText("Your destination is there");
+                itineraryDetail.getChildren().add(destinationreachedText);
             }
         }
 
 
+    }
+
+    private void addTextBlock(String indication, String distance) {
+        // Indication of the direction
+        Text indicationText = createText(indication);
+        itineraryDetail.getChildren().add(indicationText);
+        shiftY += 20;
+
+        // Indication of the distance
+        Text distanceText = createText(distance);
+        itineraryDetail.getChildren().add(distanceText);
+        shiftY += 30;
+    }
+
+    private Text createText(String text) {
+        Text fxText = new Text();
+        fxText.setText(text);
+        fxText.setVisible(true);
+        fxText.maxWidth(178);
+        fxText.setLayoutY(shiftY);
+        return fxText;
+    }
+
+    @FXML
+    protected void closeItineraryDetailSideBar() {
+        itineraryDetailScrollPane.setVisible(false);
     }
 }

@@ -109,7 +109,7 @@
                               <Text fx:id="deliveryWindow" layoutX="55.0" layoutY="39.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Delivery Window : XXh-XXh" textAlignment="CENTER" wrappingWidth="228.28125" />
                               <Button fx:id="nextDeliveryPointInfo" layoutX="308.0" layoutY="22.0" mnemonicParsing="false" onMouseClicked="#nextDeliveryPointInfoDialog" prefHeight="24.0" prefWidth="29.0" text="&gt;" />
                               <Button layoutX="308.0" layoutY="67.0" mnemonicParsing="false" onMouseClicked="#addDeliveryPointDialog" prefHeight="24.0" prefWidth="29.0" text="+" />
-                              <Text fx:id="seeDetailsDeliveryRequestText" accessibleRole="HYPERLINK" layoutX="133.0" layoutY="85.0" onMouseClicked="#seeDetailsDeliveryRequest" strokeType="OUTSIDE" strokeWidth="0.0" text="Voir détails" underline="true" />
+                              <Text fx:id="seeDetailsDeliveryRequestText" accessibleRole="HYPERLINK" layoutX="133.0" layoutY="85.0" onMouseClicked="#seeDetailsDeliveryRequest" strokeType="OUTSIDE" strokeWidth="0.0" text="Voir détails" underline="true" visible="false" />
                            </children>
                         </AnchorPane>
                      </content>
@@ -160,25 +160,26 @@
       </BorderPane>
    </center>
    <left>
-      <VBox prefHeight="525.0" prefWidth="198.0" BorderPane.alignment="CENTER">
+      <VBox fx:id="itineraryDetailSideBar" prefHeight="525.0" prefWidth="198.0" style="-fx-background-color: #ECECEC;" BorderPane.alignment="CENTER">
          <children>
-            <ScrollPane hbarPolicy="NEVER" prefHeight="533.0" prefWidth="198.0">
+            <ScrollPane fx:id="itineraryDetailScrollPane" hbarPolicy="NEVER" visible="false">
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="523.0" prefWidth="200.0">
                      <children>
-                        <Text layoutY="28.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Delivery details" textAlignment="CENTER" wrappingWidth="200.0">
+                        <Button layoutX="165.0" layoutY="1.0" mnemonicParsing="false" onMouseClicked="#closeItineraryDetailSideBar" prefHeight="28.0" prefWidth="29.0" text="x" />
+                        <Text layoutX="-13.0" layoutY="34.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Delivery details" textAlignment="CENTER" wrappingWidth="200.0">
                            <font>
                               <Font name="System Bold" size="15.0" />
                            </font>
                         </Text>
-                        <Text fx:id="itineraryText" layoutX="21.0" layoutY="53.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
-                        <Text layoutX="-14.0" layoutY="86.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Itinerary" textAlignment="CENTER" wrappingWidth="200.0">
+                        <Text fx:id="itineraryText" layoutX="11.0" layoutY="55.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+                        <Text layoutX="-13.0" layoutY="88.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Itinerary" textAlignment="CENTER" wrappingWidth="200.0">
                            <font>
                               <Font name="System Bold" size="15.0" />
                            </font>
                         </Text>
-                        <Text fx:id="deliveryTime" layoutX="21.0" layoutY="114.0" strokeType="OUTSIDE" strokeWidth="0.0" text="XX min ..........." wrappingWidth="152.45849609375" />
-                        <Group fx:id="itinaryDetail" layoutX="50.0" layoutY="150.0" />
+                        <Text fx:id="deliveryTime" layoutX="11.0" layoutY="117.0" strokeType="OUTSIDE" strokeWidth="0.0" text="XX min ..........." wrappingWidth="152.45849609375" />
+                        <Group fx:id="itineraryDetail" layoutX="11.0" layoutY="153.0" />
                      </children>
                   </AnchorPane>
               </content>
