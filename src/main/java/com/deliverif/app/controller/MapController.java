@@ -27,6 +27,8 @@ public class MapController {
     public static ArrayList<DeliveryRequest> currentDeliveryRequests = new ArrayList<>();
     public static Intersection currentlySelectedIntersection;
 
+    public boolean mapDrawn;
+
     public static int currentIndex = 0;
     public MapController() {}
 
@@ -56,6 +58,7 @@ public class MapController {
             displayCrossings(mapPane, map, map.getIntersections().values());
             displayStreets(mapPane, map, map.getStreets(), Constants.BASE_MAP_STREETS_COLOR);
             displayWarehouse(mapPane, map, map.getWarehouse(), Constants.WAREHOUSE_COLOR);
+            mapDrawn = true;
     }
 
     /**
