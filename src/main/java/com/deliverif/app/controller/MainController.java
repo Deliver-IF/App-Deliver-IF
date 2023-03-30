@@ -414,8 +414,6 @@ public class MainController {
             deliveryTour.removeDeliveryRequest(deliveryRequest);
             noRouteFoundText.setVisible(true);
         }
-
-
     }
 
     public void onWindowSizeChangeEventHandler() {
