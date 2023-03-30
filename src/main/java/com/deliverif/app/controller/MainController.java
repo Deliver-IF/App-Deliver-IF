@@ -288,7 +288,7 @@ public class MainController {
         if(MapController.currentIndex == MapController.currentDeliveryRequests.size() - 1) {
             nextDeliveryPointInfo.setVisible(false);
         }
-        System.out.println("Next");
+
     }
 
     /**
@@ -307,7 +307,7 @@ public class MainController {
         if(MapController.currentIndex == 0) {
             prevDeliveryPointInfo.setVisible(false);
         }
-        System.out.println("Prev");
+
     }
 
     /**
@@ -325,10 +325,6 @@ public class MainController {
 
             courierChoiceBox.getItems().clear();
             timeWindowChoiceBox.getItems().clear();
-
-            System.out.println(dataModel);
-            System.out.println(dataModel.getCityMap());
-            System.out.println(dataModel.getCityMap().getDeliveryTours());
 
             for (DeliveryTour deliveryTour : dataModel.getCityMap().getDeliveryTours().values()) {
                 courierChoiceBox.getItems().add(deliveryTour.getCourier());

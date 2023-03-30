@@ -257,7 +257,6 @@ public class MapController {
         point.setRadius(Constants.DELIVERY_REQUEST_SHAPE_RADIUS);
 
         point.setOnMouseClicked(mouseEvent -> {
-            System.out.println(origin.getX() + " " + origin.getY());
 
             Text deliveryWindowText = (Text) mapPane.getScene().lookup("#deliveryWindow");
 
