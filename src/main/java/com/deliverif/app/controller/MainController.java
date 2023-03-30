@@ -141,7 +141,7 @@ public class MainController {
     }
 
     /**
-     * Display a dialog window to select a tour on the user)'s device.
+     * Display a dialog window to select a tour on the user's device.
      * If the tour is successfully loaded, it is displayed on the map pane.
      */
     @FXML
