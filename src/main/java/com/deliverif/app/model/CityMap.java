@@ -112,7 +112,8 @@ public class CityMap {
      *                      represented by an Intersection object.
      */
     public void addDeliveryRequest(int idCourier, Intersection destination) {
-        DeliveryRequest deliveryRequest = new DeliveryRequest(10, destination);
-        deliveryTours.get(idCourier).addDeliveryRequest(deliveryRequest);
+        DeliveryTour deliveryTour = deliveryTours.get(idCourier);
+        DeliveryRequest deliveryRequest = new DeliveryRequest(10, destination, deliveryTour);
+        deliveryTour.addDeliveryRequest(deliveryRequest);
     }
 }

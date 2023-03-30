@@ -64,12 +64,12 @@ public class DeliveryTour {
     }
 
     public void addDeliveryRequest(int startTimeWindow, Intersection destination) {
-        DeliveryRequest deliveryRequest = new DeliveryRequest(startTimeWindow, destination);
+        DeliveryRequest deliveryRequest = new DeliveryRequest(startTimeWindow, destination, this);
         stops.add(deliveryRequest);
     }
 
     public void addDeliveryRequest(int idRequest, int startTimeWindow, Intersection destination) {
-        DeliveryRequest deliveryRequest = new DeliveryRequest(idRequest, startTimeWindow, destination);
+        DeliveryRequest deliveryRequest = new DeliveryRequest(idRequest, startTimeWindow, destination, this);
         stops.add(deliveryRequest);
     }
 

@@ -27,6 +27,7 @@ public class MapController {
     boolean mapDrawn = false;
     public static ArrayList<DeliveryRequest> currentDeliveryRequests = new ArrayList<>();
     public static Intersection currentlySelectedIntersection;
+    public static DeliveryRequest currentlySelectedDeliveryRequest;
 
     public static int currentIndex = 0;
     public MapController() {}
@@ -251,6 +252,7 @@ public class MapController {
 
             currentDeliveryRequests = DeliveryService.getInstance().getAllDeliveryRequestFromIntersection(map, intersection);
             currentlySelectedIntersection = intersection;
+            currentlySelectedDeliveryRequest = deliveryRequest;
             currentIndex = currentDeliveryRequests.size() - 1;
 
             deliveryWindowText.setText("Delivery Window : " + deliveryRequest.getStartTimeWindow() + "h-"
@@ -259,12 +261,15 @@ public class MapController {
 
             Button prevDeliveryPointInfo = (Button) mapPane.getScene().lookup("#prevDeliveryPointInfo");
             Button nextDeliveryPointInfo = (Button) mapPane.getScene().lookup("#nextDeliveryPointInfo");
-            if(currentIndex == 0) {
+            if (currentIndex == 0) {
                 prevDeliveryPointInfo.setVisible(false);
             } else {
                 prevDeliveryPointInfo.setVisible(true);
             }
             nextDeliveryPointInfo.setVisible(false);
+
+            Button editButton = (Button) mapPane.getScene().lookup("#editDeliveryRequestButton");
+            editButton.setVisible(true);
 
             DialogPane dialogPane = (DialogPane) mapPane.getScene().lookup("#intersectionInfoDialog");
             movePane(
@@ -273,7 +278,6 @@ public class MapController {
                     origin.getX() - (dialogPane.getWidth() / 2),
                     origin.getY() - dialogPane.getHeight() - 20
             );
-
         });
 
         // Event which change cursor on intersection hover
