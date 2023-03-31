@@ -1,5 +1,9 @@
 package com.deliverif.app.controller;
 
+import com.deliverif.app.algorithm.AbstractSearchOptimalTourAlgorithm;
+import com.deliverif.app.algorithm.AntColonyAlgorithm;
+import com.deliverif.app.algorithm.GreedyAlgorithm;
+import com.deliverif.app.algorithm.NaiveAlgorithm;
 import com.deliverif.app.exceptions.NoConfiguredDeliveryException;
 import com.deliverif.app.exceptions.NoCourierAvailableException;
 import com.deliverif.app.exceptions.WrongDeliveryTimeException;
@@ -64,6 +68,8 @@ public class MainController {
     private Button decreaseCourierButton;
     @FXML
     private ComboBox<Courier> selectCourierComboBox;
+    @FXML
+    private ComboBox<AbstractSearchOptimalTourAlgorithm> selectAlgorithmComboBox;
     // Itinerary - Delivery details
     @FXML
     private Text deliveryDetailsText;
@@ -125,6 +131,11 @@ public class MainController {
         allCourierFilter = Courier.create(-1, "All");
         selectCourierComboBox.getItems().add(allCourierFilter);
         selectCourierComboBox.setValue(allCourierFilter);
+
+        selectAlgorithmComboBox.getItems().add(GreedyAlgorithm.getInstance());
+        selectAlgorithmComboBox.getItems().add(NaiveAlgorithm.getInstance());
+        selectAlgorithmComboBox.getItems().add(AntColonyAlgorithm.getInstance());
+        selectAlgorithmComboBox.setValue(GreedyAlgorithm.getInstance());
 
         itineraryDetailAnchorPane.setPrefHeight(
                 Toolkit.getDefaultToolkit().getScreenSize().getHeight()
@@ -528,7 +539,10 @@ public class MainController {
                 // We are editing a delivery request
                 deliveryRequest = MapController.currentlySelectedDeliveryRequest;
                 deliveryRequest.getDeliveryTour().removeDeliveryRequest(deliveryRequest);
-                DeliveryService.getInstance().searchOptimalDeliveryTour(deliveryRequest.getDeliveryTour());
+                DeliveryService.getInstance().searchOptimalDeliveryTour(
+                        selectAlgorithmComboBox.getValue(),
+                        deliveryRequest.getDeliveryTour()
+                );
                 MapController.displayDeliveryTour(mapPane, dataModel.getCityMap(), deliveryRequest.getDeliveryTour());
                 deliveryRequest.setDeliveryTour(deliveryTour);
             } else {
@@ -538,7 +552,7 @@ public class MainController {
             deliveryTour.addDeliveryRequest(deliveryRequest);
             Text noRouteFoundText = (Text) mapPane.getScene().lookup("#noRouteFound");
             try {
-                DeliveryService.getInstance().searchOptimalDeliveryTour(deliveryTour);
+                DeliveryService.getInstance().searchOptimalDeliveryTour(selectAlgorithmComboBox.getValue(), deliveryTour);
 
                 // Draw the delivery tour on the map
                 closeAddDeliveryRequestDialogPane();
@@ -565,7 +579,7 @@ public class MainController {
         DeliveryTour deliveryTour = deliveryRequest.getDeliveryTour();
 
         deliveryTour.removeDeliveryRequest(deliveryRequest);
-        DeliveryService.getInstance().searchOptimalDeliveryTour(deliveryTour);
+        DeliveryService.getInstance().searchOptimalDeliveryTour(selectAlgorithmComboBox.getValue(), deliveryTour);
         MapController.currentlySelectedIntersection.getDefaultShapesOnMap().remove(deliveryRequest.getDeliveryRequestCircle());
 
         MapController.displayDeliveryTour(mapPane, dataModel.getCityMap(), deliveryTour);
