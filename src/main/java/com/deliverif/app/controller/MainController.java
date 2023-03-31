@@ -247,6 +247,10 @@ public class MainController {
                     this.selectCourierComboBox.getItems().add(deliveryTour.getCourier());
                 }
                 this.selectCourierComboBox.setValue(allCourierFilter);
+                if(this.dataModel.getCityMap().getDeliveryTours().size() > 0) {
+                    this.decreaseCourierButton.setDisable(false);
+                    this.increaseCourierButton.setDisable(false);
+                }
             } catch (FileNotFoundException | WrongSelectedMapException e) {
                 warningDialog("Information", null, e.getMessage());
             } catch (Exception exc) {
