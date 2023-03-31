@@ -39,19 +39,28 @@ public class GreedyAlgorithm extends AbstractSearchOptimalTourAlgorithm {
 
         float arrivalTime = 8*60;
         for (int i = 0; i < deliveryTour.getStops().size()+1; i++) {
-            DeliveryRequest stop = deliveryTour.getStops().get(i);
             if (i == 0) {
-                currentRoute.addAll(routeFinder.findRoute(deliveryTour.getCityMap().getWarehouse(), stop.getIntersection()));
+                currentRoute.addAll(routeFinder.findRoute(
+                        deliveryTour.getCityMap().getWarehouse(),
+                        deliveryTour.getStops().get(i).getIntersection())
+                );
             } else if (i == deliveryTour.getStops().size()) {
-                currentRoute.addAll(routeFinder.findRoute(deliveryTour.getStops().get(i-1).getIntersection(), deliveryTour.getCityMap().getWarehouse()));
+                currentRoute.addAll(routeFinder.findRoute(
+                        deliveryTour.getStops().get(i-1).getIntersection(),
+                        deliveryTour.getCityMap().getWarehouse())
+                );
             } else {
-                currentRoute.addAll(routeFinder.findRoute(deliveryTour.getStops().get(i-1).getIntersection(), stop.getIntersection()));
+                currentRoute.addAll(routeFinder.findRoute(
+                        deliveryTour.getStops().get(i-1).getIntersection(),
+                        deliveryTour.getStops().get(i).getIntersection())
+                );
             }
 
             for (int iRoute = 0; iRoute < currentRoute.size()-1; iRoute++) {
                 arrivalTime += timeTaken(currentRoute.get(iRoute).getReachableIntersections().get(currentRoute.get(iRoute+1)).getLength(), 250);
             }
             if (i < deliveryTour.getStops().size()) {
+                DeliveryRequest stop = deliveryTour.getStops().get(i);
                 stop.setArrivalTime((int) arrivalTime);
                 arrivalTime = stop.getArrivalTime() + stop.getDeliveryDuration();
             }

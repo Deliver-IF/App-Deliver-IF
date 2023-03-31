@@ -534,6 +534,26 @@ public class MainController {
         }
     }
 
+    /**
+     * Delete a delivery request.
+     * It is removed from a delivery tour and erased on the map pane.
+     *
+     * @throws Exception
+     */
+    @FXML
+    protected void deleteDeliveryRequest() throws Exception {
+        DeliveryRequest deliveryRequest = MapController.currentlySelectedDeliveryRequest;
+        DeliveryTour deliveryTour = deliveryRequest.getDeliveryTour();
+
+        deliveryTour.removeDeliveryRequest(deliveryRequest);
+        DeliveryService.getInstance().searchOptimalDeliveryTour(deliveryTour);
+        MapController.currentlySelectedIntersection.getDefaultShapesOnMap().remove(deliveryRequest.getDeliveryRequestCircle());
+
+        MapController mapController = new MapController();
+        mapController.displayDeliveryTour(mapPane, dataModel.getCityMap(), deliveryTour);
+        closeIntersectionInfoDialog();
+    }
+
     public void onWindowSizeChangeEventHandler() {
         if (mapPane.getChildren().size() != 0) {
             mapPane.getChildren().clear();
