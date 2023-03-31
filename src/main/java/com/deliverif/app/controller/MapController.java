@@ -188,7 +188,7 @@ public class MapController {
      * @param map the object with all map elements
      * @param deliveryTour the deliveryTour to draw
      */
-    public void displayDeliveryTour(Pane mapPane, CityMap map, DeliveryTour deliveryTour) {
+    public static void displayDeliveryTour(Pane mapPane, CityMap map, DeliveryTour deliveryTour) {
         Color color = Color.rgb(
             joaat(deliveryTour.getCourier().getIdCourier()) & 255,
             joaat(deliveryTour.getCourier().getIdCourier()) >> 16 & 255,
@@ -230,7 +230,7 @@ public class MapController {
      * @param color         the color that has to be used to draw the delivery point.
      * @param deliveryRequest the delivery request we try to display, in order to retrieve all the information related to it
      */
-    private Circle displayDeliveryPoint(
+    private static Circle displayDeliveryPoint(
             Pane mapPane, CityMap map, Intersection intersection, Paint color, DeliveryRequest deliveryRequest
     ) {
         Coordinates origin = getCoordinates(mapPane, map, intersection.getLongitude(), intersection.getLatitude());
@@ -295,12 +295,10 @@ public class MapController {
      * @param mapPane   the map pane to display the dialog pane on.
      * @param origin    the coordinates of the intersection.
      */
-    private void properlyPlaceIntersectionInfoDialogPane(Pane mapPane, Coordinates origin) {
+    private static void properlyPlaceIntersectionInfoDialogPane(Pane mapPane, Coordinates origin) {
         DialogPane dialogPane = (DialogPane) mapPane.getScene().lookup("#intersectionInfoDialog");
         double dialogPaneX;
         double dialogPaneY;
-
-        System.out.println(origin.getX());
 
         if (mapPane.getWidth() < origin.getX() + (dialogPane.getWidth() / 2)) {
             dialogPaneX = mapPane.getWidth() - dialogPane.getWidth();
@@ -331,7 +329,7 @@ public class MapController {
      * @param segments collection of streets we want to draw
      * @param color which color we want to draw the streets with
      */
-    private void displayStreets(Pane mapPane, CityMap map, Collection<Segment> segments, Color color) {
+    private static void displayStreets(Pane mapPane, CityMap map, Collection<Segment> segments, Color color) {
         for (Segment segment : segments) {
             displaySegment(mapPane, map, segment, color, true);
         }
@@ -385,7 +383,7 @@ public class MapController {
      * @param mapPane   the map pane where the segments are drawn on.
      * @param shapes     a collection of shapes to remove.
      */
-    public void eraseShapes(Pane mapPane, Collection<Shape> shapes) {
+    public static void eraseShapes(Pane mapPane, Collection<Shape> shapes) {
         for (Shape shape : shapes) {
             eraseShape(mapPane, shape);
         }
@@ -397,7 +395,7 @@ public class MapController {
      * @param mapPane   the map pane where the segments are drawn on.
      * @param shape     a collection of shapes to remove.
      */
-    public void eraseShape(Pane mapPane, Shape shape) {
+    public static void eraseShape(Pane mapPane, Shape shape) {
         mapPane.getChildren().remove(shape);
     }
 

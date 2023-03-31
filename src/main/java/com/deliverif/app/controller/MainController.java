@@ -204,11 +204,11 @@ public class MainController {
         if (file != null) {
             try {
                 for (DeliveryTour deliveryTour: this.dataModel.getCityMap().getDeliveryTours().values()) {
-                    this.dataModel.getMapController().eraseShapes(this.mapPane, deliveryTour.getShapes());
+                    MapController.eraseShapes(this.mapPane, deliveryTour.getShapes());
                 }
                 this.dataModel.loadTourFromFile(file);
                 for (DeliveryTour deliveryTour: this.dataModel.getCityMap().getDeliveryTours().values()) {
-                    this.dataModel.getMapController().displayDeliveryTour(this.mapPane, this.dataModel.getCityMap(), deliveryTour);
+                    MapController.displayDeliveryTour(this.mapPane, this.dataModel.getCityMap(), deliveryTour);
                 }
                 this.nbCourierText.setText(Integer.toString(this.dataModel.getCityMap().getDeliveryTours().size()));
                 this.selectCourierComboBox.getItems().clear();
@@ -448,7 +448,6 @@ public class MainController {
 
         if (MapController.currentlySelectedDeliveryRequest != null) {
             // If we are editing a delivery request
-
             courierChoiceBox.setValue(MapController.currentlySelectedDeliveryRequest.getDeliveryTour().getCourier());
             timeWindowChoiceBox.setValue(intToTimeWindowText(MapController.currentlySelectedDeliveryRequest.getStartTimeWindow()));
             submitDeliveryRequestButton.setText("Save");
@@ -510,6 +509,8 @@ public class MainController {
                 // We are editing a delivery request
                 deliveryRequest = MapController.currentlySelectedDeliveryRequest;
                 deliveryRequest.getDeliveryTour().removeDeliveryRequest(deliveryRequest);
+                DeliveryService.getInstance().searchOptimalDeliveryTour(deliveryRequest.getDeliveryTour());
+                MapController.displayDeliveryTour(mapPane, dataModel.getCityMap(), deliveryRequest.getDeliveryTour());
                 deliveryRequest.setDeliveryTour(deliveryTour);
             } else {
                 throw new Exception("The content of the submit button does not match any possible value.");
@@ -523,7 +524,6 @@ public class MainController {
                 // Draw the delivery tour on the map
                 closeAddDeliveryRequestDialogPane();
                 closeIntersectionInfoDialog();
-                MapController MapController = new MapController();
                 MapController.displayDeliveryTour(mapPane, dataModel.getCityMap(), deliveryTour);
             } catch (IllegalStateException | WrongDeliveryTimeException e) {
                 deliveryTour.removeDeliveryRequest(deliveryRequest);
@@ -549,8 +549,7 @@ public class MainController {
         DeliveryService.getInstance().searchOptimalDeliveryTour(deliveryTour);
         MapController.currentlySelectedIntersection.getDefaultShapesOnMap().remove(deliveryRequest.getDeliveryRequestCircle());
 
-        MapController mapController = new MapController();
-        mapController.displayDeliveryTour(mapPane, dataModel.getCityMap(), deliveryTour);
+        MapController.displayDeliveryTour(mapPane, dataModel.getCityMap(), deliveryTour);
         closeIntersectionInfoDialog();
     }
 
@@ -559,7 +558,7 @@ public class MainController {
             mapPane.getChildren().clear();
             this.dataModel.getMapController().drawBasemap(this.mapPane, this.dataModel.getCityMap());
             for (DeliveryTour deliveryTour: this.dataModel.getCityMap().getDeliveryTours().values()) {
-                this.dataModel.getMapController().displayDeliveryTour(this.mapPane, this.dataModel.getCityMap(), deliveryTour);
+                MapController.displayDeliveryTour(this.mapPane, this.dataModel.getCityMap(), deliveryTour);
             }
         }
     }
