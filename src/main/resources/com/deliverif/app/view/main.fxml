@@ -110,17 +110,10 @@
                               <Button fx:id="prevDeliveryPointInfo" layoutX="3.0" layoutY="24.0" mnemonicParsing="false" onMouseClicked="#prevDeliveryPointInfoDialog" prefHeight="24.0" prefWidth="0.0" text="&lt;" />
                               <Text fx:id="deliveryWindow" layoutX="55.0" layoutY="39.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Delivery Window : XXh-XXh" textAlignment="CENTER" wrappingWidth="228.28125" />
                               <Button fx:id="nextDeliveryPointInfo" layoutX="308.0" layoutY="22.0" mnemonicParsing="false" onMouseClicked="#nextDeliveryPointInfoDialog" prefHeight="24.0" prefWidth="29.0" text="&gt;" />
-                              <HBox layoutY="66.0" prefHeight="27.0" prefWidth="339.0">
-                                 <children>
-                                    <Text fx:id="seeDetailsDeliveryRequestText" accessibleRole="HYPERLINK" layoutX="133.0" layoutY="85.0" onMouseClicked="#seeDetailsDeliveryRequest" strokeType="OUTSIDE" strokeWidth="0.0" text="Voir détails" underline="true" visible="false" />
-                                    <AnchorPane prefHeight="27.0" prefWidth="124.0" />
-                                    <Button fx:id="editDeliveryRequestButton" mnemonicParsing="false" onMouseClicked="#editDeliveryRequestDialog" prefHeight="25.0" prefWidth="95.0" text="Edit" visible="false" />
-                                    <AnchorPane prefHeight="27.0" prefWidth="38.0" />
-                                    <Button fx:id="deleteDeliveryRequestButton" mnemonicParsing="false" onMouseClicked="#deleteDeliveryRequest" prefHeight="25.0" prefWidth="100.0" text="Delete" visible="false" />
-                                    <AnchorPane prefHeight="27.0" prefWidth="115.0" />
-                                    <Button mnemonicParsing="false" onMouseClicked="#addDeliveryRequestDialog" prefHeight="24.0" prefWidth="29.0" text="+" />
-                                 </children>
-                              </HBox>
+                              <Button fx:id="deleteDeliveryRequestButton" layoutX="3.0" layoutY="65.0" mnemonicParsing="false" onMouseClicked="#deleteDeliveryRequest" prefHeight="25.0" prefWidth="72.0" text="Delete" visible="false" />
+                              <Text fx:id="seeDetailsDeliveryRequestText" accessibleRole="HYPERLINK" layoutX="134.0" layoutY="87.0" onMouseClicked="#seeDetailsDeliveryRequest" strokeType="OUTSIDE" strokeWidth="0.0" text="Voir détails" underline="true" visible="false" />
+                              <Button layoutX="308.0" layoutY="66.0" mnemonicParsing="false" onMouseClicked="#addDeliveryRequestDialog" prefHeight="24.0" prefWidth="29.0" text="+" />
+                              <Button fx:id="editDeliveryRequestButton" layoutX="256.0" layoutY="66.0" mnemonicParsing="false" onMouseClicked="#editDeliveryRequestDialog" prefHeight="25.0" prefWidth="45.0" text="Edit" visible="false" />
                            </children>
                         </AnchorPane>
                      </content>
