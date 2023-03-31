@@ -9,4 +9,9 @@ abstract public class AbstractSearchOptimalTourAlgorithm {
     public static float timeTaken(float length, float speed) {
         return length / speed;
     }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName();
+    }
 }

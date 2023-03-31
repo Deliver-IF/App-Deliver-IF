@@ -77,6 +77,11 @@
                               <Insets right="10.0" />
                            </HBox.margin>
                         </ComboBox>
+                        <ComboBox fx:id="selectAlgorithmComboBox" prefWidth="150.0">
+                           <HBox.margin>
+                              <Insets right="10.0" />
+                           </HBox.margin>
+                        </ComboBox>
                      </children>
                      <BorderPane.margin>
                         <Insets bottom="10.0" top="10.0" />
