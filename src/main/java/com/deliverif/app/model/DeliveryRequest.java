@@ -77,4 +77,8 @@ public class DeliveryRequest {
         }
         this.arrivalTime = arrivalTime;
     }
+
+    public float getDeliveryDuration() {
+        return DELIVERY_TIME;
+    }
 }

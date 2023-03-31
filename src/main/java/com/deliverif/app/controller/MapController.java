@@ -150,6 +150,7 @@ public class MapController {
             }
         });
 
+        intersection.getDefaultShapesOnMap().clear();
         intersection.setDefaultShapeOnMap(point);
 
         mapPane.getChildren().add(point);

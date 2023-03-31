@@ -96,4 +96,18 @@ public class Segment {
         }
         return this.origin.equals(other.origin) && this.destination.equals(other.destination);
     }
+
+    public float getTimeToTravel(float speed) {
+        return this.length / speed;
+    }
+
+    public Intersection getEndIntersection(Intersection startIntersection) {
+        if (startIntersection == origin) {
+            return destination;
+        } else if (startIntersection == destination) {
+            return origin;
+        } else {
+            return null;
+        }
+    }
 }

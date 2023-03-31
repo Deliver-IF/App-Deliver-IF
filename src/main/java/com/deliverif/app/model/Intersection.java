@@ -97,4 +97,8 @@ public class Intersection implements GraphNode {
                 Float.parseFloat(element.getAttribute("latitude"))
         );
     }
+
+    public Segment getSegmentTo(Intersection key) {
+        return reachableIntersections.get(key);
+    }
 }
