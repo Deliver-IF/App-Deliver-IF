@@ -28,8 +28,8 @@ class TestableIntersection extends Intersection {
     }
 }
 class TestableDeliveryRequest extends DeliveryRequest {
-    protected TestableDeliveryRequest(int idRequest, int startTimeWindow, String idIntersection, DeliveryTour deliveryTour) {
-        super(idRequest, startTimeWindow, new TestableIntersection(idIntersection), deliveryTour);
+    protected TestableDeliveryRequest(int idRequest, int startTimeWindow, int arrivalTime, String idIntersection, DeliveryTour deliveryTour) {
+        super(idRequest, startTimeWindow, arrivalTime, new TestableIntersection(idIntersection), deliveryTour);
     }
 }
 class TestableSegment extends Segment {
@@ -125,9 +125,9 @@ public class DeliveryServiceTest {
         List<DeliveryTour> deliveryTours = new ArrayList<>();
 
         TestableDeliveryTour deliveryTour = new TestableDeliveryTour(MapFactory.createMapFromFile(new File(mapFilePath)), 0, "toto", true);
-        deliveryTour.getStops().add(new TestableDeliveryRequest(0, 10, "5", deliveryTour));
-        deliveryTour.getStops().add(new TestableDeliveryRequest(1, 9, "6", deliveryTour));
-        deliveryTour.getStops().add(new TestableDeliveryRequest(2, 11, "6", deliveryTour));
+        deliveryTour.getStops().add(new TestableDeliveryRequest(0, 10, 600, "5", deliveryTour));
+        deliveryTour.getStops().add(new TestableDeliveryRequest(1, 9, 540, "6", deliveryTour));
+        deliveryTour.getStops().add(new TestableDeliveryRequest(2, 11, 660, "6", deliveryTour));
         deliveryTour.getTour().add(new TestableSegment("1", "3"));
         deliveryTour.getTour().add(new TestableSegment("3", "9"));
         deliveryTour.getTour().add(new TestableSegment("9", "6"));
@@ -138,7 +138,7 @@ public class DeliveryServiceTest {
         deliveryTours.add(deliveryTour);
 
         TestableDeliveryTour deliveryTour2 = new TestableDeliveryTour(null, 23, "titi", true);
-        deliveryTour2.getStops().add(new TestableDeliveryRequest(12, 9, "2", deliveryTour2));
+        deliveryTour2.getStops().add(new TestableDeliveryRequest(12, 9, 540, "2", deliveryTour2));
         deliveryTour2.getTour().add(new TestableSegment("1", "2"));
         deliveryTour2.getTour().add(new TestableSegment("2", "1"));
         deliveryTours.add(deliveryTour2);

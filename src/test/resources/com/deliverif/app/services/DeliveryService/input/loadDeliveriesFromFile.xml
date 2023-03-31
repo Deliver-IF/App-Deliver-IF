@@ -3,9 +3,9 @@
     <related-map hash="161406"/>
     <delivery-tour id="0" name="toto">
         <requests>
-            <request id="0" startTimeWindow="10" idIntersection="5"/>
-            <request id="1" startTimeWindow="9" idIntersection="6"/>
-            <request id="2" startTimeWindow="11" idIntersection="6"/>
+            <request id="0" startTimeWindow="10" idIntersection="5" arrivalTime="600"/>
+            <request id="1" startTimeWindow="9" idIntersection="6" arrivalTime="540"/>
+            <request id="2" startTimeWindow="11" idIntersection="6" arrivalTime="660"/>
         </requests>
         <segments>
             <segment idOrigin="1" idDestination="3"/>
@@ -19,7 +19,7 @@
     </delivery-tour>
     <delivery-tour id="23" name="titi">
         <requests>
-            <request id="12" startTimeWindow="9" idIntersection="2"/>
+            <request id="12" startTimeWindow="9" idIntersection="2" arrivalTime="540"/>
         </requests>
         <segments>
             <segment idOrigin="1" idDestination="2"/>

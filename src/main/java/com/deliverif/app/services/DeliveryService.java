@@ -111,7 +111,8 @@ public class DeliveryService {
                     int idRequest = Integer.parseInt(request.getAttribute("id"));
                     int startTimeWindow = Integer.parseInt(request.getAttribute("startTimeWindow"));
                     String idIntersection = request.getAttribute("idIntersection");
-                    newDeliveryTour.addDeliveryRequest(idRequest, startTimeWindow, cityMap.getIntersections().get(idIntersection));
+                    int arrivalTime = Integer.parseInt(request.getAttribute("arrivalTime"));
+                    newDeliveryTour.addDeliveryRequest(idRequest, startTimeWindow, arrivalTime, cityMap.getIntersections().get(idIntersection));
                 }
 
                 NodeList segments = ((Element) nSegmentsParent.item(0)).getElementsByTagName("segment");
@@ -160,6 +161,7 @@ public class DeliveryService {
                     deliveryRequestElement.setAttribute("id", String.valueOf(deliveryRequest.getId()));
                     deliveryRequestElement.setAttribute("startTimeWindow", String.valueOf(deliveryRequest.getStartTimeWindow()));
                     deliveryRequestElement.setAttribute("idIntersection", String.valueOf(deliveryRequest.getIntersection().getId()));
+                    deliveryRequestElement.setAttribute("arrivalTime", String.valueOf(deliveryRequest.getArrivalTime()));
                     deliveryRequestsElement.appendChild(deliveryRequestElement);
                 }
                 deliveryTourElement.appendChild(deliveryRequestsElement);
