@@ -18,8 +18,8 @@ import java.util.Map;
 
 
 class TestableDeliveryTour extends DeliveryTour {
-    protected TestableDeliveryTour(CityMap cityMap, int idCourier, String nameCourier) {
-        super(cityMap, idCourier, nameCourier);
+    protected TestableDeliveryTour(CityMap cityMap, int idCourier, String nameCourier, boolean visible) {
+        super(cityMap, idCourier, nameCourier, visible);
     }
 }
 class TestableIntersection extends Intersection {
@@ -124,7 +124,7 @@ public class DeliveryServiceTest {
         String mapFilePath = DeliveryServiceTest.class.getResource("").getPath().concat("DeliveryService/input/testMap.xml");
         List<DeliveryTour> deliveryTours = new ArrayList<>();
 
-        TestableDeliveryTour deliveryTour = new TestableDeliveryTour(MapFactory.createMapFromFile(new File(mapFilePath)), 0, "toto");
+        TestableDeliveryTour deliveryTour = new TestableDeliveryTour(MapFactory.createMapFromFile(new File(mapFilePath)), 0, "toto", true);
         deliveryTour.getStops().add(new TestableDeliveryRequest(0, 10, "5", deliveryTour));
         deliveryTour.getStops().add(new TestableDeliveryRequest(1, 9, "6", deliveryTour));
         deliveryTour.getStops().add(new TestableDeliveryRequest(2, 11, "6", deliveryTour));
@@ -137,7 +137,7 @@ public class DeliveryServiceTest {
         deliveryTour.getTour().add(new TestableSegment("4", "1"));
         deliveryTours.add(deliveryTour);
 
-        TestableDeliveryTour deliveryTour2 = new TestableDeliveryTour(null, 23, "titi");
+        TestableDeliveryTour deliveryTour2 = new TestableDeliveryTour(null, 23, "titi", true);
         deliveryTour2.getStops().add(new TestableDeliveryRequest(12, 9, "2", deliveryTour2));
         deliveryTour2.getTour().add(new TestableSegment("1", "2"));
         deliveryTour2.getTour().add(new TestableSegment("2", "1"));

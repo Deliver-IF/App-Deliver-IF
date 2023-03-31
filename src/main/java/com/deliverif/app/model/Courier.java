@@ -38,7 +38,10 @@ public class Courier {
     protected Courier(int id, String name) {
         this.idCourier = id;
         this.courierName = name;
+    }
 
+    public static Courier create(int id, String name) {
+        return new Courier(id, name);
     }
 
     @Override

@@ -26,8 +26,8 @@ public class NaiveAlgorithmTest {
         URL res = NaiveAlgorithmTest.class.getResource("NaiveAlgorithmOptimizeMap.xml");
         assert res != null;
         cityMap = MapFactory.createMapFromFile(new File(URLDecoder.decode(res.getPath(), StandardCharsets.UTF_8)));
-        cityMap.addDeliveryTour(0,"Toto");
-        cityMap.addDeliveryTour();
+        cityMap.addDeliveryTour(0,"Toto", true);
+        cityMap.addDeliveryTour(true);
         mappedIntersections = new HashMap<>();
         for (Intersection intersection : cityMap.getIntersections().values()) {
             mappedIntersections.put(intersection.getId(), intersection);
