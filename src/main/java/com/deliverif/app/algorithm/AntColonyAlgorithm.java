@@ -39,7 +39,6 @@ public class AntColonyAlgorithm extends AbstractSearchOptimalTourAlgorithm {
         // Reset static variables
         Ant.reset();
 
-
         // Create the pheromone matrix from deliveryTour.getCityMap()
         final Map<Segment, Float> pheromoneMatrix = new HashMap<>(2048);
         final Map<Segment, Float> pheromoneLastUpdateMatrix = new HashMap<>(2048);
@@ -50,6 +49,9 @@ public class AntColonyAlgorithm extends AbstractSearchOptimalTourAlgorithm {
         // Sort the delivery requests by start time window
         final List<DeliveryRequest> deliveryRequests = deliveryTour.getStops();
         deliveryRequests.sort(Comparator.comparing(DeliveryRequest::getStartTimeWindow));
+        if (deliveryRequests.size() == 0) {
+            return;
+        }
 
         // Place the ants on the map (at least one ant on the warehouse)
         final List<Ant> ants = placeAnts(deliveryTour.getCityMap().getWarehouse(), deliveryRequests, numberOfAnts);
@@ -118,13 +120,20 @@ public class AntColonyAlgorithm extends AbstractSearchOptimalTourAlgorithm {
             currentTime += segment.getTimeToTravel(ANT_SPEED);
 
             final Intersection destination = segment.getEndIntersection(lastIntersection);
+            int timeWindow = deliveryRequests.get(0).getStartTimeWindow();
             for (DeliveryRequest deliveryRequest : deliveryRequests) {
-                if (deliveryRequest.getIntersection() == destination) {
+                if (deliveryRequest.getStartTimeWindow() == timeWindow && deliveryRequest.getIntersection() == destination) {
+                    deliveryRequests.remove(deliveryRequest);
                     deliveryRequest.setArrivalTime((int) currentTime);
                     currentTime = Math.max(currentTime, deliveryRequest.getArrivalTime()) + deliveryRequest.getDeliveryDuration();
                     break;
                 }
             }
+
+            if (deliveryRequests.size() == 0) {
+                break;
+            }
+
             lastIntersection = destination;
         }
     }
