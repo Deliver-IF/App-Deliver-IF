@@ -31,6 +31,7 @@ import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.nio.file.FileAlreadyExistsException;
 import java.util.HashMap;
+import java.util.Optional;
 
 @Getter
 public class MainController {
@@ -144,26 +145,44 @@ public class MainController {
      */
     @FXML
     public void loadMapAction() {
-        FileChooser chooser = new FileChooser();
-        File file = chooser.showOpenDialog(menuBar.getScene().getWindow());
-        loadFile(file);
+        Optional<ButtonType> alertResult = showWarningOnLoad();
+            if (alertResult.isPresent() && alertResult.get() == ButtonType.CANCEL) {
+                return;
+            }
+            FileChooser chooser = new FileChooser();
+            File file = chooser.showOpenDialog(menuBar.getScene().getWindow());
+            if (file != null) {
+                loadFile(file);
+            }
     }
 
 
     @FXML
     public void loadSmallMap() {
+        Optional<ButtonType> alertResult = showWarningOnLoad();
+        if (alertResult.isPresent() && alertResult.get() == ButtonType.CANCEL) {
+            return;
+        }
         File file = new File(System.getProperty("user.dir") + "/src/main/resources/com/deliverif/app/maps/smallMap.xml");
         loadFile(file);
     }
 
     @FXML
     public void loadMediumMap() {
+        Optional<ButtonType> alertResult = showWarningOnLoad();
+        if (alertResult.isPresent() && alertResult.get() == ButtonType.CANCEL) {
+            return;
+        }
         File file = new File(System.getProperty("user.dir") + "/src/main/resources/com/deliverif/app/maps/mediumMap.xml");
         loadFile(file);
     }
 
     @FXML
     public void loadLargeMap() {
+            Optional<ButtonType> alertResult = showWarningOnLoad();
+            if (alertResult.isPresent() && alertResult.get() == ButtonType.CANCEL) {
+                return;
+            }
         File file = new File(System.getProperty("user.dir") + "/src/main/resources/com/deliverif/app/maps/largeMap.xml");
         loadFile(file);
     }
@@ -588,6 +607,17 @@ public class MainController {
         content.setAlignment(Pos.CENTER);
         alert.getDialogPane().setContent(content);
         alert.showAndWait();
+    }
+
+    protected Optional<ButtonType> showWarningOnLoad() {
+        Optional<ButtonType> result = Optional.empty();
+        if (this.dataModel.getCityMap() != null && !this.dataModel.getCityMap().getDeliveryTours().isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "There is some changes that aren't saved, would you like to continue ?");
+            alert.setHeaderText(null);
+            alert.setTitle("Unsaved changes detected");
+            result = alert.showAndWait();
+        }
+        return result;
     }
 
     @FXML
