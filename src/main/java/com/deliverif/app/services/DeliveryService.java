@@ -1,6 +1,7 @@
 package com.deliverif.app.services;
 
 import com.deliverif.app.algorithm.AntColonyAlgorithm;
+import com.deliverif.app.algorithm.GreedyAlgorithm;
 import com.deliverif.app.exceptions.NoConfiguredDeliveryException;
 import com.deliverif.app.exceptions.WrongDeliveryTimeException;
 import com.deliverif.app.exceptions.WrongSelectedMapException;
@@ -50,7 +51,7 @@ public class DeliveryService {
      * @param deliveryTour  the DeliveryTour object to optimize.
      */
     public void searchOptimalDeliveryTour(DeliveryTour deliveryTour) throws WrongDeliveryTimeException {
-        AntColonyAlgorithm.getInstance().optimize(deliveryTour);
+        GreedyAlgorithm.getInstance().optimize(deliveryTour);
     }
 
     public void loadDeliveriesFromFile(File file, CityMap cityMap) throws FileNotFoundException, WrongSelectedMapException {
