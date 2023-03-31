@@ -18,8 +18,8 @@ import java.util.Map;
 
 
 class TestableDeliveryTour extends DeliveryTour {
-    protected TestableDeliveryTour(CityMap cityMap, int idCourier, String nameCourier) {
-        super(cityMap, idCourier, nameCourier);
+    protected TestableDeliveryTour(CityMap cityMap, int idCourier, String nameCourier, boolean visible) {
+        super(cityMap, idCourier, nameCourier, visible);
     }
 }
 class TestableIntersection extends Intersection {
@@ -28,8 +28,8 @@ class TestableIntersection extends Intersection {
     }
 }
 class TestableDeliveryRequest extends DeliveryRequest {
-    protected TestableDeliveryRequest(int idRequest, int startTimeWindow, String idIntersection) {
-        super(idRequest, startTimeWindow, new TestableIntersection(idIntersection));
+    protected TestableDeliveryRequest(int idRequest, int startTimeWindow, String idIntersection, DeliveryTour deliveryTour) {
+        super(idRequest, startTimeWindow, new TestableIntersection(idIntersection), deliveryTour);
     }
 }
 class TestableSegment extends Segment {
@@ -123,10 +123,10 @@ public class DeliveryServiceTest {
         String expectedFilePath = DeliveryServiceTest.class.getResource("").getPath().concat("DeliveryService/expected/saveDeliveriesToFile.xml");
         String mapFilePath = DeliveryServiceTest.class.getResource("").getPath().concat("DeliveryService/input/testMap.xml");
         List<DeliveryTour> deliveryTours = new ArrayList<>();
-        TestableDeliveryTour deliveryTour = new TestableDeliveryTour(MapFactory.createMapFromFile(new File(mapFilePath)), 0, "toto");
-        deliveryTour.getStops().add(new TestableDeliveryRequest(0, 10, "5"));
-        deliveryTour.getStops().add(new TestableDeliveryRequest(1, 9, "6"));
-        deliveryTour.getStops().add(new TestableDeliveryRequest(2, 11, "6"));
+        TestableDeliveryTour deliveryTour = new TestableDeliveryTour(MapFactory.createMapFromFile(new File(mapFilePath)), 0, "toto", true);
+        deliveryTour.getStops().add(new TestableDeliveryRequest(0, 10, "5", deliveryTour));
+        deliveryTour.getStops().add(new TestableDeliveryRequest(1, 9, "6", deliveryTour));
+        deliveryTour.getStops().add(new TestableDeliveryRequest(2, 11, "6", deliveryTour));
         deliveryTour.getTour().add(new TestableSegment("1", "3"));
         deliveryTour.getTour().add(new TestableSegment("3", "9"));
         deliveryTour.getTour().add(new TestableSegment("9", "6"));
@@ -136,8 +136,8 @@ public class DeliveryServiceTest {
         deliveryTour.getTour().add(new TestableSegment("4", "1"));
         deliveryTours.add(deliveryTour);
 
-        TestableDeliveryTour deliveryTour2 = new TestableDeliveryTour(null, 23, "titi");
-        deliveryTour2.getStops().add(new TestableDeliveryRequest(12, 9, "2"));
+        TestableDeliveryTour deliveryTour2 = new TestableDeliveryTour(null, 23, "titi", true);
+        deliveryTour2.getStops().add(new TestableDeliveryRequest(12, 9, "2", deliveryTour2));
         deliveryTour2.getTour().add(new TestableSegment("1", "2"));
         deliveryTour2.getTour().add(new TestableSegment("2", "1"));
         deliveryTours.add(deliveryTour2);

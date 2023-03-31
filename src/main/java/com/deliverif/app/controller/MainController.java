@@ -20,7 +20,6 @@ import lombok.Getter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.FileAlreadyExistsException;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 
 @Getter
@@ -49,7 +48,7 @@ public class MainController {
     @FXML
     private Button decreaseCourierButton;
     @FXML
-    private ComboBox selectCourierButton;
+    private ComboBox<Courier> selectCourierComboBox;
     // Itinerary - Delivery details
     @FXML
     private Text deliveryDetailsText;
@@ -65,9 +64,9 @@ public class MainController {
     @FXML
     private Button nextDeliveryPointInfo;
     @FXML
-    private ChoiceBox courierChoiceBox;
+    private ChoiceBox<Courier> courierChoiceBox;
     @FXML
-    private ChoiceBox timeWindowChoiceBox;
+    private ChoiceBox<String> timeWindowChoiceBox;
     @FXML
     private Button closeAddDeliveryRequestDialogPane;
     @FXML
@@ -76,7 +75,8 @@ public class MainController {
     private TextField courierNameTextField;
     @FXML
     private Button addCourierButton;
-    private HashMap<String, Integer> timeWindows = new HashMap<String, Integer>();
+    private final HashMap<String, Integer> timeWindows = new HashMap<>();
+    private Courier allCourierFilter;
 
     public MainController() {
         this.dataModel = new DataModel();
@@ -85,7 +85,11 @@ public class MainController {
     /**
      * Method called by the FXML loader after ressource file reading
      */
+    @FXML
     public void initialize() {
+        allCourierFilter = Courier.create(-1, "All");
+        selectCourierComboBox.getItems().add(allCourierFilter);
+        selectCourierComboBox.setValue(allCourierFilter);
     }
 
     public void warningDialog(String title, String header, String content) {
@@ -115,7 +119,7 @@ public class MainController {
     }
 
     @FXML
-    public void loadMediumMap() throws URISyntaxException {
+    public void loadMediumMap() {
         File file = new File(System.getProperty("user.dir") + "/src/main/resources/com/deliverif/app/maps/mediumMap.xml");
         loadFile(file);
     }
@@ -137,6 +141,9 @@ public class MainController {
                 CityMap citymap = this.dataModel.getCityMap();
                 if(citymap != null) {
                     this.nbCourierText.setText(Integer.toString(citymap.getDeliveryTours().size()));
+                    this.selectCourierComboBox.getItems().clear();
+                    this.selectCourierComboBox.getItems().add(allCourierFilter);
+                    this.selectCourierComboBox.setValue(allCourierFilter);
                     this.increaseCourierButton.setDisable(false);
                     this.decreaseCourierButton.setDisable(true);
                 }
@@ -166,6 +173,12 @@ public class MainController {
                     this.dataModel.getMapController().displayDeliveryTour(this.mapPane, this.dataModel.getCityMap(), deliveryTour);
                 }
                 this.nbCourierText.setText(Integer.toString(this.dataModel.getCityMap().getDeliveryTours().size()));
+                this.selectCourierComboBox.getItems().clear();
+                this.selectCourierComboBox.getItems().add(allCourierFilter);
+                for (DeliveryTour deliveryTour: this.dataModel.getCityMap().getDeliveryTours().values()) {
+                    this.selectCourierComboBox.getItems().add(deliveryTour.getCourier());
+                }
+                this.selectCourierComboBox.setValue(allCourierFilter);
             } catch (FileNotFoundException | WrongSelectedMapException e) {
                 warningDialog("Information", null, e.getMessage());
             } catch (Exception exc) {
@@ -209,7 +222,7 @@ public class MainController {
      * Make visible the dialog box to enter the name of the new courier
      */
     @FXML
-    public void createCourier(){
+    public void createCourier() {
         this.courierNameTextField.clear();
         this.newCourierDialogPane.setVisible(true);
     }
@@ -222,15 +235,16 @@ public class MainController {
     public void addCourier() {
         this.newCourierDialogPane.setVisible(false);
         CityMap citymap = this.dataModel.getCityMap();
-        if(citymap != null) {
+        if (citymap != null) {
             String courierName = this.courierNameTextField.getText();
-            DeliveryTour newDeliveryTour =  citymap.addDeliveryTour();
-            if(newDeliveryTour != null) {
+            DeliveryTour newDeliveryTour =  citymap.addDeliveryTour((selectCourierComboBox.getValue()) == allCourierFilter);
+            if (newDeliveryTour != null) {
                 newDeliveryTour.getCourier().setCourierName(courierName);
                 int nbCourier = citymap.getDeliveryTours().size();
                 this.nbCourierText.setText(Integer.toString(nbCourier));
+                selectCourierComboBox.getItems().add(newDeliveryTour.getCourier());
 
-                if(nbCourier == 1) {
+                if (nbCourier == 1) {
                     this.decreaseCourierButton.setDisable(false);
                 }
             }
@@ -245,22 +259,51 @@ public class MainController {
     @FXML
     public void deleteCourier() {
         CityMap citymap = this.dataModel.getCityMap();
-        if(citymap != null) {
+
+        if (citymap != null) {
             int nbCourier = citymap.getDeliveryTours().size();
-            if(nbCourier >= 1){
+            if (nbCourier >= 1){
                 try {
                     citymap.deleteDeliveryTour();
                     nbCourier = citymap.getDeliveryTours().size();
                     this.nbCourierText.setText(Integer.toString(nbCourier));
-                    if(nbCourier == 0) {
+                    if (nbCourier == 0) {
                         this.decreaseCourierButton.setDisable(true);
+                    }
+
+                    // We remove the name of the courier that has been removed
+                    Courier currentCourierFilter = selectCourierComboBox.getValue();
+                    selectCourierComboBox.getItems().clear();
+                    selectCourierComboBox.getItems().add(allCourierFilter);
+                    if (dataModel.getCityMap().getDeliveryTours().get(currentCourierFilter.getIdCourier()) != null) {
+                        selectCourierComboBox.setValue(currentCourierFilter);
+                    } else {
+                        selectCourierComboBox.setValue(allCourierFilter);
+                    }
+                    for (DeliveryTour deliveryTour : citymap.getDeliveryTours().values()) {
+                        if (dataModel.getCityMap().getDeliveryTours().get(currentCourierFilter.getIdCourier()) != null) {
+                            selectCourierComboBox.getItems().add(deliveryTour.getCourier());
+                        }
                     }
                 } catch (NoCourierAvailableException e) {
                     warningDialog("Information", null, e.getMessage());
                 }
             }
         }
+    }
 
+    @FXML
+    protected void updateCourierViewFilter() {
+        Courier courierViewFilter = selectCourierComboBox.getValue();
+        if (courierViewFilter != null) {
+            for (DeliveryTour deliveryTour : dataModel.getCityMap().getDeliveryTours().values()) {
+                if (courierViewFilter.getCourierName().equals("All") || deliveryTour.getCourier().getCourierName().equals(courierViewFilter.getCourierName())) {
+                    MapController.changeCourierPathVisibility(this.mapPane, dataModel.getCityMap(), deliveryTour, true);
+                } else {
+                    MapController.changeCourierPathVisibility(this.mapPane, dataModel.getCityMap(), deliveryTour, false);
+                }
+            }
+        }
     }
 
     /**
@@ -379,12 +422,12 @@ public class MainController {
     @FXML
     protected void addDeliveryRequest() {
         DeliveryService deliveryService = DeliveryService.getInstance();
-        DeliveryTour deliveryTour = dataModel.getCityMap().getDeliveryTours().get(((Courier) courierChoiceBox.getValue()).getIdCourier());
+        DeliveryTour deliveryTour = dataModel.getCityMap().getDeliveryTours().get(courierChoiceBox.getValue().getIdCourier());
         if (deliveryTour == null) {
             warningDialog("Information", null, "The courier with id "+courierChoiceBox.getValue()+" doesn't exist anymore");
             return;
         }
-        DeliveryRequest deliveryRequest = new DeliveryRequest(timeWindows.get((String) timeWindowChoiceBox.getValue()), MapController.currentlySelectedIntersection);
+        DeliveryRequest deliveryRequest = new DeliveryRequest(timeWindows.get(timeWindowChoiceBox.getValue()), MapController.currentlySelectedIntersection, deliveryTour);
         deliveryTour.addDeliveryRequest(deliveryRequest);
         Text noRouteFoundText = (Text) mapPane.getScene().lookup("#noRouteFound");
         try {
