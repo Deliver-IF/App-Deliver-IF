@@ -63,6 +63,15 @@ public class DeliveryRequest {
         this.deliveryRequestCircle = new Circle();
     }
 
+    protected DeliveryRequest(int idRequest, int startTimeWindow, int arrivalTime, Intersection intersection, DeliveryTour deliveryTour) {
+        this.startTimeWindow = startTimeWindow;
+        this.id = idRequest;
+        this.arrivalTime = arrivalTime;
+        this.intersection = intersection;
+        this.deliveryTour = deliveryTour;
+        this.deliveryRequestCircle = new Circle();
+    }
+
     /**
      * Set the arrival time of the delivery request.
      *

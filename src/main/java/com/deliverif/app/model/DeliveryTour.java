@@ -75,8 +75,8 @@ public class DeliveryTour {
         stops.add(deliveryRequest);
     }
 
-    public void addDeliveryRequest(int idRequest, int startTimeWindow, Intersection destination) {
-        DeliveryRequest deliveryRequest = new DeliveryRequest(idRequest, startTimeWindow, destination, this);
+    public void addDeliveryRequest(int idRequest, int startTimeWindow, int arrivalTime, Intersection destination) {
+        DeliveryRequest deliveryRequest = new DeliveryRequest(idRequest, startTimeWindow, arrivalTime, destination, this);
         stops.add(deliveryRequest);
     }
 
