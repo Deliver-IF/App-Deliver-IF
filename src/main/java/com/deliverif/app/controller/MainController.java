@@ -301,19 +301,21 @@ public class MainController {
      */
     @FXML
     public void addCourier() {
-        this.newCourierDialogPane.setVisible(false);
-        CityMap citymap = this.dataModel.getCityMap();
-        if (citymap != null) {
-            String courierName = this.courierNameTextField.getText();
-            DeliveryTour newDeliveryTour =  citymap.addDeliveryTour((selectCourierComboBox.getValue()) == allCourierFilter);
-            if (newDeliveryTour != null) {
-                newDeliveryTour.getCourier().setCourierName(courierName);
-                int nbCourier = citymap.getDeliveryTours().size();
-                this.nbCourierText.setText(Integer.toString(nbCourier));
-                selectCourierComboBox.getItems().add(newDeliveryTour.getCourier());
+        if (!this.courierNameTextField.getText().isEmpty()) {
+            this.newCourierDialogPane.setVisible(false);
+            CityMap citymap = this.dataModel.getCityMap();
+            if (citymap != null) {
+                String courierName = this.courierNameTextField.getText();
+                DeliveryTour newDeliveryTour = citymap.addDeliveryTour((selectCourierComboBox.getValue()) == allCourierFilter);
+                if (newDeliveryTour != null) {
+                    newDeliveryTour.getCourier().setCourierName(courierName);
+                    int nbCourier = citymap.getDeliveryTours().size();
+                    this.nbCourierText.setText(Integer.toString(nbCourier));
+                    selectCourierComboBox.getItems().add(newDeliveryTour.getCourier());
 
-                if (nbCourier == 1) {
-                    this.decreaseCourierButton.setDisable(false);
+                    if (nbCourier == 1) {
+                        this.decreaseCourierButton.setDisable(false);
+                    }
                 }
             }
         }
