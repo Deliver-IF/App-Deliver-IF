@@ -25,7 +25,8 @@ public class DeliveryRequest {
     /**
      * The minimum time from which the delivery can be realized.
      */
-    private final int startTimeWindow;
+    @Setter
+    private int startTimeWindow;
 
     /**
      * The time at which the delivery will be realized in minutes.
