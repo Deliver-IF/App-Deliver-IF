@@ -80,7 +80,7 @@ public class Segment {
 
     @Override
     public int hashCode() {
-        return this.origin.hashCode() * this.destination.hashCode();
+        return this.origin.hashCode() ^ this.destination.hashCode();
     }
 
     @Override

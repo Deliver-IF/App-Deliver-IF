@@ -1,6 +1,8 @@
 package com.deliverif.app.model;
 
 import com.deliverif.app.controller.MapController;
+import com.deliverif.app.exceptions.NoConfiguredDeliveryException;
+import com.deliverif.app.exceptions.WrongSelectedMapException;
 import com.deliverif.app.services.DeliveryService;
 import com.deliverif.app.services.MapFactory;
 import lombok.Getter;
@@ -34,11 +36,11 @@ public class DataModel {
      * @param file                      the file containing the data of the delivery tour to load.
      * @throws FileNotFoundException    the file is missing on the user's device.
      */
-    public void loadTourFromFile(File file) throws FileNotFoundException {
+    public void loadTourFromFile(File file) throws FileNotFoundException, WrongSelectedMapException {
         DeliveryService.getInstance().loadDeliveriesFromFile(file, cityMap);
     }
 
-    public void saveTourToFile(File file) throws FileAlreadyExistsException {
+    public void saveTourToFile(File file) throws FileAlreadyExistsException, NoConfiguredDeliveryException {
         DeliveryService.getInstance().saveDeliveriesToFile(file, cityMap.getDeliveryTours().values());
     }
 }
