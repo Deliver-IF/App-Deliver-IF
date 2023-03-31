@@ -25,6 +25,7 @@ public class GreedyAlgorithm extends AbstractSearchOptimalTourAlgorithm {
     }
     public void optimize(DeliveryTour deliveryTour) throws WrongDeliveryTimeException {
         if (deliveryTour.getStops().size() == 0) {
+            deliveryTour.getTour().clear();
             return;
         }
 

@@ -2,9 +2,9 @@ package com.deliverif.app.controller;
 
 import com.deliverif.app.exceptions.NoConfiguredDeliveryException;
 import com.deliverif.app.exceptions.NoCourierAvailableException;
+import com.deliverif.app.exceptions.WrongDeliveryTimeException;
 import com.deliverif.app.exceptions.WrongSelectedMapException;
 import com.deliverif.app.model.*;
-import com.deliverif.app.exceptions.WrongDeliveryTimeException;
 import com.deliverif.app.services.DeliveryService;
 import com.deliverif.app.utils.Constants;
 import javafx.fxml.FXML;
@@ -75,8 +75,16 @@ public class MainController {
     private TextField courierNameTextField;
     @FXML
     private Button addCourierButton;
-    private final HashMap<String, Integer> timeWindows = new HashMap<>();
+
     private Courier allCourierFilter;
+
+    private final HashMap<String, Integer> timeWindowsHashMap = new HashMap<>();
+    @FXML
+    private Button submitDeliveryRequestButton;
+    @FXML
+    private Button deleteDeliveryRequestButton;
+    @FXML
+    private Button editDeliveryRequestButton;
 
     public MainController() {
         this.dataModel = new DataModel();
@@ -312,8 +320,11 @@ public class MainController {
     @FXML
     protected void closeIntersectionInfoDialog() {
         intersectionInfoDialog.setVisible(false);
-        MapController.currentlySelectedIntersection.getDefaultShapeOnMap().setFill(Constants.BASE_MAP_INTERSECTION_COLOR);
+        MapController.currentlySelectedIntersection.getDefaultShapesOnMap().get(0).setFill(Constants.BASE_MAP_INTERSECTION_COLOR);
         MapController.currentlySelectedIntersection = null;
+        MapController.currentlySelectedDeliveryRequest = null;
+        editDeliveryRequestButton.setVisible(false);
+        deleteDeliveryRequestButton.setVisible(false);
     }
 
     /**
@@ -335,16 +346,16 @@ public class MainController {
      */
     @FXML
     protected void nextDeliveryPointInfoDialog() {
-        if(MapController.currentIndex == 0) {
+        if (MapController.currentIndex == 0) {
             prevDeliveryPointInfo.setVisible(true);
         }
         MapController.currentIndex++;
         deliveryWindow.setText(getDeliveryInfoDialogContent());
+        MapController.currentlySelectedDeliveryRequest = MapController.currentDeliveryRequests.get(MapController.currentIndex);
 
-        if(MapController.currentIndex == MapController.currentDeliveryRequests.size() - 1) {
+        if (MapController.currentIndex == MapController.currentDeliveryRequests.size() - 1) {
             nextDeliveryPointInfo.setVisible(false);
         }
-
     }
 
     /**
@@ -353,16 +364,16 @@ public class MainController {
      */
     @FXML
     protected void prevDeliveryPointInfoDialog() {
-        if(MapController.currentIndex == MapController.currentDeliveryRequests.size() - 1) {
+        if (MapController.currentIndex == MapController.currentDeliveryRequests.size() - 1) {
             nextDeliveryPointInfo.setVisible(true);
         }
         MapController.currentIndex--;
+        MapController.currentlySelectedDeliveryRequest = MapController.currentDeliveryRequests.get(MapController.currentIndex);
         deliveryWindow.setText(getDeliveryInfoDialogContent());
 
-        if(MapController.currentIndex == 0) {
+        if (MapController.currentIndex == 0) {
             prevDeliveryPointInfo.setVisible(false);
         }
-
     }
 
     /**
@@ -371,12 +382,12 @@ public class MainController {
      * The user can also use this pop-up to create a new delivery request.
      */
     @FXML
-    protected void addDeliveryPointDialog() {
+    protected void addDeliveryRequestDialog() {
         if(this.dataModel.getCityMap().getDeliveryTours().size() != 0) {
             newDeliveryRequestDialogPane.setVisible(true);
             int start_hour = 8;
             int limit_hour = 12;
-            timeWindows.clear();
+            timeWindowsHashMap.clear();
 
             courierChoiceBox.getItems().clear();
             timeWindowChoiceBox.getItems().clear();
@@ -386,16 +397,43 @@ public class MainController {
             }
 
             for (int hour = start_hour; hour + 1 <= limit_hour; hour++) {
-                String start_am_or_pm = hour <= 11 ? "am" : "pm";
-                String end_am_or_pm = (hour + 1) <= 11 ? "am" : "pm";
-                String timeWindowText = hour + ".00 " + start_am_or_pm + " - " + (hour + 1) + ".00 " + end_am_or_pm;
+                String timeWindowText = intToTimeWindowText(hour);
                 timeWindowChoiceBox.getItems().add(timeWindowText);
-                timeWindows.put(timeWindowText, hour);
+                timeWindowsHashMap.put(timeWindowText, hour);
             }
         } else {
             warningDialog("Warning", "No courier", "You cannot enter a new delivery request because there are no couriers ");
         }
+    }
 
+    /**
+     * Open the delivery request dialog pane with the ability to edit and delete it.
+     */
+    @FXML
+    protected void editDeliveryRequestDialog() {
+        addDeliveryRequestDialog();
+
+        if (MapController.currentlySelectedDeliveryRequest != null) {
+            // If we are editing a delivery request
+
+            courierChoiceBox.setValue(MapController.currentlySelectedDeliveryRequest.getDeliveryTour().getCourier());
+            timeWindowChoiceBox.setValue(intToTimeWindowText(MapController.currentlySelectedDeliveryRequest.getStartTimeWindow()));
+            submitDeliveryRequestButton.setText("Save");
+        }
+    }
+
+    /**
+     * Given an int, creates a string representing the time window in the format "XX.00 am/pm - XX.00 am/pm"
+     *
+     * @param hour  the start hour of the time window.
+     * @return      the formatted string representing the time window.
+     */
+    private String intToTimeWindowText(int hour) {
+        String start_am_or_pm = hour <= 11 ? "am" : "pm";
+        String end_am_or_pm = (hour + 1) <= 11 ? "am" : "pm";
+        String timeWindowText = hour + ".00 " + start_am_or_pm + " - " + (hour + 1) + ".00 " + end_am_or_pm;
+
+        return timeWindowText;
     }
 
     /**
@@ -405,6 +443,7 @@ public class MainController {
     protected void closeAddDeliveryRequestDialogPane() {
         mapPane.getScene().lookup("#noRouteFound").setVisible(false);
         newDeliveryRequestDialogPane.setVisible(false);
+        submitDeliveryRequestButton.setText("Add");
     }
 
     /**
@@ -420,19 +459,33 @@ public class MainController {
      * to the selected courier.
      */
     @FXML
-    protected void addDeliveryRequest() {
+    protected void submitDeliveryRequest() throws Exception {
         if (courierChoiceBox.getValue() != null && timeWindowChoiceBox.getValue() != null) {
-            DeliveryService deliveryService = DeliveryService.getInstance();
             DeliveryTour deliveryTour = dataModel.getCityMap().getDeliveryTours().get((courierChoiceBox.getValue()).getIdCourier());
+            DeliveryRequest deliveryRequest;
+
             if (deliveryTour == null) {
-                warningDialog("Information", null, "The courier with id " + courierChoiceBox.getValue() + " doesn't exist anymore");
+                warningDialog("Information", null, "The courier with id "+courierChoiceBox.getValue()+" doesn't exist anymore");
                 return;
             }
-            DeliveryRequest deliveryRequest = new DeliveryRequest(timeWindows.get(timeWindowChoiceBox.getValue()), MapController.currentlySelectedIntersection, deliveryTour);
+
+            if (submitDeliveryRequestButton.getText().equals("Add")) {
+                // We are creating a new delivery request;
+                deliveryRequest = new DeliveryRequest(timeWindowsHashMap.get(timeWindowChoiceBox.getValue()), MapController.currentlySelectedIntersection, deliveryTour);
+
+            } else if (submitDeliveryRequestButton.getText().equals("Save")) {
+                // We are editing a delivery request
+                deliveryRequest = MapController.currentlySelectedDeliveryRequest;
+                deliveryRequest.getDeliveryTour().removeDeliveryRequest(deliveryRequest);
+                deliveryRequest.setDeliveryTour(deliveryTour);
+            } else {
+                throw new Exception("The content of the submit button does not match any possible value.");
+            }
+
             deliveryTour.addDeliveryRequest(deliveryRequest);
             Text noRouteFoundText = (Text) mapPane.getScene().lookup("#noRouteFound");
             try {
-                deliveryService.searchOptimalDeliveryTour(deliveryTour);
+                DeliveryService.getInstance().searchOptimalDeliveryTour(deliveryTour);
 
                 // Draw the delivery tour on the map
                 closeAddDeliveryRequestDialogPane();
@@ -446,6 +499,26 @@ public class MainController {
         } else {
             warningDialog("Warning", null, "You need to fill all the fields to create a delivery request !");
         }
+    }
+
+    /**
+     * Delete a delivery request.
+     * It is removed from a delivery tour and erased on the map pane.
+     *
+     * @throws Exception
+     */
+    @FXML
+    protected void deleteDeliveryRequest() throws Exception {
+        DeliveryRequest deliveryRequest = MapController.currentlySelectedDeliveryRequest;
+        DeliveryTour deliveryTour = deliveryRequest.getDeliveryTour();
+
+        deliveryTour.removeDeliveryRequest(deliveryRequest);
+        DeliveryService.getInstance().searchOptimalDeliveryTour(deliveryTour);
+        MapController.currentlySelectedIntersection.getDefaultShapesOnMap().remove(deliveryRequest.getDeliveryRequestCircle());
+
+        MapController mapController = new MapController();
+        mapController.displayDeliveryTour(mapPane, dataModel.getCityMap(), deliveryTour);
+        closeIntersectionInfoDialog();
     }
 
     public void onWindowSizeChangeEventHandler() {

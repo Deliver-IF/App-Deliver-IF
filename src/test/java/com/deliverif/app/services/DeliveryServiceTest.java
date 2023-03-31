@@ -123,6 +123,7 @@ public class DeliveryServiceTest {
         String expectedFilePath = DeliveryServiceTest.class.getResource("").getPath().concat("DeliveryService/expected/saveDeliveriesToFile.xml");
         String mapFilePath = DeliveryServiceTest.class.getResource("").getPath().concat("DeliveryService/input/testMap.xml");
         List<DeliveryTour> deliveryTours = new ArrayList<>();
+
         TestableDeliveryTour deliveryTour = new TestableDeliveryTour(MapFactory.createMapFromFile(new File(mapFilePath)), 0, "toto", true);
         deliveryTour.getStops().add(new TestableDeliveryRequest(0, 10, "5", deliveryTour));
         deliveryTour.getStops().add(new TestableDeliveryRequest(1, 9, "6", deliveryTour));
