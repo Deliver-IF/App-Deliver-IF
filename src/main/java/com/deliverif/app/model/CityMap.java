@@ -66,8 +66,8 @@ public class CityMap {
     /**
      * Add a new DeliveryTour object to the current list of DeliveryTour objects.
      */
-    public DeliveryTour addDeliveryTour() {
-        DeliveryTour deliveryTour = new DeliveryTour(this);
+    public DeliveryTour addDeliveryTour(boolean visible) {
+        DeliveryTour deliveryTour = new DeliveryTour(this, visible);
         deliveryTours.put(deliveryTour.getCourier().getIdCourier(), deliveryTour);
         return deliveryTour;
     }
@@ -76,9 +76,11 @@ public class CityMap {
      * Add a new DeliveryTour object to the current list of DeliveryTour objects.
      *
      * @param idCourier     the id of the courier that has to manage the new delivery tour.
+     * @param nameCourier   the name of the courier that has to manage the new delivery tour.
+     * @param visible       whether the newly created delivery tour should be visible on the map.
      */
-    public DeliveryTour addDeliveryTour(Integer idCourier, String nameCourier) {
-        DeliveryTour deliveryTour = new DeliveryTour(this, idCourier, nameCourier);
+    public DeliveryTour addDeliveryTour(Integer idCourier, String nameCourier, boolean visible) {
+        DeliveryTour deliveryTour = new DeliveryTour(this, idCourier, nameCourier, visible);
         deliveryTours.put(deliveryTour.getCourier().getIdCourier(), deliveryTour);
         return deliveryTour;
     }
@@ -112,8 +114,9 @@ public class CityMap {
      *                      represented by an Intersection object.
      */
     public void addDeliveryRequest(int idCourier, Intersection destination) {
-        DeliveryRequest deliveryRequest = new DeliveryRequest(10, destination);
-        deliveryTours.get(idCourier).addDeliveryRequest(deliveryRequest);
+        DeliveryTour deliveryTour = deliveryTours.get(idCourier);
+        DeliveryRequest deliveryRequest = new DeliveryRequest(10, destination, deliveryTour);
+        deliveryTour.addDeliveryRequest(deliveryRequest);
     }
 
     @Override

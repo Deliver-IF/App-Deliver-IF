@@ -109,8 +109,7 @@ public class MapController {
 
         // Click on an intersection
         point.setOnMouseClicked(mouseEvent -> {
-
-            if(currentlySelectedIntersection != null) {
+            if (currentlySelectedIntersection != null) {
                 currentlySelectedIntersection.getDefaultShapeOnMap().setFill(Constants.BASE_MAP_INTERSECTION_COLOR);
             }
             currentlySelectedIntersection = intersection;
@@ -127,31 +126,7 @@ public class MapController {
             prevDeliveryPointInfo.setVisible(false);
             nextDeliveryPointInfo.setVisible(false);
 
-            // Move the dialog pane properly on the mapPane
-            DialogPane dialogPane = (DialogPane) mapPane.getScene().lookup("#intersectionInfoDialog");
-            double dialogPaneX;
-            double dialogPaneY;
-
-            if (mapPane.getWidth() < origin.getX() + (dialogPane.getWidth() / 2)) {
-                dialogPaneX = mapPane.getWidth() - dialogPane.getWidth();
-            } else if (origin.getX() - (dialogPane.getWidth() / 2) < 0.0) {
-                dialogPaneX = 0.0;
-            } else {
-                dialogPaneX = origin.getX() - (dialogPane.getWidth() / 2);
-            }
-
-            if (origin.y - dialogPane.getHeight() < 0) {
-                dialogPaneY = dialogPane.getHeight() / 2;
-            } else {
-                dialogPaneY = origin.getY() - dialogPane.getHeight() - 10;
-            }
-
-            movePane(
-                    mapPane,
-                    dialogPane,
-                    dialogPaneX,
-                    dialogPaneY
-            );
+            properlyPlaceIntersectionInfoDialogPane(mapPane, origin);
         });
 
         // Event which change cursor on intersection hover
@@ -217,7 +192,7 @@ public class MapController {
 
         // Streets
         for (Segment segment : deliveryTour.getTour()) {
-            Line lineDrawn = displaySegment(mapPane, map, segment, color);
+            Line lineDrawn = displaySegment(mapPane, map, segment, color, deliveryTour.isVisible());
             deliveryTour.addShape(lineDrawn);
         }
         // Delivery Points
@@ -227,11 +202,14 @@ public class MapController {
         }
     }
 
+
     /**
-     * Remove the path followed by a courier.
+     * Hide the path followed by a courier.
      */
-    static public void hideCourierPath() {
-        // TODO
+    static public void changeCourierPathVisibility(Pane mapPane, CityMap map, DeliveryTour deliveryTour, boolean visible) {
+        for (Shape shape : deliveryTour.getShapes()) {
+            shape.setVisible(visible);
+        }
     }
 
     /**
@@ -255,9 +233,9 @@ public class MapController {
         point.setStroke(color);
         point.setFill(color);
         point.setRadius(Constants.DELIVERY_REQUEST_SHAPE_RADIUS);
+        point.setVisible(deliveryRequest.getDeliveryTour().isVisible());
 
         point.setOnMouseClicked(mouseEvent -> {
-
             Text deliveryWindowText = (Text) mapPane.getScene().lookup("#deliveryWindow");
 
             currentDeliveryRequests = DeliveryService.getInstance().getAllDeliveryRequestFromIntersection(map, intersection);
@@ -268,21 +246,10 @@ public class MapController {
 
             Button prevDeliveryPointInfo = (Button) mapPane.getScene().lookup("#prevDeliveryPointInfo");
             Button nextDeliveryPointInfo = (Button) mapPane.getScene().lookup("#nextDeliveryPointInfo");
-            if(currentIndex == 0) {
-                prevDeliveryPointInfo.setVisible(false);
-            } else {
-                prevDeliveryPointInfo.setVisible(true);
-            }
+            prevDeliveryPointInfo.setVisible(currentIndex != 0);
             nextDeliveryPointInfo.setVisible(false);
 
-            DialogPane dialogPane = (DialogPane) mapPane.getScene().lookup("#intersectionInfoDialog");
-            movePane(
-                    mapPane,
-                    dialogPane,
-                    origin.getX() - (dialogPane.getWidth() / 2),
-                    origin.getY() - dialogPane.getHeight() - 20
-            );
-
+            properlyPlaceIntersectionInfoDialogPane(mapPane, origin);
         });
 
         // Event which change cursor on intersection hover
@@ -294,6 +261,36 @@ public class MapController {
         mapPane.getChildren().add(point);
 
         return point;
+    }
+
+    /**
+     * Places the intersection's info dialog pane so that it fits inside the map pane.
+     *
+     * @param mapPane   the map pane to display the dialog pane on.
+     * @param origin    the coordinates of the intersection.
+     */
+    private void properlyPlaceIntersectionInfoDialogPane(Pane mapPane, Coordinates origin) {
+        DialogPane dialogPane = (DialogPane) mapPane.getScene().lookup("#intersectionInfoDialog");
+        double dialogPaneX;
+        double dialogPaneY;
+
+        System.out.println(origin.getX());
+
+        if (mapPane.getWidth() < origin.getX() + (dialogPane.getWidth() / 2)) {
+            dialogPaneX = mapPane.getWidth() - dialogPane.getWidth();
+        } else if (origin.getX() - (dialogPane.getWidth() / 2) < 0.0) {
+            dialogPaneX = 0.0;
+        } else {
+            dialogPaneX = origin.getX() - (dialogPane.getWidth() / 2);
+        }
+
+        if (origin.y - dialogPane.getHeight() - 10 < 0) {
+            dialogPaneY = origin.y + 25;
+        } else {
+            dialogPaneY = origin.getY() - dialogPane.getHeight() - 10;
+        }
+
+        movePane(mapPane, dialogPane, dialogPaneX, dialogPaneY);
     }
 
     // ------------------------------------------- //
@@ -310,7 +307,7 @@ public class MapController {
      */
     private void displayStreets(Pane mapPane, CityMap map, Collection<Segment> segments, Color color) {
         for (Segment segment : segments) {
-            displaySegment(mapPane, map, segment, color);
+            displaySegment(mapPane, map, segment, color, true);
         }
     }
 
@@ -323,7 +320,7 @@ public class MapController {
      * @param color     the color that has to be used to draw the street.
      * @return          the Line object that has been drawn on the map pane.
      */
-    static private Line displaySegment(Pane mapPane, CityMap map, Segment segment, Paint color) {
+    static private Line displaySegment(Pane mapPane, CityMap map, Segment segment, Paint color, boolean visible) {
         Coordinates origin = getCoordinates(mapPane, map, segment.getOrigin().getLongitude(), segment.getOrigin().getLatitude());
         Coordinates destination = getCoordinates(mapPane, map, segment.getDestination().getLongitude(), segment.getDestination().getLatitude());
         Line line = new Line(
@@ -334,6 +331,7 @@ public class MapController {
         );
         line.setStroke(color);
         line.setStrokeWidth(3);
+        line.setVisible(visible);
         mapPane.getChildren().add(line);
 
         Circle originPoint = segment.getOrigin().getDefaultShapeOnMap();
