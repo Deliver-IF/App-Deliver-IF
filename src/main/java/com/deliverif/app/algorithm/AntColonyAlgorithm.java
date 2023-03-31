@@ -47,8 +47,12 @@ public class AntColonyAlgorithm extends AbstractSearchOptimalTourAlgorithm {
         // Get the optimal number of ants
         final int numberOfAnts = getOptimalNumberOfAnts(deliveryTour);
 
+        // Sort the delivery requests by start time window
+        final List<DeliveryRequest> deliveryRequests = deliveryTour.getStops();
+        deliveryRequests.sort(Comparator.comparing(DeliveryRequest::getStartTimeWindow));
+
         // Place the ants on the map (at least one ant on the warehouse)
-        final List<Ant> ants = placeAnts(deliveryTour, numberOfAnts);
+        final List<Ant> ants = placeAnts(deliveryTour.getCityMap().getWarehouse(), deliveryRequests, numberOfAnts);
 
         // Create a priority queue with ants ordered by next movement time
         Comparator<Ant> antComparator = (ant1, ant2) -> {
@@ -115,6 +119,22 @@ public class AntColonyAlgorithm extends AbstractSearchOptimalTourAlgorithm {
         // Update the delivery tour
         deliveryTour.getTour().clear();
         deliveryTour.getTour().addAll(Ant.getBestTourSegments());
+
+        float currentTime = 8 * 60;
+        Intersection lastIntersection = deliveryTour.getCityMap().getWarehouse();
+        for (Segment segment : deliveryTour.getTour()) {
+            currentTime += segment.getTimeToTravel(ANT_SPEED);
+
+            final Intersection destination = segment.getEndIntersection(lastIntersection);
+            for (DeliveryRequest deliveryRequest : deliveryRequests) {
+                if (deliveryRequest.getIntersection() == destination) {
+                    deliveryRequest.setArrivalTime((int) currentTime);
+                    currentTime = Math.max(currentTime, deliveryRequest.getArrivalTime()) + deliveryRequest.getDeliveryDuration();
+                    break;
+                }
+            }
+            lastIntersection = destination;
+        }
     }
 
     private float evaporatePheromone(float pheromoneIntensity, float lastUpdate, float currentTime) {
@@ -129,12 +149,12 @@ public class AntColonyAlgorithm extends AbstractSearchOptimalTourAlgorithm {
         return Math.max(20, deliveryTour.getStops().size());
     }
 
-    private List<Ant> placeAnts(DeliveryTour deliveryTour, int numberOfAnts) {
+    private List<Ant> placeAnts(Intersection start, List<DeliveryRequest> stops, int numberOfAnts) {
         final List<Ant> ants = new ArrayList<>();
 
         // TODO : Change to place ants randomly on the map except for the first one which is placed on the warehouse
         for (int i = 0; i < numberOfAnts; i++) {
-            ants.add(new Ant(ANT_SPEED, deliveryTour.getCityMap().getWarehouse(), deliveryTour.getStops()));
+            ants.add(new Ant(ANT_SPEED, start, stops));
         }
 
         return ants;
@@ -176,7 +196,6 @@ public class AntColonyAlgorithm extends AbstractSearchOptimalTourAlgorithm {
             this.indexVisitedIntersection = new HashMap<>(128);
 
             this.intersectionsToVisit = new ArrayList<>(intersectionsToVisit);
-            this.intersectionsToVisit.sort(Comparator.comparing(DeliveryRequest::getStartTimeWindow));
             this.startNewTour();
         }
 
@@ -215,7 +234,7 @@ public class AntColonyAlgorithm extends AbstractSearchOptimalTourAlgorithm {
 
             Intersection nextIntersection = selectBestNextIntersection(pheromoneMatrix, defaultPheromoneIntensity);
             final int countVisit = this.countVisitedIntersectionsSinceLastVisit.getOrDefault(nextIntersection, 0);
-            if (countVisit > 5) {
+            if (countVisit > 10) {
                 // Reduce attractiveness of the segment to avoid ants to get stuck in a loop a new time
                 pheromoneMatrix.put(
                         currentIntersection.getSegmentTo(nextIntersection),
