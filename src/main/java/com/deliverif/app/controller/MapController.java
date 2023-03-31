@@ -109,13 +109,16 @@ public class MapController {
 
         // Click on an intersection
         point.setOnMouseClicked(mouseEvent -> {
-            if (currentlySelectedIntersection != null) {
+            if (currentlySelectedIntersection != null && currentDeliveryRequests.size() == 0) {
                 currentlySelectedIntersection
                         .getDefaultShapesOnMap()
                         .get(0)
                         .setFill(Constants.BASE_MAP_INTERSECTION_COLOR);
             }
             currentlySelectedIntersection = intersection;
+            // Reset the DeliveryRequests for the current intersection. Indeed, if this part of the code is reach, it means
+            // the intersection has no DeliveryRequest
+            currentDeliveryRequests.clear();
 
             // Leave the selected intersection colored
             intersection.getDefaultShapesOnMap().get(0).setFill(Constants.BASE_MAP_INTERSECTION_COLOR_HOVER);
@@ -128,6 +131,9 @@ public class MapController {
             Button nextDeliveryPointInfo = (Button) mapPane.getScene().lookup("#nextDeliveryPointInfo");
             prevDeliveryPointInfo.setVisible(false);
             nextDeliveryPointInfo.setVisible(false);
+
+            Text seeDetails = (Text) mapPane.getScene().lookup("#seeDetailsDeliveryRequestText");
+            seeDetails.setVisible(false);
 
             properlyPlaceIntersectionInfoDialogPane(mapPane, origin);
         });
@@ -209,7 +215,7 @@ public class MapController {
     /**
      * Hide the path followed by a courier.
      */
-    static public void changeCourierPathVisibility(Pane mapPane, CityMap map, DeliveryTour deliveryTour, boolean visible) {
+    static public void changeCourierPathVisibility(DeliveryTour deliveryTour, boolean visible) {
         for (Shape shape : deliveryTour.getShapes()) {
             shape.setVisible(visible);
         }
@@ -244,6 +250,9 @@ public class MapController {
             }
 
             Text deliveryWindowText = (Text) mapPane.getScene().lookup("#deliveryWindow");
+            if (currentlySelectedIntersection != null && currentDeliveryRequests.size() == 0) {
+                currentlySelectedIntersection.getDefaultShapesOnMap().get(0).setFill(Constants.BASE_MAP_INTERSECTION_COLOR);
+            }
 
             currentDeliveryRequests = DeliveryService.getInstance().getAllDeliveryRequestFromIntersection(map, intersection);
             currentlySelectedIntersection = intersection;
@@ -251,6 +260,9 @@ public class MapController {
             currentIndex = currentDeliveryRequests.size() - 1;
 
             deliveryWindowText.setText(MainController.getDeliveryInfoDialogContent());
+
+            Text seeDetails = (Text) mapPane.getScene().lookup("#seeDetailsDeliveryRequestText");
+            seeDetails.setVisible(true);
 
             Button prevDeliveryPointInfo = (Button) mapPane.getScene().lookup("#prevDeliveryPointInfo");
             Button nextDeliveryPointInfo = (Button) mapPane.getScene().lookup("#nextDeliveryPointInfo");

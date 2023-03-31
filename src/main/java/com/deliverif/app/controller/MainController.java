@@ -10,21 +10,33 @@ import com.deliverif.app.utils.Constants;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import lombok.Getter;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.math.BigDecimal;
 import java.nio.file.FileAlreadyExistsException;
 import java.util.HashMap;
 
 @Getter
 public class MainController {
     DataModel dataModel;
+
+    private static double shiftY = 0;
 
     // Map pane
     @FXML
@@ -39,6 +51,8 @@ public class MainController {
     private MenuItem loadTourMenuItem;
     @FXML
     private MenuItem saveTourMenuItem;
+    @FXML
+    private Button addDeliveryButton;
     @FXML
     private Menu helpMenu;
     @FXML
@@ -70,11 +84,23 @@ public class MainController {
     @FXML
     private Button closeAddDeliveryRequestDialogPane;
     @FXML
+    private Group itineraryDetail;
+    @FXML
+    private VBox itineraryDetailSideBar;
+    @FXML
+    private ScrollPane itineraryDetailScrollPane;
+    @FXML
     private DialogPane newCourierDialogPane;
     @FXML
     private TextField courierNameTextField;
     @FXML
     private Button addCourierButton;
+    @FXML
+    private Text itineraryDetailArriveAt;
+    @FXML
+    private Text itineraryDetailDeliveryTime;
+    @FXML
+    private AnchorPane itineraryDetailAnchorPane;
 
     private Courier allCourierFilter;
 
@@ -98,6 +124,10 @@ public class MainController {
         allCourierFilter = Courier.create(-1, "All");
         selectCourierComboBox.getItems().add(allCourierFilter);
         selectCourierComboBox.setValue(allCourierFilter);
+
+        itineraryDetailAnchorPane.setPrefHeight(
+                Toolkit.getDefaultToolkit().getScreenSize().getHeight()
+        );
     }
 
     public void warningDialog(String title, String header, String content) {
@@ -306,9 +336,9 @@ public class MainController {
         if (courierViewFilter != null) {
             for (DeliveryTour deliveryTour : dataModel.getCityMap().getDeliveryTours().values()) {
                 if (courierViewFilter.getCourierName().equals("All") || deliveryTour.getCourier().getCourierName().equals(courierViewFilter.getCourierName())) {
-                    MapController.changeCourierPathVisibility(this.mapPane, dataModel.getCityMap(), deliveryTour, true);
+                    MapController.changeCourierPathVisibility(deliveryTour, true);
                 } else {
-                    MapController.changeCourierPathVisibility(this.mapPane, dataModel.getCityMap(), deliveryTour, false);
+                    MapController.changeCourierPathVisibility(deliveryTour, false);
                 }
             }
         }
@@ -320,7 +350,10 @@ public class MainController {
     @FXML
     protected void closeIntersectionInfoDialog() {
         intersectionInfoDialog.setVisible(false);
-        MapController.currentlySelectedIntersection.getDefaultShapesOnMap().get(0).setFill(Constants.BASE_MAP_INTERSECTION_COLOR);
+        // The circle is transparent again only if the selected Intersection doesn't have any DeliveryRequest
+        if(MapController.currentDeliveryRequests.size() == 0) {
+            MapController.currentlySelectedIntersection.getDefaultShapesOnMap().get(0).setFill(Constants.BASE_MAP_INTERSECTION_COLOR);
+        }
         MapController.currentlySelectedIntersection = null;
         MapController.currentlySelectedDeliveryRequest = null;
         editDeliveryRequestButton.setVisible(false);
@@ -556,5 +589,110 @@ public class MainController {
         content.setAlignment(Pos.CENTER);
         alert.getDialogPane().setContent(content);
         alert.showAndWait();
+    }
+
+    @FXML
+    protected void seeDetailsDeliveryRequest() {
+        itineraryDetailScrollPane.setVisible(true);
+        itineraryDetail.getChildren().clear();
+        shiftY = 0;
+
+        DeliveryRequest selectedDeliveryRequest = MapController.currentDeliveryRequests.get(MapController.currentIndex);
+        DeliveryTour selectedDeliveryTour = DeliveryService.getInstance().getDeliveryTourFromDeliveryRequest(dataModel.getCityMap(), selectedDeliveryRequest);
+        int indexSelectedDeliveryRequest = selectedDeliveryTour.getStops().indexOf(selectedDeliveryRequest);
+        Intersection intersectionOrigin;
+        Intersection intersectionDestination = selectedDeliveryRequest.getIntersection();
+
+        boolean hasStart = false;
+        boolean isDestinationreached = false;
+        int durationDelivery;
+
+        // If indexDestinationDeliveryRequest == 0, then it means the origin is the warehouse
+        if(indexSelectedDeliveryRequest > 0) {
+            DeliveryRequest deliveryRequestOrigin = selectedDeliveryTour.getStops().get(indexSelectedDeliveryRequest - 1);
+            intersectionOrigin = deliveryRequestOrigin.getIntersection();
+            durationDelivery = selectedDeliveryRequest.getArrivalTime() - deliveryRequestOrigin.getArrivalTime();
+        } else {
+            intersectionOrigin = dataModel.getCityMap().getWarehouse();
+            durationDelivery = selectedDeliveryRequest.getArrivalTime() - 8 * 60;
+        }
+
+        String indicationText = "";
+        String distanceText = "";
+
+        itineraryDetailArriveAt.setText(
+                "Arrive at "
+                + String.format("%02d", selectedDeliveryRequest.getArrivalTime() / 60) + "h"
+                + String.format("%02d", selectedDeliveryRequest.getArrivalTime() % 60)
+        );
+        itineraryDetailDeliveryTime.setText(
+                durationDelivery + " min ..........."
+        );
+
+        String currentStreetName = "";
+        float distanceStreet = 0;
+
+        for (Segment streetToTake : selectedDeliveryTour.getTour()) {
+
+            if(streetToTake.getOrigin().equals(intersectionOrigin) || (hasStart && !isDestinationreached)) {
+                hasStart = true;
+
+                if(streetToTake.getName().equals(currentStreetName)) {
+                    distanceStreet += streetToTake.getLength();
+                } else if (!currentStreetName.equals("")) {
+                    indicationText = "Turn " + currentStreetName;
+                    distanceText = new BigDecimal(distanceStreet).setScale(2, BigDecimal.ROUND_UP) + " m";
+
+                    addTextBlock(indicationText, distanceText);
+
+                    currentStreetName = streetToTake.getName();
+                    distanceStreet = streetToTake.getLength();
+                } else {
+                    currentStreetName = streetToTake.getName();
+                    distanceStreet = streetToTake.getLength();
+                }
+
+            }
+
+            if (streetToTake.getDestination().equals(intersectionDestination)) {
+                isDestinationreached = true;
+
+                indicationText = "Turn " + currentStreetName;
+                distanceText = new BigDecimal(distanceStreet).setScale(2, BigDecimal.ROUND_UP) + " m";
+
+                addTextBlock(indicationText, distanceText);
+                Text destinationreachedText = createText("Your destination is there");
+                itineraryDetail.getChildren().add(destinationreachedText);
+            }
+        }
+
+        itineraryDetailAnchorPane.setPrefHeight(itineraryDetailAnchorPane.getPrefHeight() + shiftY);
+
+    }
+
+    private void addTextBlock(String indication, String distance) {
+        // Indication of the direction
+        Text indicationText = createText(indication);
+        itineraryDetail.getChildren().add(indicationText);
+        shiftY += 20;
+
+        // Indication of the distance
+        Text distanceText = createText(distance);
+        itineraryDetail.getChildren().add(distanceText);
+        shiftY += 30;
+    }
+
+    private Text createText(String text) {
+        Text fxText = new Text();
+        fxText.setText(text);
+        fxText.setVisible(true);
+        fxText.maxWidth(178);
+        fxText.setLayoutY(shiftY);
+        return fxText;
+    }
+
+    @FXML
+    protected void closeItineraryDetailSideBar() {
+        itineraryDetailScrollPane.setVisible(false);
     }
 }
