@@ -459,6 +459,7 @@ public class MainController {
 
         if (MapController.currentlySelectedDeliveryRequest != null) {
             // If we are editing a delivery request
+
             courierChoiceBox.setValue(MapController.currentlySelectedDeliveryRequest.getDeliveryTour().getCourier());
             timeWindowChoiceBox.setValue(intToTimeWindowText(MapController.currentlySelectedDeliveryRequest.getStartTimeWindow()));
             submitDeliveryRequestButton.setText("Save");
@@ -506,6 +507,7 @@ public class MainController {
         if (courierChoiceBox.getValue() != null && timeWindowChoiceBox.getValue() != null) {
             DeliveryTour deliveryTour = dataModel.getCityMap().getDeliveryTours().get((courierChoiceBox.getValue()).getIdCourier());
             DeliveryRequest deliveryRequest;
+            int startTimeWindow = timeWindowsHashMap.get(timeWindowChoiceBox.getValue());
 
             if (deliveryTour == null) {
                 warningDialog("Information", null, "The courier with id "+courierChoiceBox.getValue()+" doesn't exist anymore");
@@ -514,12 +516,13 @@ public class MainController {
 
             if (submitDeliveryRequestButton.getText().equals("Add")) {
                 // We are creating a new delivery request;
-                deliveryRequest = new DeliveryRequest(timeWindowsHashMap.get(timeWindowChoiceBox.getValue()), MapController.currentlySelectedIntersection, deliveryTour);
+                deliveryRequest = new DeliveryRequest(startTimeWindow, MapController.currentlySelectedIntersection, deliveryTour);
 
             } else if (submitDeliveryRequestButton.getText().equals("Save")) {
                 // We are editing a delivery request
                 deliveryRequest = MapController.currentlySelectedDeliveryRequest;
                 deliveryRequest.getDeliveryTour().removeDeliveryRequest(deliveryRequest);
+                deliveryRequest.setStartTimeWindow(startTimeWindow);
                 DeliveryService.getInstance().searchOptimalDeliveryTour(
                         selectAlgorithmComboBox.getValue(),
                         deliveryRequest.getDeliveryTour()
