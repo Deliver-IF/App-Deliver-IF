@@ -72,7 +72,7 @@
                               <Insets right="10.0" />
                            </HBox.margin>
                         </Button>
-                        <ComboBox fx:id="selectCourierButton" disable="true" prefWidth="150.0">
+                        <ComboBox fx:id="selectCourierComboBox" onAction="#updateCourierViewFilter" prefWidth="150.0">
                            <HBox.margin>
                               <Insets right="10.0" />
                            </HBox.margin>
@@ -110,8 +110,17 @@
                               <Button fx:id="prevDeliveryPointInfo" layoutX="3.0" layoutY="24.0" mnemonicParsing="false" onMouseClicked="#prevDeliveryPointInfoDialog" prefHeight="24.0" prefWidth="0.0" text="&lt;" />
                               <Text fx:id="deliveryWindow" layoutX="55.0" layoutY="39.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Delivery Window : XXh-XXh" textAlignment="CENTER" wrappingWidth="228.28125" />
                               <Button fx:id="nextDeliveryPointInfo" layoutX="308.0" layoutY="22.0" mnemonicParsing="false" onMouseClicked="#nextDeliveryPointInfoDialog" prefHeight="24.0" prefWidth="29.0" text="&gt;" />
-                              <Button layoutX="308.0" layoutY="67.0" mnemonicParsing="false" onMouseClicked="#addDeliveryPointDialog" prefHeight="24.0" prefWidth="29.0" text="+" />
-                              <Text fx:id="seeDetailsDeliveryRequestText" accessibleRole="HYPERLINK" layoutX="133.0" layoutY="85.0" onMouseClicked="#seeDetailsDeliveryRequest" strokeType="OUTSIDE" strokeWidth="0.0" text="Voir détails" underline="true" visible="false" />
+                              <HBox layoutY="66.0" prefHeight="27.0" prefWidth="339.0">
+                                 <children>
+                                    <Text fx:id="seeDetailsDeliveryRequestText" accessibleRole="HYPERLINK" layoutX="133.0" layoutY="85.0" onMouseClicked="#seeDetailsDeliveryRequest" strokeType="OUTSIDE" strokeWidth="0.0" text="Voir détails" underline="true" visible="false" />
+                                    <AnchorPane prefHeight="27.0" prefWidth="124.0" />
+                                    <Button fx:id="editDeliveryRequestButton" mnemonicParsing="false" onMouseClicked="#editDeliveryRequestDialog" prefHeight="25.0" prefWidth="95.0" text="Edit" visible="false" />
+                                    <AnchorPane prefHeight="27.0" prefWidth="38.0" />
+                                    <Button fx:id="deleteDeliveryRequestButton" mnemonicParsing="false" onMouseClicked="#deleteDeliveryRequest" prefHeight="25.0" prefWidth="100.0" text="Delete" visible="false" />
+                                    <AnchorPane prefHeight="27.0" prefWidth="115.0" />
+                                    <Button mnemonicParsing="false" onMouseClicked="#addDeliveryRequestDialog" prefHeight="24.0" prefWidth="29.0" text="+" />
+                                 </children>
+                              </HBox>
                            </children>
                         </AnchorPane>
                      </content>
@@ -147,7 +156,7 @@
                                     </HBox>
                                     <HBox alignment="BOTTOM_CENTER" prefHeight="33.0" prefWidth="339.0">
                                        <children>
-                                          <Button mnemonicParsing="false" onMouseClicked="#addDeliveryRequest" prefHeight="25.0" prefWidth="48.0" text="Add" />
+                                          <Button fx:id="submitDeliveryRequestButton" mnemonicParsing="false" onMouseClicked="#submitDeliveryRequest" prefHeight="25.0" prefWidth="77.0" text="Add" />
                                        </children>
                                     </HBox>
                                  </children>
