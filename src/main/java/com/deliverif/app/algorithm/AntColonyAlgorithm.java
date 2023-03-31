@@ -103,18 +103,10 @@ public class AntColonyAlgorithm extends AbstractSearchOptimalTourAlgorithm {
             antsQueue.add(ant);
         }
 
-        // Find the best tour
+        // Check if we found the best tour
         if (Ant.getBestTour() == null) {
             throw new WrongDeliveryTimeException();
         }
-
-        ants.forEach(ant -> {
-            System.out.println("Ant tour duration : " + Ant.getBestTourDuration());
-            System.out.println("Ant tour count : " + ant.getCountTour());
-            System.out.println("Ant new best tour : " + ant.getCountBeatBestTour());
-            System.out.println("Ant same best tour : " + Ant.getCountSameBestTour());
-            System.out.println("====================");
-        });
 
         // Update the delivery tour
         deliveryTour.getTour().clear();
@@ -180,12 +172,6 @@ public class AntColonyAlgorithm extends AbstractSearchOptimalTourAlgorithm {
         private static Pair<List<Intersection>, Float> bestTour;
         @Getter
         private static int countSameBestTour = 0;
-
-        // Only for logs
-        @Getter
-        private int countTour = -1;
-        @Getter
-        private int countBeatBestTour = -1;
 
 
         public Ant(float speed, Intersection initialIntersection, List<DeliveryRequest> intersectionsToVisit) {
@@ -322,11 +308,9 @@ public class AntColonyAlgorithm extends AbstractSearchOptimalTourAlgorithm {
 
         public void startNewTour() {
             if (this.currentTourIsValid() && this.currentTourIsBetter()) {
-                this.countBeatBestTour++;
                 bestTour = new ImmutablePair<>(this.tour, this.currentTourDuration);
             }
 
-            this.countTour++;
             this.currentTourIsValid = true;
             this.currentTourDuration = 0;
             this.currentIntersection = initialIntersection;
