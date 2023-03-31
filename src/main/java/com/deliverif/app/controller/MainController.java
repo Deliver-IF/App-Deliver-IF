@@ -421,29 +421,31 @@ public class MainController {
      */
     @FXML
     protected void addDeliveryRequest() {
-        DeliveryService deliveryService = DeliveryService.getInstance();
-        DeliveryTour deliveryTour = dataModel.getCityMap().getDeliveryTours().get(courierChoiceBox.getValue().getIdCourier());
-        if (deliveryTour == null) {
-            warningDialog("Information", null, "The courier with id "+courierChoiceBox.getValue()+" doesn't exist anymore");
-            return;
+        if (courierChoiceBox.getValue() != null && timeWindowChoiceBox.getValue() != null) {
+            DeliveryService deliveryService = DeliveryService.getInstance();
+            DeliveryTour deliveryTour = dataModel.getCityMap().getDeliveryTours().get((courierChoiceBox.getValue()).getIdCourier());
+            if (deliveryTour == null) {
+                warningDialog("Information", null, "The courier with id " + courierChoiceBox.getValue() + " doesn't exist anymore");
+                return;
+            }
+            DeliveryRequest deliveryRequest = new DeliveryRequest(timeWindows.get(timeWindowChoiceBox.getValue()), MapController.currentlySelectedIntersection, deliveryTour);
+            deliveryTour.addDeliveryRequest(deliveryRequest);
+            Text noRouteFoundText = (Text) mapPane.getScene().lookup("#noRouteFound");
+            try {
+                deliveryService.searchOptimalDeliveryTour(deliveryTour);
+
+                // Draw the delivery tour on the map
+                closeAddDeliveryRequestDialogPane();
+                closeIntersectionInfoDialog();
+                MapController MapController = new MapController();
+                MapController.displayDeliveryTour(mapPane, dataModel.getCityMap(), deliveryTour);
+            } catch (IllegalStateException | WrongDeliveryTimeException e) {
+                deliveryTour.removeDeliveryRequest(deliveryRequest);
+                noRouteFoundText.setVisible(true);
+            }
+        } else {
+            warningDialog("Warning", null, "You need to fill all the fields to create a delivery request !");
         }
-        DeliveryRequest deliveryRequest = new DeliveryRequest(timeWindows.get(timeWindowChoiceBox.getValue()), MapController.currentlySelectedIntersection, deliveryTour);
-        deliveryTour.addDeliveryRequest(deliveryRequest);
-        Text noRouteFoundText = (Text) mapPane.getScene().lookup("#noRouteFound");
-        try {
-            deliveryService.searchOptimalDeliveryTour(deliveryTour);
-
-            // Draw the delivery tour on the map
-            closeAddDeliveryRequestDialogPane();
-            closeIntersectionInfoDialog();
-            MapController MapController = new MapController();
-            MapController.displayDeliveryTour(mapPane, dataModel.getCityMap(), deliveryTour);
-        } catch (IllegalStateException | WrongDeliveryTimeException e) {
-            deliveryTour.removeDeliveryRequest(deliveryRequest);
-            noRouteFoundText.setVisible(true);
-        }
-
-
     }
 
     public void onWindowSizeChangeEventHandler() {
