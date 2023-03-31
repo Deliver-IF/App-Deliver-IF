@@ -1,7 +1,9 @@
 package com.deliverif.app.model;
 
+import javafx.scene.shape.Circle;
 import com.deliverif.app.exceptions.WrongDeliveryTimeException;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Random;
 
@@ -35,16 +37,30 @@ public class DeliveryRequest {
      */
     private final Intersection intersection;
 
-    public DeliveryRequest(int startTimeWindow, Intersection intersection) {
+    /**
+     * The delivery tour the delivery request is part of.
+     */
+    @Setter
+    private DeliveryTour deliveryTour;
+
+    @Setter
+    private Circle deliveryRequestCircle;
+
+
+    public DeliveryRequest(int startTimeWindow, Intersection intersection, DeliveryTour deliveryTour) {
         this.startTimeWindow = startTimeWindow;
         this.id = new Random().nextInt(1000000000);
         this.intersection = intersection;
+        this.deliveryTour = deliveryTour;
+        this.deliveryRequestCircle =  new Circle();
     }
 
-    protected DeliveryRequest(int idRequest, int startTimeWindow, Intersection intersection) {
+    protected DeliveryRequest(int idRequest, int startTimeWindow, Intersection intersection, DeliveryTour deliveryTour) {
         this.startTimeWindow = startTimeWindow;
         this.id = idRequest;
         this.intersection = intersection;
+        this.deliveryTour = deliveryTour;
+        this.deliveryRequestCircle = new Circle();
     }
 
     /**
